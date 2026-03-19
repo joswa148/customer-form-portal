@@ -1,130 +1,156 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { BarChart, Database, Filter, LayoutTemplate, Clock, Mail, CheckCircle2, ChevronRight, PieChart } from 'lucide-react';
 
 const API_URL = 'http://localhost:5002/api';
 
 export default function Dashboard() {
+  const [responses, setResponses] = useState([]);
   const [forms, setForms] = useState([]);
-  const [selectedFormId, setSelectedFormId] = useState('');
-  
-  const [feedbacks, setFeedbacks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedForm, setSelectedForm] = useState('');
 
   useEffect(() => {
-    axios.get(`${API_URL}/forms`).then(res => setForms(res.data));
-  }, []);
-
-  useEffect(() => {
-    const fetchFeedbacks = async () => {
-      setLoading(true);
+    const init = async () => {
       try {
-        const url = selectedFormId ? `${API_URL}/responses?formId=${selectedFormId}` : `${API_URL}/responses`;
-        const response = await axios.get(url);
-        
-        const parsedData = response.data.map(item => {
-          let parsedAnswers = item.answers;
-          if (typeof parsedAnswers === 'string') {
-            try { parsedAnswers = JSON.parse(parsedAnswers); } catch(e) {}
-          }
-          return { ...item, answers: parsedAnswers };
-        });
-        setFeedbacks(parsedData);
+        const [resRes, formsRes] = await Promise.all([
+          axios.get(`${API_URL}/responses${selectedForm ? `?formId=${selectedForm}` : ''}`),
+          axios.get(`${API_URL}/forms`)
+        ]);
+        setResponses(resRes.data);
+        setForms(formsRes.data);
       } catch (err) {
-        console.error(err);
+        console.error('Failed to load portal data', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchFeedbacks();
-  }, [selectedFormId]);
+    init();
+  }, [selectedForm]);
 
-  const getLabel = (formId, fieldKey) => {
+  const getLabel = (formId, fieldId) => {
     const form = forms.find(f => f.id === formId);
-    if (!form || !form.fields) return fieldKey;
-    let parsed = form.fields;
-    if (typeof parsed === 'string') {
-       try { parsed = JSON.parse(parsed); } catch(e) {}
+    if (!form) return fieldId;
+    let schema = form.fields;
+    if (typeof schema === 'string') {
+      try { schema = JSON.parse(schema); } catch(e) { return fieldId; }
     }
-    if (Array.isArray(parsed)) {
-       const field = parsed.find(f => f.id === fieldKey);
-       return field && field.label ? field.label : (fieldKey === 'userEmail' ? 'Submitter Email' : fieldKey);
-    }
-    return fieldKey;
+    if (!Array.isArray(schema)) return fieldId;
+    
+    const field = schema.find(f => f.id === fieldId);
+    return field ? field.label : fieldId;
   };
 
+  if (loading) return <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center font-black text-indigo-300 text-xl tracking-widest uppercase animate-pulse"><Database className="w-12 h-12 mb-3 text-indigo-200"/> Synchronizing Analytics...</div>;
+
   return (
-    <div className="p-8 max-w-[95%] mx-auto font-sans">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 pb-6 border-b border-gray-200">
-        <div>
-          <h1 className="text-4xl font-extrabold text-blue-950 tracking-tight">Dataset Analysis</h1>
-          <Link to="/dashboard/forms" className="text-sm font-bold text-blue-600 hover:text-blue-800 transition mt-2 inline-block pt-1 uppercase tracking-widest hover:-translate-x-1 transform inline-flex items-center">
-            <span className="mr-2">←</span> Form Schema Builders
-          </Link>
-        </div>
-        <div className="flex gap-4 items-center bg-white p-3 rounded-2xl border border-gray-200 shadow-md w-full md:w-auto mt-6 md:mt-0">
-          <label className="font-extrabold text-xs uppercase tracking-widest text-gray-500 whitespace-nowrap pl-2">Constrain Dataset:</label>
-          <select 
-            value={selectedFormId} 
-            onChange={e => setSelectedFormId(e.target.value)} 
-            className="p-2.5 border border-gray-300 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/20 bg-gray-50 hover:bg-white transition min-w-[280px] font-medium text-gray-800"
-          >
-            <option value="">-- Complete Multi-Campaign Dump --</option>
-            {forms.map(f => <option key={f.id} value={f.id}>{f.title}</option>)}
-          </select>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="py-32 text-center text-gray-400 font-extrabold text-xl uppercase tracking-widest">Aggregating Matrix Data...</div>
-      ) : (
-        <div className="space-y-6">
-          {feedbacks.length === 0 && (
-            <div className="text-center p-16 bg-white rounded-3xl shadow-sm text-gray-400 font-semibold border-2 border-dashed border-gray-200">
-              No entries mapped to this constraint.
-            </div>
-          )}
-          
-          <div className="masonry-grid grid grid-cols-1 xl:grid-cols-2 gap-8">
-          {feedbacks.map(fb => (
-            <div key={fb.id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col transition hover:shadow-xl">
-              <div className="bg-blue-50/50 p-5 border-b border-gray-100 flex justify-between items-center">
-                 <div>
-                    <span className="text-[10px] font-black uppercase text-blue-400 tracking-widest bg-blue-100 px-2 py-1 rounded-md">ID-{fb.id}</span>
-                    <h3 className="text-base font-bold text-blue-900 mt-2 truncate">{fb.user_email}</h3>
-                 </div>
-                 <div className="text-right">
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">{new Date(fb.created_at).toLocaleDateString()}</div>
-                    <div className="text-[11px] font-semibold text-gray-500 mt-1">{new Date(fb.created_at).toLocaleTimeString()}</div>
-                 </div>
-              </div>
-
-              <div className="p-6">
-                <h4 className="text-[10px] uppercase font-black text-gray-300 mb-4 tracking-widest flex items-center">
-                  Extracted Evaluation Values
-                  {!selectedFormId && <span className="ml-auto bg-gray-100 text-gray-600 px-2 py-1 rounded border border-gray-200">Schema Config ID: {fb.form_id}</span>}
-                </h4>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {fb.answers && Object.entries(fb.answers).map(([key, val]) => {
-                    const label = getLabel(fb.form_id, key);
-                    const isLongText = String(val).length > 60;
-                    return (
-                      <div key={key} className={`bg-gray-50/80 p-4 rounded-xl border border-gray-100/50 transition hover:bg-gray-50 ${isLongText ? 'col-span-1 md:col-span-2' : ''}`}>
-                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide block mb-1.5 leading-snug">{label}</span>
-                         <span className={`text-sm font-semibold ${val ? 'text-gray-800' : 'text-gray-300 italic'}`}>
-                           {val ? String(val) : 'Omitted Check'}
-                         </span>
-                      </div>
-                    )
-                  })}
+    <div className="min-h-screen bg-slate-50 font-sans p-6 md:p-12">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Region */}
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center py-10 border-b border-slate-200 mb-12 bg-white rounded-3xl shadow-xl shadow-slate-200/50 px-10 relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-indigo-50 to-transparent pointer-events-none"></div>
+           
+           <div className="relative z-10">
+             <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight flex items-center gap-4">
+               <PieChart className="w-12 h-12 text-indigo-600" />
+               Analytics Matrix
+             </h1>
+             <p className="text-slate-500 mt-3 font-semibold text-lg ml-1">Live aggregated response registries.</p>
+           </div>
+           
+           <div className="flex flex-col sm:flex-row gap-5 mt-8 xl:mt-0 relative z-10 w-full xl:w-auto items-center">
+              <div className="relative w-full sm:w-auto">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Filter className="w-5 h-5 text-indigo-400" />
                 </div>
+                <select 
+                  value={selectedForm} 
+                  onChange={e => setSelectedForm(e.target.value)}
+                  className="w-full sm:w-64 p-4 pl-12 bg-slate-50 border border-slate-200 text-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-400 font-bold transition shadow-sm appearance-none cursor-pointer"
+                >
+                  <option value="">Global Overview (All Campaigns)</option>
+                  {forms.map(f => (
+                    <option key={f.id} value={f.id}>{f.title}</option>
+                  ))}
+                </select>
               </div>
-            </div>
-          ))}
-          </div>
+              
+              <Link to="/dashboard/forms" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-2xl hover:from-slate-900 hover:to-black font-black shadow-lg shadow-slate-900/30 transition flex justify-center items-center gap-2 transform hover:-translate-y-1">
+                <LayoutTemplate className="w-5 h-5" /> Engine Dashboard
+              </Link>
+           </div>
         </div>
-      )}
+
+        {/* Analytics Grid */}
+        {responses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-32 bg-white rounded-3xl border-2 border-dashed border-slate-200 shadow-sm text-center">
+            <CheckCircle2 className="w-20 h-20 text-slate-200 mb-6" />
+            <h2 className="text-2xl font-bold text-slate-400">Zero Inbound Telemetry</h2>
+            <p className="text-slate-400 font-medium mt-2">Adjust your filters or deploy a new campaign.</p>
+          </div>
+        ) : (
+          <div className="columns-1 md:columns-2 xl:columns-3 gap-8 space-y-8">
+            {responses.map(fb => {
+              let parsedAnswers = fb.answers || {};
+              if (typeof parsedAnswers === 'string') {
+                 try { parsedAnswers = JSON.parse(parsedAnswers); } catch(e) {}
+              }
+              const formDoc = forms.find(x => x.id === fb.form_id);
+
+              return (
+                <div key={fb.id} className="bg-white p-8 rounded-[2rem] shadow-lg shadow-slate-200/50 border border-slate-100 flex flex-col break-inside-avoid relative group hover:-translate-y-1 hover:shadow-xl transition duration-300">
+                  <div className="absolute top-0 right-8 w-12 h-1.5 bg-indigo-500 rounded-b-md"></div>
+                  
+                  {/* Card Header */}
+                  <div className="flex justify-between items-start mb-6">
+                     <div>
+                        <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-sm inline-block mb-3">Target ID #{fb.form_id}</span>
+                        <h3 className="font-extrabold text-lg text-slate-800 leading-tight">
+                          {formDoc ? formDoc.title : 'Legacy Payload'}
+                        </h3>
+                     </div>
+                  </div>
+                  
+                  {/* Origin */}
+                  <div className="mb-8 p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-inner shrink-0">
+                       <Mail className="w-5 h-5"/>
+                    </div>
+                    <div className="overflow-hidden">
+                       <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Origin Node</p>
+                       <p className="font-bold text-slate-700 truncate" title={fb.user_email}>{fb.user_email || 'Anonymous'}</p>
+                    </div>
+                  </div>
+
+                  {/* Answers Map */}
+                  <div className="space-y-4">
+                    {Object.entries(parsedAnswers).map(([k, v]) => (
+                      <div key={k} className="border-l-4 border-slate-200 pl-4 py-1 hover:border-indigo-400 transition">
+                        <span className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-1 flex items-center gap-1.5">
+                           <ChevronRight className="w-3 h-3 text-indigo-300"/>
+                           {getLabel(fb.form_id, k)}
+                        </span>
+                        <span className="block font-bold text-slate-800 text-[15px] leading-snug break-words">
+                           {v === null || v === '' ? <span className="text-slate-300 italic">Empty</span> : String(v)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 pt-5 border-t border-slate-100 flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    <Clock className="w-4 h-4"/> 
+                    {new Date(fb.created_at).toLocaleString(undefined, {
+                      year: 'numeric', month: 'short', day: 'numeric', 
+                      hour: '2-digit', minute:'2-digit'
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
