@@ -4,255 +4,183 @@ import { useParams } from 'react-router-dom';
 
 const API_URL = 'http://localhost:5002/api';
 
-const STATEMENTS = [
-  { id: 'satisfaction', label: 'I feel satisfied with this product or service.' },
-  { id: 'quality', label: 'The quality of our product is excellent.' },
-  { id: 'met_needs', label: 'The product met my needs perfectly.' },
-  { id: 'ease_of_use', label: 'I find the product/service easy to use.' },
-  { id: 'value_for_money', label: 'The product offers good value for money.' },
-  { id: 'recommend', label: 'I would recommend this product/service to others.' },
-  { id: 'valued_customer', label: 'I feel valued as a customer by this brand.' },
-  { id: 'quality_expectations', label: 'Quality of our product met my expectations.' }
-];
-
-const RATINGS = [
-  { value: 1, label: 'Strongly Disagree' },
-  { value: 2, label: 'Disagree' },
-  { value: 3, label: 'Neutral' },
-  { value: 4, label: 'Agree' },
-  { value: 5, label: 'Strongly Agree' }
-];
-
 export default function FeedbackForm() {
   const { uuid } = useParams();
-  
   const [formConfig, setFormConfig] = useState(null);
-  const [configLoading, setConfigLoading] = useState(true);
-  const [configError, setConfigError] = useState('');
-
-  const [formData, setFormData] = useState({
-    userEmail: '',
-    age: '',
-    gender: '',
-    name: '',
-    customer_service_comment: '',
-    improvement_areas: ''
-  });
-
-  const [ratings, setRatings] = useState({
-    satisfaction: null,
-    quality: null,
-    met_needs: null,
-    ease_of_use: null,
-    value_for_money: null,
-    recommend: null,
-    valued_customer: null,
-    quality_expectations: null
-  });
-
-  const [loading, setLoading] = useState(false);
+  const [fields, setFields] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  
+  const [userEmail, setUserEmail] = useState('');
+  const [answers, setAnswers] = useState({});
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState('');
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
-    const fetchFormConfig = async () => {
+    const fetchForm = async () => {
       try {
         const { data } = await axios.get(`${API_URL}/forms/${uuid}`);
         setFormConfig(data);
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          setConfigError('Form not found or link is invalid.');
-        } else {
-          setConfigError('Unable to load the form at this time.');
+        
+        let parsedFields = data.fields;
+        if (typeof parsedFields === 'string') {
+           try { parsedFields = JSON.parse(parsedFields); } catch(e) {}
         }
+        setFields(Array.isArray(parsedFields) ? parsedFields : []);
+        
+        const initialAnswers = {};
+        if (Array.isArray(parsedFields)) {
+          parsedFields.forEach(f => initialAnswers[f.id] = '');
+        }
+        setAnswers(initialAnswers);
+      } catch (err) {
+        setError('Endpoint restricted or unavailable.');
       } finally {
-        setConfigLoading(false);
+        setLoading(false);
       }
     };
-    fetchFormConfig();
+    fetchForm();
   }, [uuid]);
 
-  const handleTextChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-  const handleRatingChange = (statementId, value) => setRatings({ ...ratings, [statementId]: value });
+  const handleChange = (id, val) => {
+    setAnswers(prev => ({ ...prev, [id]: val }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setSubmitError('');
+    setSubmitSuccess('');
     
-    if (!formData.userEmail || !formData.userEmail.includes('@')) {
-      setError('Please provide a valid email address.');
-      return;
-    }
-    if (!formData.age || formData.age <= 0) {
-      setError('Please provide a valid age.');
-      return;
-    }
-    if (!formData.gender) {
-      setError('Please select a gender.');
-      return;
-    }
-    const missingRatings = Object.values(ratings).some(val => val === null);
-    if (missingRatings) {
-      setError('Please select a rating for all statements.');
+    if (!userEmail || !userEmail.includes('@')) {
+      setSubmitError('Please provide a valid metric verification email address.');
       return;
     }
 
-    setLoading(true);
+    for (const f of fields) {
+      if (f.required && !answers[f.id]) {
+        setSubmitError(`A required entry is missing: ${f.label}`);
+        return;
+      }
+    }
 
+    setSubmitLoading(true);
     try {
       await axios.post(`${API_URL}/responses`, {
-        ...formData,
         formId: formConfig.id,
-        age: parseInt(formData.age, 10),
-        ...ratings
+        userEmail,
+        answers
       });
-      setSuccess('Thank you! Your feedback has been submitted successfully.');
-      setFormData({ userEmail: '', age: '', gender: '', name: '', customer_service_comment: '', improvement_areas: '' });
-      setRatings(Object.keys(ratings).reduce((acc, key) => ({ ...acc, [key]: null }), {}));
+      setSubmitSuccess('Payload successful! Check your inbox for response metrics.');
+      setAnswers(fields.reduce((acc, f) => ({ ...acc, [f.id]: '' }), {}));
+      setUserEmail('');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to submit feedback. Please try again.');
+      setSubmitError(err.response?.data?.error || 'Rejected by constraints API.');
     } finally {
-      setLoading(false);
+      setSubmitLoading(false);
     }
   };
 
-  if (configLoading) return <div className="flex h-screen items-center justify-center font-bold text-gray-500">Loading form...</div>;
-  if (configError) return <div className="flex bg-red-50 text-red-600 border border-red-200 p-8 rounded-xl justify-center font-bold m-10 max-w-2xl mx-auto">{configError}</div>;
+  if (loading) return <div className="text-center p-20 font-bold text-gray-500 text-xl tracking-widest uppercase">Fetching Router...</div>;
+  if (error) return <div className="text-center p-20 font-bold text-red-500 bg-red-50 mx-10 rounded-2xl">{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 my-10 bg-white shadow-xl rounded-2xl border border-gray-100">
-      <div className="text-center mb-8 border-b border-gray-100 pb-8">
-        <h1 className="text-3xl font-extrabold text-blue-900 tracking-tight">{formConfig.title}</h1>
-        {formConfig.description && <h2 className="text-lg text-gray-600 mt-3 max-w-2xl mx-auto">{formConfig.description}</h2>}
+    <div className="max-w-4xl mx-auto p-8 my-12 bg-white shadow-2xl rounded-3xl border border-gray-100">
+      <div className="mb-10 text-center border-b border-gray-100 pb-8">
+        <h1 className="text-4xl font-black text-blue-950 tracking-tight">{formConfig.title}</h1>
+        {formConfig.description && <p className="text-gray-500 mt-4 text-lg font-medium">{formConfig.description}</p>}
       </div>
 
-      {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">{error}</div>}
-      {success && <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200 font-semibold">{success}</div>}
+      {submitError && <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 font-semibold shadow-sm">{submitError}</div>}
+      {submitSuccess && <div className="mb-8 p-4 bg-green-50 border-l-4 border-green-500 text-green-800 font-bold shadow-sm">{submitSuccess}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Core Info */}
-        <div className="bg-blue-50/50 p-6 rounded-xl border border-blue-100 mb-8">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">Your Email Address <span className="text-red-500">*</span></label>
+        <div className="p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
+          <label className="block text-sm font-extrabold text-blue-900 mb-2 tracking-wide uppercase">Recipient Address <span className="text-red-500">*</span></label>
           <input 
             type="email" 
-            name="userEmail" 
-            value={formData.userEmail} 
-            onChange={handleTextChange} 
-            className="w-full md:w-1/2 p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
-            placeholder="We'll send a copy of your response here"
+            value={userEmail} 
+            onChange={e => setUserEmail(e.target.value)} 
+            className="w-full md:w-2/3 p-3.5 border border-blue-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white transition shadow-sm"
+            placeholder="For duplicate metrics dispatch"
+            required
           />
         </div>
 
-        {/* User Info Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Age <span className="text-red-500">*</span></label>
-            <input 
-              type="number" 
-              name="age" 
-              value={formData.age} 
-              onChange={handleTextChange} 
-              className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="e.g. 25"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Gender <span className="text-red-500">*</span></label>
-            <select 
-              name="gender" 
-              value={formData.gender} 
-              onChange={handleTextChange}
-              className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-              <option value="Prefer not to say">Prefer not to say</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Name (Optional)</label>
-            <input 
-              type="text" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleTextChange} 
-              className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="John Doe"
-            />
-          </div>
-        </div>
-
-        {/* Likert Scale Section */}
-        <div className="overflow-x-auto border border-gray-200 rounded-xl bg-white shadow-sm">
-          <table className="w-full text-left border-collapse min-w-[600px]">
-            <thead>
-              <tr className="bg-gray-100 divide-x divide-gray-200 border-b border-gray-200">
-                <th className="p-4 font-semibold text-gray-700 w-1/3">Statement</th>
-                {RATINGS.map(r => (
-                  <th key={r.value} className="p-3 text-center text-xs font-semibold text-gray-600">
-                    {r.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {STATEMENTS.map((stmt, idx) => (
-                <tr key={stmt.id} className={idx % 2 === 0 ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'}>
-                  <td className="p-4 text-sm text-gray-800 font-medium">{stmt.label}</td>
-                  {RATINGS.map(r => (
-                    <td key={r.value} className="p-3 text-center border-l border-gray-100">
+        <div className="space-y-6">
+          {fields.map((field, idx) => (
+            <div key={field.id} className="p-6 bg-gray-50 rounded-2xl border border-gray-100 shadow-sm custom-field-hover transition">
+              <label className="block text-base font-bold text-gray-800 mb-3">
+                {idx + 1}. {field.label} {field.required && <span className="text-red-500 ml-1" title="Required">*</span>}
+              </label>
+              
+              {field.type === 'text' || field.type === 'email' ? (
+                <input 
+                  type={field.type} 
+                  value={answers[field.id] || ''}
+                  onChange={e => handleChange(field.id, e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white transition"
+                  required={field.required}
+                  placeholder="Evaluate here..."
+                />
+              ) : field.type === 'number' ? (
+                <input 
+                  type="number" 
+                  value={answers[field.id] || ''}
+                  onChange={e => handleChange(field.id, e.target.value)}
+                  className="w-full md:w-1/3 p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white transition"
+                  required={field.required}
+                />
+              ) : field.type === 'textarea' ? (
+                <textarea 
+                  value={answers[field.id] || ''}
+                  onChange={e => handleChange(field.id, e.target.value)}
+                  rows="4"
+                  className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white resize-y transition"
+                  required={field.required}
+                  placeholder="Expand your thoughts..."
+                />
+              ) : field.type === 'select' ? (
+                <select 
+                  value={answers[field.id] || ''}
+                  onChange={e => handleChange(field.id, e.target.value)}
+                  className="w-full md:w-1/2 p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white cursor-pointer transition"
+                  required={field.required}
+                >
+                  <option value="" disabled>-- Make a selection --</option>
+                  {(field.options || []).map((opt, i) => (
+                    <option key={i} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              ) : field.type === 'radio' ? (
+                <div className="flex flex-col sm:flex-row flex-wrap gap-4 mt-3 bg-white p-4 rounded-xl border border-gray-200">
+                  {(field.options || []).map((opt, i) => (
+                    <label key={i} className="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-50 rounded-lg transition">
                       <input 
                         type="radio" 
-                        name={stmt.id} 
-                        value={r.value}
-                        checked={ratings[stmt.id] === r.value}
-                        onChange={() => handleRatingChange(stmt.id, r.value)}
-                        className="w-5 h-5 text-blue-600 cursor-pointer"
+                        name={field.id}
+                        value={opt}
+                        checked={answers[field.id] === opt}
+                        onChange={() => handleChange(field.id, opt)}
+                        className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                        required={field.required}
                       />
-                    </td>
+                      <span className="text-gray-700 font-medium text-sm">{opt}</span>
+                    </label>
                   ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                </div>
+              ) : null}
+            </div>
+          ))}
         </div>
 
-        {/* Comments Section */}
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Customer service to be helpful and responsive</label>
-            <textarea 
-              name="customer_service_comment"
-              value={formData.customer_service_comment}
-              onChange={handleTextChange}
-              rows="3"
-              className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-            ></textarea>
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Which areas do you believe require improvement?</label>
-            <textarea 
-              name="improvement_areas"
-              value={formData.improvement_areas}
-              onChange={handleTextChange}
-              rows="3"
-              className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-            ></textarea>
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-gray-100 flex justify-end">
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg disabled:opacity-50 transition"
-          >
-            {loading ? 'Submitting...' : 'Submit Feedback'}
-          </button>
-        </div>
+        <button 
+          type="submit" 
+          disabled={submitLoading}
+          className="w-full py-5 mt-6 bg-blue-600 hover:bg-blue-700 text-white font-black text-lg tracking-wide uppercase rounded-2xl shadow-xl shadow-blue-200 disabled:opacity-50 transition transform hover:-translate-y-1 active:translate-y-0"
+        >
+          {submitLoading ? 'Transmitting Data...' : 'Dispatch Responses'}
+        </button>
       </form>
     </div>
   );

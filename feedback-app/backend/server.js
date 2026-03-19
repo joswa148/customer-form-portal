@@ -6,12 +6,11 @@ const nodemailer = require('nodemailer');
 
 const db = require('./db');
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 
 app.use(cors());
 app.use(express.json());
 
-// Set up Nodemailer transporter
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -20,35 +19,42 @@ const transporter = nodemailer.createTransport({
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
     },
-    tls: {
-        rejectUnauthorized: false
-    }
+    tls: { rejectUnauthorized: false }
 });
 
 // --- FORMS ENDPOINTS ---
 
-// 1. Create a new form
 app.post('/api/forms', async (req, res) => {
     try {
-        const { title, description } = req.body;
+        const { title, description, fields } = req.body;
         if (!title) return res.status(400).json({ error: 'Title is required.' });
+        if (!fields || !Array.isArray(fields) || fields.length === 0) {
+            return res.status(400).json({ error: 'At least one field is required in the fields array.' });
+        }
+
+        // Validate each field
+        for (let i = 0; i < fields.length; i++) {
+            const f = fields[i];
+            if (!f.id) f.id = `field_${uuidv4().replace(/-/g, '').substring(0,8)}`;
+            if (!f.type) return res.status(400).json({ error: `Field at index ${i} is missing a type.` });
+            if (!f.label) return res.status(400).json({ error: `Field at index ${i} is missing a label.` });
+        }
 
         const uuid = uuidv4();
-        const insertQuery = `INSERT INTO forms (title, description, uuid) VALUES (?, ?, ?)`;
-        const [result] = await db.query(insertQuery, [title, description || null, uuid]);
+        const insertQuery = `INSERT INTO forms (title, description, uuid, fields) VALUES (?, ?, ?, ?)`;
+        const [result] = await db.query(insertQuery, [title, description || null, uuid, JSON.stringify(fields)]);
 
-        res.status(201).json({ id: result.insertId, title, description, uuid });
+        res.status(201).json({ id: result.insertId, title, description, uuid, fields });
     } catch (error) {
         console.error('Error creating form:', error);
         res.status(500).json({ error: 'Internal server error while creating form' });
     }
 });
 
-// 2. Get list of all forms (for dashboard)
 app.get('/api/forms', async (req, res) => {
     try {
         const query = `
-            SELECT f.*, COUNT(r.id) as response_count 
+            SELECT f.id, f.title, f.description, f.uuid, f.created_at, COUNT(r.id) as response_count 
             FROM forms f 
             LEFT JOIN responses r ON f.id = r.form_id 
             GROUP BY f.id 
@@ -62,7 +68,6 @@ app.get('/api/forms', async (req, res) => {
     }
 });
 
-// 3. Get single form by UUID (public view)
 app.get('/api/forms/:uuid', async (req, res) => {
     try {
         const { uuid } = req.params;
@@ -80,7 +85,6 @@ app.get('/api/forms/:uuid', async (req, res) => {
 
 // --- RESPONSES ENDPOINTS ---
 
-// 1. Get responses (with optional formId filter)
 app.get('/api/responses', async (req, res) => {
     try {
         const { formId } = req.query;
@@ -102,104 +106,67 @@ app.get('/api/responses', async (req, res) => {
     }
 });
 
-// 2. Submit new response
 app.post('/api/responses', async (req, res) => {
     try {
-        let {
-            formId, userEmail,
-            age, gender, name,
-            satisfaction, quality, met_needs, ease_of_use,
-            value_for_money, recommend, valued_customer, quality_expectations,
-            customer_service_comment, improvement_areas
-        } = req.body;
+        const { formId, userEmail, answers } = req.body;
 
-        // Validation
         if (!formId) return res.status(400).json({ error: 'Form ID is required.' });
+        if (!answers || typeof answers !== 'object') return res.status(400).json({ error: 'Answers object is required.' });
         if (!userEmail || !userEmail.includes('@')) return res.status(400).json({ error: 'Valid user email is required.' });
-        if (!age || age <= 0 || !Number.isInteger(Number(age))) return res.status(400).json({ error: 'Valid age is required.' });
-        if (!gender) return res.status(400).json({ error: 'Gender is required.' });
-        
-        const ratings = [satisfaction, quality, met_needs, ease_of_use, value_for_money, recommend, valued_customer, quality_expectations];
-        for (let rating of ratings) {
-            if (!rating || rating < 1 || rating > 5 || !Number.isInteger(Number(rating))) {
-                return res.status(400).json({ error: 'All 8 rating fields must be provided and be integers between 1 and 5.' });
-            }
-        }
 
-        // Verify that the specified form ID actually exists
-        const [formCheck] = await db.query('SELECT title FROM forms WHERE id = ?', [formId]);
+        const [formCheck] = await db.query('SELECT title, fields FROM forms WHERE id = ?', [formId]);
         if (formCheck.length === 0) {
             return res.status(400).json({ error: 'Invalid form ID provided.' });
         }
+        
         const formTitle = formCheck[0].title;
+        // Parse fields if MySQL returned it as string (depends on mysql2 driver config, usually it parses JSON automatically)
+        let formFields = formCheck[0].fields;
+        if (typeof formFields === 'string') {
+            try { formFields = JSON.parse(formFields); } catch(e) {}
+        }
 
-        // Sanitization
-        name = name?.trim() || null;
-        customer_service_comment = customer_service_comment?.trim() || null;
-        improvement_areas = improvement_areas?.trim() || null;
-        userEmail = userEmail.trim();
+        if (!Array.isArray(formFields)) return res.status(500).json({ error: 'Form schema corrupted' });
 
-        const insertQuery = `
-            INSERT INTO responses (
-                form_id, user_email, age, gender, name, 
-                satisfaction, quality, met_needs, ease_of_use, 
-                value_for_money, recommend, valued_customer, quality_expectations, 
-                customer_service_comment, improvement_areas
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
+        // Dynamic Validation
+        for (const field of formFields) {
+            const val = answers[field.id];
+            
+            if (field.required && (val === undefined || val === null || val === '')) {
+                return res.status(400).json({ error: `Field '${field.label}' is required.` });
+            }
+            if (val !== undefined && val !== null && val !== '') {
+                if (field.type === 'number') {
+                    if (isNaN(Number(val))) return res.status(400).json({ error: `Field '${field.label}' must be a number.` });
+                }
+                if ((field.type === 'radio' || field.type === 'select') && Array.isArray(field.options)) {
+                    if (!field.options.includes(String(val))) return res.status(400).json({ error: `Invalid option selected for '${field.label}'.` });
+                }
+            }
+        }
 
-        const values = [
-            formId, userEmail, age, gender, name, 
-            satisfaction, quality, met_needs, ease_of_use, 
-            value_for_money, recommend, valued_customer, quality_expectations, 
-            customer_service_comment, improvement_areas
-        ];
+        const insertQuery = `INSERT INTO responses (form_id, user_email, answers) VALUES (?, ?, ?)`;
+        const [result] = await db.query(insertQuery, [formId, userEmail.trim(), JSON.stringify(answers)]);
 
-        const [result] = await db.query(insertQuery, values);
+        // Build Email Dynamic Content
+        let summaryText = '';
+        for (const field of formFields) {
+            const answer = answers[field.id];
+            summaryText += `${field.label}:\n${answer !== undefined && answer !== null && answer !== '' ? answer : 'N/A'}\n\n`;
+        }
 
-        // --- EMAIL LOGIC ---
-        // 1. Admin Email
         const adminMailOptions = {
             from: process.env.EMAIL_FROM,
             to: process.env.EMAIL_TO,
             subject: `New submission on Form: ${formTitle}`,
-            text: `
-A new response was received for the form "${formTitle}".
-
-User Email: ${userEmail}
-Name: ${name || 'Anonymous'}
-Age: ${age}
-Gender: ${gender}
-
-Ratings summary:
-Satisfaction: ${satisfaction}/5 | Quality: ${quality}/5 | Met Needs: ${met_needs}/5 | Ease of Use: ${ease_of_use}/5
-Value for Money: ${value_for_money}/5 | Recommend: ${recommend}/5 | Valued Customer: ${valued_customer}/5 | Quality Expectations: ${quality_expectations}/5
-
-Customer Service Comment: ${customer_service_comment || 'N/A'}
-Improvement Areas: ${improvement_areas || 'N/A'}
-            `
+            text: `A new response was received for the form "${formTitle}".\nUser Email: ${userEmail}\n\n--- Responses ---\n${summaryText}`
         };
 
-        // 2. User Confirmation Email
         const userMailOptions = {
             from: process.env.EMAIL_FROM,
             to: userEmail,
             subject: `Thank you for your feedback – ${formTitle}`,
-            text: `
-Hi ${name || 'there'},
-
-Thank you for providing your feedback on "${formTitle}". We truly appreciate your time.
-
-Here's a summary of what you submitted:
-Satisfaction Rating: ${satisfaction}/5
-Quality Rating: ${quality}/5
-Recommendation Rating: ${recommend}/5
-Comments: ${customer_service_comment || 'None'}
-Improvements Suggested: ${improvement_areas || 'None'}
-
-Best regards,
-Thynk Unlimited
-            `
+            text: `Hi there,\n\nThank you for providing your feedback on "${formTitle}". We truly appreciate your time.\n\nHere is a summary of what you submitted:\n${summaryText}\nBest regards,\nThynk Unlimited`
         };
 
         try {
