@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 5002;
 
 app.use(cors());
 app.use(express.json());
-
 const initTrackingDB = async () => {
     try {
         await db.query(`CREATE TABLE IF NOT EXISTS form_opens (
