@@ -12,3 +12,5 @@
 535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-c74665ca1f8sm6887703a12.20 - gsmtp
 [2026-03-23T06:57:15.891Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
 535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2b08354b109sm128486425ad.31 - gsmtp
+[2026-03-23T06:57:22.303Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-35bd33919a0sm4573930a91.2 - gsmtp
