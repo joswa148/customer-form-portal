@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, Info, ShieldCheck, CheckSquare, Check } from 'lucide-react';
+import { countryCodes } from '../utils/countries';
 
 const API_URL = 'http://localhost:5002/api';
 
@@ -12,11 +13,17 @@ export default function InteractiveForm() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const trackingRef = searchParams.get('ref');
+
   const [currentIndex, setCurrentIndex] = useState(-1); // -1 is intro, N is length (email step)
   const [answers, setAnswers] = useState({});
   const answersRef = useRef(answers);
   useEffect(() => { answersRef.current = answers; }, [answers]);
   const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userPhoneCode, setUserPhoneCode] = useState('+971');
+  const [userPhoneNumber, setUserPhoneNumber] = useState('');
   
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState('');
@@ -29,10 +36,13 @@ export default function InteractiveForm() {
     const saved = localStorage.getItem(`form_progress_${uuid}`);
     if (saved) {
       try {
-        const { answers: savedAnswers, currentIndex: savedIndex, userEmail: savedEmail } = JSON.parse(saved);
+        const { answers: savedAnswers, currentIndex: savedIndex, userEmail: savedEmail, userName: savedName, userPhoneCode: savedCode, userPhoneNumber: savedNumber } = JSON.parse(saved);
         if (savedAnswers) setAnswers(savedAnswers);
         if (savedIndex !== undefined) setCurrentIndex(savedIndex);
         if (savedEmail) setUserEmail(savedEmail);
+        if (savedName) setUserName(savedName);
+        if (savedCode) setUserPhoneCode(savedCode);
+        if (savedNumber) setUserPhoneNumber(savedNumber);
       } catch (e) { console.error('Failed to parse saved progress', e); }
     }
   }, [uuid]);
@@ -40,15 +50,18 @@ export default function InteractiveForm() {
   // Save to LocalStorage
   useEffect(() => {
     if (!loading && !submitSuccess) {
-      localStorage.setItem(`form_progress_${uuid}`, JSON.stringify({ answers, currentIndex, userEmail }));
+      localStorage.setItem(`form_progress_${uuid}`, JSON.stringify({ answers, currentIndex, userEmail, userName, userPhoneCode, userPhoneNumber }));
     }
-  }, [answers, currentIndex, userEmail, loading, submitSuccess, uuid]);
+  }, [answers, currentIndex, userEmail, userName, userPhoneCode, userPhoneNumber, loading, submitSuccess, uuid]);
 
   useEffect(() => {
     const fetchForm = async () => {
       try {
         const { data } = await axios.get(`${API_URL}/forms/${uuid}`);
         setFormConfig({ id: data.id, title: data.title, description: data.description });
+        if (trackingRef) {
+           axios.post(`${API_URL}/track-open`, { formId: data.id, ref: trackingRef }).catch(() => {});
+        }
         
         let parsedFields = data.fields;
         if (typeof parsedFields === 'string') {
@@ -63,7 +76,7 @@ export default function InteractiveForm() {
       }
     };
     fetchForm();
-  }, [uuid]);
+  }, [uuid, trackingRef]);
 
   // Auto-focus logic
   useEffect(() => {
@@ -73,6 +86,12 @@ export default function InteractiveForm() {
   }, [currentIndex]);
 
   const handleNext = () => {
+    if (currentIndex === -1) {
+      if (!userName.trim() || !userEmail.includes('@') || !userPhoneNumber.trim()) {
+        alert('Please provide your name, valid email, and phone number to start.');
+        return;
+      }
+    }
     if (currentIndex >= 0 && currentIndex < fields.length) {
       const field = fields[currentIndex];
       const val = answersRef.current[field.id];
@@ -109,7 +128,10 @@ export default function InteractiveForm() {
       const res = await axios.post(`${API_URL}/responses`, {
         formId: formConfig.id,
         userEmail,
-        answers
+        userName,
+        userPhone: `${userPhoneCode} ${userPhoneNumber.trim()}`,
+        answers,
+        ref: trackingRef
       });
       // Handle 201 or 202 Accepted
       setSubmitSuccess(res.data.message || 'Success! Your response has been submitted.');
@@ -155,49 +177,55 @@ export default function InteractiveForm() {
             <p className="mt-8 text-slate-500">You can safely close this window.</p>
           </div>
         ) : isIntro ? (
-          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-up px-4">
-             <h1 className="text-3xl md:text-4xl font-black mb-4 leading-tight">{formConfig.title}</h1>
-             <p className="text-lg md:text-xl text-slate-300 mb-8 font-medium leading-relaxed max-w-2xl mx-auto">{formConfig.description}</p>
+          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-up px-4 max-w-lg mx-auto">
+             <h1 className="text-3xl md:text-4xl font-black mb-3 leading-tight">{formConfig.title}</h1>
+             <p className="text-lg text-slate-300 mb-6 font-medium leading-relaxed">{formConfig.description}</p>
+             
+             <div className="space-y-4 mb-8 text-left">
+               <div>
+                 <label className="block text-slate-400 text-sm font-bold mb-1 ml-1">Full Name <span className="text-red-400">*</span></label>
+                 <input type="text" value={userName} onChange={e => setUserName(e.target.value)} placeholder="John Doe" className="w-full bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500" />
+               </div>
+               <div>
+                 <label className="block text-slate-400 text-sm font-bold mb-1 ml-1">Email Address <span className="text-red-400">*</span></label>
+                 <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} placeholder="name@company.com" className="w-full bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500" />
+               </div>
+               <div>
+                 <label className="block text-slate-400 text-sm font-bold mb-1 ml-1">Phone Number <span className="text-red-400">*</span></label>
+                 <div className="flex gap-2">
+                   <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="w-1/3 bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500 shrink-0 appearance-none">
+                     {countryCodes.map((c, i) => <option key={i} value={c.code}>{c.name}</option>)}
+                   </select>
+                   <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value)} placeholder="234 567 8900" className="w-2/3 bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500" />
+                 </div>
+               </div>
+             </div>
+             
              <button 
                onClick={handleNext} 
-               className="bg-white text-slate-900 px-8 py-4 rounded-xl text-lg font-bold shadow-xl shadow-white/10 hover:shadow-white/20 hover:-translate-y-1 transition transform flex items-center justify-center gap-3 w-full md:w-auto md:mx-auto"
+               className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 transition transform flex items-center justify-center gap-3 w-full"
              >
                Start Questionnaire <ChevronRight className="w-5 h-5"/>
              </button>
-             <p className="mt-6 text-slate-500 text-sm flex items-center justify-center gap-2"><Info className="w-4 h-4"/> Takes about 2 minutes</p>
           </div>
         ) : isOutro ? (
-          <div className="transform transition opacity-100 scale-100 animate-fade-in-right px-4">
-             <h2 className="text-2xl md:text-3xl font-black mb-3">You're almost done.</h2>
-             <p className="text-base md:text-lg text-slate-400 mb-8">Please provide your email address so we know who this feedback is from.</p>
+          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-right px-4">
+             <h2 className="text-3xl md:text-4xl font-black mb-3">You're almost done!</h2>
+             <p className="text-lg md:text-xl text-slate-400 mb-8">Click submit below to finish securely sending your questionnaire.</p>
              
              {submitError && (
-                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center gap-3 font-medium text-sm">
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center justify-center gap-3 font-medium text-sm">
                   <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}
                 </div>
              )}
 
-             <div className="relative mb-6 group">
-               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-400 transition" />
-               <input 
-                 ref={inputRef}
-                 type="email" 
-                 value={userEmail}
-                 onChange={e => setUserEmail(e.target.value)}
-                 onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
-                 placeholder="name@company.com"
-                 className="w-full bg-slate-800/50 border border-slate-700/50 text-white p-4 pl-12 rounded-xl text-lg outline-none focus:border-blue-500 focus:bg-slate-800 transition"
-               />
-             </div>
-             
              <button 
                onClick={handleSubmit} 
                disabled={submitLoading}
-               className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition transform flex items-center justify-center gap-2 disabled:opacity-50"
+               className="w-full md:w-auto md:mx-auto bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-10 py-4 rounded-xl text-xl font-bold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-1 transition transform flex items-center justify-center gap-3 disabled:opacity-50"
              >
-               {submitLoading ? 'Submitting...' : <>Submit Feedback <ShieldCheck className="w-5 h-5"/></>}
+               {submitLoading ? 'Submitting...' : <>Finish & Submit <ShieldCheck className="w-6 h-6"/></>}
              </button>
-             <p className="mt-6 text-slate-500 text-sm">Press <strong>Enter ↵</strong> to submit</p>
           </div>
         ) : (
           <div className="transform transition opacity-100 scale-100 animate-fade-in-right px-4">

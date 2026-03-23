@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Database, Filter, LayoutTemplate, Clock, Mail, CheckCircle2, ChevronRight, PieChart } from 'lucide-react';
+import { Database, Filter, LayoutTemplate, CheckCircle2, PieChart } from 'lucide-react';
+import ResponsesTable from './ResponsesTable';
 
 const API_URL = 'http://localhost:5002/api';
 
@@ -30,19 +31,6 @@ export default function Dashboard() {
     };
     init();
   }, [selectedForm]);
-
-  const getLabel = (formId, fieldId) => {
-    const form = forms.find(f => f.id === formId);
-    if (!form) return fieldId;
-    let schema = form.fields;
-    if (typeof schema === 'string') {
-      try { schema = JSON.parse(schema); } catch(e) { console.error('Failed to parse schema', e); return fieldId; }
-    }
-    if (!Array.isArray(schema)) return fieldId;
-    
-    const field = schema.find(f => f.id === fieldId);
-    return field ? field.label : fieldId;
-  };
 
   if (loading) return <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center font-black text-indigo-300 text-xl tracking-widest uppercase animate-pulse"><Database className="w-12 h-12 mb-3 text-indigo-200"/> Loading Responses...</div>;
 
@@ -92,65 +80,20 @@ export default function Dashboard() {
             <p className="text-slate-400 font-medium mt-1">Adjust filters or share your form to get responses.</p>
           </div>
         ) : (
-          <div className="columns-1 md:columns-2 xl:columns-3 gap-8 space-y-8">
-            {responses.map(fb => {
-              let parsedAnswers = fb.answers || {};
-              if (typeof parsedAnswers === 'string') {
-                 try { parsedAnswers = JSON.parse(parsedAnswers); } catch(e) { console.error('Failed to parse answers', e); }
-              }
-              const formDoc = forms.find(x => x.id === fb.form_id);
-
-              return (
-                <div key={fb.id} className="bg-white p-8 rounded-[2rem] shadow-lg shadow-slate-200/50 border border-slate-100 flex flex-col break-inside-avoid relative group hover:-translate-y-1 hover:shadow-xl transition duration-300">
-                  <div className="absolute top-0 right-8 w-12 h-1.5 bg-indigo-500 rounded-b-md"></div>
-                  
-                  {/* Card Header */}
-                  <div className="flex justify-between items-start mb-6">
-                     <div>
-                        <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-sm inline-block mb-3">Form ID #{fb.form_id}</span>
-                        <h3 className="font-extrabold text-lg text-slate-800 leading-tight">
-                          {formDoc ? formDoc.title : 'Untitled Form'}
-                        </h3>
-                     </div>
-                  </div>
-                  
-                  {/* Origin */}
-                  <div className="mb-8 p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shadow-inner shrink-0">
-                       <Mail className="w-5 h-5"/>
-                    </div>
-                    <div className="overflow-hidden">
-                       <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Respondent Email</p>
-                       <p className="font-bold text-slate-700 truncate" title={fb.user_email}>{fb.user_email || 'Anonymous'}</p>
-                    </div>
-                  </div>
-
-                  {/* Answers Map */}
-                  <div className="space-y-4">
-                    {Object.entries(parsedAnswers).map(([k, v]) => (
-                      <div key={k} className="border-l-4 border-slate-200 pl-4 py-1 hover:border-indigo-400 transition">
-                        <span className="block text-xs font-black uppercase text-slate-400 tracking-widest mb-1 flex items-center gap-1.5">
-                           <ChevronRight className="w-3 h-3 text-indigo-300"/>
-                           {getLabel(fb.form_id, k)}
-                        </span>
-                        <span className="block font-bold text-slate-800 text-[15px] leading-snug break-words">
-                           {v === null || v === '' ? <span className="text-slate-300 italic">Empty</span> : String(v)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-8 pt-5 border-t border-slate-100 flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                    <Clock className="w-4 h-4"/> 
-                    {new Date(fb.created_at).toLocaleString(undefined, {
-                      year: 'numeric', month: 'short', day: 'numeric', 
-                      hour: '2-digit', minute:'2-digit'
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <ResponsesTable 
+            responses={responses} 
+            forms={forms} 
+            onDelete={async (id) => {
+               if (!window.confirm("Are you sure you want to permanently delete this response?")) return;
+               try {
+                 await axios.delete(`${API_URL}/responses/${id}`);
+                 setResponses(prev => prev.filter(r => r.id !== id));
+               } catch(e) {
+                 console.error('Delete failed:', e);
+                 alert('Failed to delete response.');
+               }
+            }}
+          />
         )}
       </div>
     </div>

@@ -39,12 +39,17 @@ const sendEmail = async (to, subject, htmlContent) => {
 };
 
 // HTML Template with Inline CSS
-const buildFeedbackTemplate = (formTitle, formattedAnswers, isAdmin = false) => {
+const buildFeedbackTemplate = (formTitle, formattedAnswers, userName, userPhone, userEmail, isAdmin = false) => {
     const brandColor = "#4f46e5"; // Indigo 600
     
     let preamble = isAdmin 
-        ? `<p style="color: #334155; font-size: 16px; line-height: 1.5;">A new response was received for the form <strong>"${formTitle}"</strong>.</p>`
-        : `<p style="color: #334155; font-size: 16px; line-height: 1.5;">Hi there,</p>
+        ? `<p style="color: #334155; font-size: 16px; line-height: 1.5;">A new response was received for the form <strong>"${formTitle}"</strong>.</p>
+           <div style="background-color:#eff6ff; border:1px solid #bfdbfe; padding:16px; border-radius:8px; margin: 16px 0;">
+             <p style="margin:0; font-size:14px; color:#1e3a8a;"><strong>Name:</strong> ${userName}</p>
+             <p style="margin:4px 0 0 0; font-size:14px; color:#1e3a8a;"><strong>Phone:</strong> ${userPhone}</p>
+             <p style="margin:4px 0 0 0; font-size:14px; color:#1e3a8a;"><strong>Email:</strong> ${userEmail}</p>
+           </div>`
+        : `<p style="color: #334155; font-size: 16px; line-height: 1.5;">Hi ${userName},</p>
            <p style="color: #334155; font-size: 16px; line-height: 1.5;">Thank you for providing your feedback on <strong>"${formTitle}"</strong>. We truly appreciate your time.</p>`;
 
     let answersHtml = '';
@@ -75,11 +80,11 @@ const buildFeedbackTemplate = (formTitle, formattedAnswers, isAdmin = false) => 
 };
 
 // Multi-Stakeholder Dispatcher
-const sendFeedbackNotifications = async (formTitle, userEmail, adminEmail, rawAnswersArray) => {
+const sendFeedbackNotifications = async (formTitle, userEmail, userName, userPhone, adminEmail, rawAnswersArray) => {
     
     // 1. Send Admin Email
     if (adminEmail) {
-        const adminHtml = buildFeedbackTemplate(formTitle, rawAnswersArray, true);
+        const adminHtml = buildFeedbackTemplate(formTitle, rawAnswersArray, userName, userPhone, userEmail, true);
         await sendEmail(adminEmail, `New submission on Form: ${formTitle}`, adminHtml);
         
         // Intentional delay between iterative/consecutive sends to prevent SMTP rate limiting blocks
@@ -88,7 +93,7 @@ const sendFeedbackNotifications = async (formTitle, userEmail, adminEmail, rawAn
 
     // 2. Send User Confirmation Email
     if (userEmail) {
-        const userHtml = buildFeedbackTemplate(formTitle, rawAnswersArray, false);
+        const userHtml = buildFeedbackTemplate(formTitle, rawAnswersArray, userName, userPhone, userEmail, false);
         await sendEmail(userEmail, `Thank you for your feedback – ${formTitle}`, userHtml);
     }
 };

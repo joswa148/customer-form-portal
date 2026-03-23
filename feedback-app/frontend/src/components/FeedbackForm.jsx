@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, Hash, List, MousePointerClick, MessageSquareText, CheckSquare } from 'lucide-react';
+import { countryCodes } from '../utils/countries';
 
 const API_URL = 'http://localhost:5002/api';
 
@@ -13,6 +14,9 @@ export default function FeedbackForm() {
   const [error, setError] = useState('');
   
   const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userPhoneCode, setUserPhoneCode] = useState('+971');
+  const [userPhoneNumber, setUserPhoneNumber] = useState('');
   const [answers, setAnswers] = useState({});
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState('');
@@ -73,11 +77,16 @@ export default function FeedbackForm() {
       await axios.post(`${API_URL}/responses`, {
         formId: formConfig.id,
         userEmail,
+        userName,
+        userPhone: `${userPhoneCode} ${userPhoneNumber.trim()}`,
         answers
       });
       setSubmitSuccess('Success! Your response has been submitted.');
       setAnswers(fields.reduce((acc, f) => ({ ...acc, [f.id]: '' }), {}));
       setUserEmail('');
+      setUserName('');
+      setUserPhoneCode('+971');
+      setUserPhoneNumber('');
     } catch (err) {
       setSubmitError(err.response?.data?.error || 'An error occurred during submission.');
     } finally {
@@ -128,18 +137,32 @@ export default function FeedbackForm() {
           <form onSubmit={handleSubmit} className="space-y-10">
             {/* Target Origin Identity */}
             <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl border border-blue-100/60 shadow-inner group">
-              <label className="text-sm font-black text-blue-900 mb-3 tracking-widest uppercase flex items-center gap-2">
-                <Mail className="w-5 h-5 text-blue-500" /> Email Address <span className="text-red-500 ml-1 text-lg leading-none">*</span>
-              </label>
-              <input 
-                type="email" 
-                value={userEmail} 
-                onChange={e => setUserEmail(e.target.value)} 
-                className="w-full md:w-3/4 p-4 text-lg border border-blue-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white transition shadow-sm placeholder:text-blue-200 font-semibold text-slate-800"
-                placeholder="Enter your email address"
-                required
-              />
-              <p className="text-xs font-bold text-blue-400 mt-3 flex items-center gap-1 uppercase tracking-widest"><ShieldCheck className="w-3 h-3"/> Secure Connection</p>
+              <div className="grid md:grid-cols-2 gap-6">
+                 <div className="col-span-full md:col-span-2">
+                   <label className="text-sm font-black text-blue-900 mb-3 tracking-widest uppercase flex items-center gap-2">
+                     Full Name <span className="text-red-500 ml-1 leading-none">*</span>
+                   </label>
+                   <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full p-4 text-lg border border-blue-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white shadow-sm placeholder:text-blue-200 font-semibold text-slate-800" placeholder="Enter your full name" required />
+                 </div>
+                 <div>
+                   <label className="text-sm font-black text-blue-900 mb-3 tracking-widest uppercase flex items-center gap-2">
+                     <Mail className="w-4 h-4 text-blue-500" /> Email <span className="text-red-500 ml-1 leading-none">*</span>
+                   </label>
+                   <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full p-4 text-lg border border-blue-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white shadow-sm placeholder:text-blue-200 font-semibold text-slate-800" placeholder="name@company.com" required />
+                 </div>
+                 <div>
+                   <label className="text-sm font-black text-blue-900 mb-3 tracking-widest uppercase flex items-center gap-2">
+                     Phone <span className="text-red-500 ml-1 leading-none">*</span>
+                   </label>
+                   <div className="flex gap-2">
+                     <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="w-1/3 p-4 text-lg border border-blue-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white shadow-sm font-semibold text-slate-800 appearance-none shrink-0">
+                       {countryCodes.map((c, i) => <option key={i} value={c.code}>{c.name}</option>)}
+                     </select>
+                     <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value)} className="w-2/3 p-4 text-lg border border-blue-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white shadow-sm placeholder:text-blue-200 font-semibold text-slate-800" placeholder="234 567 8900" required />
+                   </div>
+                 </div>
+              </div>
+              <p className="text-xs font-bold text-blue-400 mt-6 flex items-center gap-1 uppercase tracking-widest"><ShieldCheck className="w-4 h-4"/> Secure Identity Connection</p>
             </div>
 
             <div className="space-y-8 relative">

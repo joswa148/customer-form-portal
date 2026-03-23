@@ -89,13 +89,24 @@ export default function DashboardForms() {
   };
 
   const copyLink = (uuid) => {
-    navigator.clipboard.writeText(`http://localhost:3000/interactive/${uuid}`);
+    const trackingRef = window.prompt("Enter Recipient Name/ID for tracking (Optional):", "");
+    const trackingParam = trackingRef ? `?ref=${encodeURIComponent(trackingRef.trim())}` : '';
+    
+    let origin = window.location.origin;
+    navigator.clipboard.writeText(`${origin}/interactive/${uuid}${trackingParam}`);
+    alert('Tracked link copied to clipboard!');
   };
 
   const shareWhatsApp = (uuid, formTitle) => {
-    const url = encodeURIComponent(`http://localhost:3000/interactive/${uuid}`);
-    const text = encodeURIComponent(`Please take a moment to quickly share your feedback on "${formTitle}": `);
-    window.open(`https://wa.me/?text=${text}${url}`, '_blank');
+    const trackingRef = window.prompt("Enter Recipient Name/ID for tracking (Optional):", "");
+    const trackingParam = trackingRef ? `?ref=${encodeURIComponent(trackingRef.trim())}` : '';
+    
+    let origin = window.location.origin;
+    const rawUrl = `${origin}/interactive/${uuid}${trackingParam}`;
+    const text = encodeURIComponent(`Please take a moment to quickly share your feedback on "${formTitle}":\n\n${rawUrl}`);
+    
+    // Use the official api.whatsapp.com endpoint which reliably supports WhatsApp Web, Desktop, and Mobile bridging
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
   const editForm = (form) => {
