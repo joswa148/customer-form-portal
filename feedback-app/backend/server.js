@@ -236,10 +236,12 @@ app.post('/api/responses', async (req, res) => {
                 if ((field.type === 'radio' || field.type === 'select') && Array.isArray(field.options)) {
                     if (!field.options.includes(String(val))) return res.status(400).json({ error: `Invalid option selected for '${field.label}'.` });
                 }
-                if (field.type === 'checkbox' && Array.isArray(field.options)) {
-                    if (!Array.isArray(val)) return res.status(400).json({ error: `Field '${field.label}' must be an array of selections.` });
-                    for (const v of val) {
-                        if (!field.options.includes(String(v))) return res.status(400).json({ error: `Invalid option selected for '${field.label}'.` });
+                if (field.type === 'checkbox' || field.type === 'dropdown-multi') {
+                    if (Array.isArray(field.options)) {
+                        if (!Array.isArray(val)) return res.status(400).json({ error: `Field '${field.label}' must be an array of selections.` });
+                        for (const v of val) {
+                            if (!field.options.includes(String(v))) return res.status(400).json({ error: `Invalid option selected for '${field.label}'.` });
+                        }
                     }
                 }
             }

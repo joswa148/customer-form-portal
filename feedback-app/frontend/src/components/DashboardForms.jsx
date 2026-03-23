@@ -51,9 +51,9 @@ export default function DashboardForms() {
     const newField = {
       id: `field_${Date.now()}`,
       type,
-      label: type === 'checkbox' && fields.length === 0 ? 'Which services are you interested in?' : `New ${type} question`,
+      label: (type === 'checkbox' || type === 'dropdown-multi') && fields.length === 0 ? 'Which services are you interested in?' : `New ${type} question`,
       required: false,
-      options: type === 'radio' || type === 'select' || type === 'checkbox' ? defaultOptions : undefined
+      options: type === 'radio' || type === 'select' || type === 'checkbox' || type === 'dropdown-multi' ? defaultOptions : undefined
     };
     setFields([...fields, newField]);
   };
@@ -201,7 +201,7 @@ export default function DashboardForms() {
                       </label>
                     </div>
                     
-                    {(field.type === 'radio' || field.type === 'select' || field.type === 'checkbox') && (
+                    {(field.type === 'radio' || field.type === 'select' || field.type === 'checkbox' || field.type === 'dropdown-multi') && (
                       <div className="mt-2 bg-gradient-to-b from-slate-50 to-white p-6 border border-slate-200 rounded-2xl shadow-inner">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2"><CheckSquare className="w-4 h-4 text-slate-400"/> Options</p>
                         <input 
@@ -228,6 +228,7 @@ export default function DashboardForms() {
                 <button onClick={() => addField('radio')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><ToggleLeft className="w-5 h-5 text-purple-400"/> Single Choice</button>
                 <button onClick={() => addField('checkbox')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><CheckSquare className="w-5 h-5 text-indigo-400"/> Multiple Choice</button>
                 <button onClick={() => addField('select')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><AlignLeft className="w-5 h-5 text-amber-400"/> Dropdown</button>
+                <button onClick={() => addField('dropdown-multi')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><CheckSquare className="w-5 h-5 text-teal-400"/> Multi Dropdown</button>
                 <button onClick={() => addField('number')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><Hash className="w-5 h-5 text-pink-400"/> Number</button>
               </div>
             </div>

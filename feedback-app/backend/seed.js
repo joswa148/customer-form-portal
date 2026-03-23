@@ -10,10 +10,10 @@ const seedForm = async () => {
     const fields = [
       {
         id: `field_${uuidv4().replace(/-/g, '').substring(0, 8)}`,
-        type: 'radio',
+        type: 'dropdown-multi',
         label: '1. Which services do you currently receive from us?',
         required: true,
-        options: ['Corporate Tax (CT)', 'VAT Services', 'Bookkeeping (BK)', 'Other']
+        options: ['Corp Tax Registration / Amendments', 'VAT Registration / Amendments', 'CT Filing', 'VAT Filing', 'Book Keeping & Auditing', 'POA', 'Biz Set up / License Renewal', 'Visa Services', 'Business account opening', 'Other']
       },
       {
         id: `field_${uuidv4().replace(/-/g, '').substring(0, 8)}`,

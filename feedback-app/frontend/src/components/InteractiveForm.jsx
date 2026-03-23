@@ -331,12 +331,41 @@ export default function InteractiveForm() {
                          )
                        })}
                      </fieldset>
+                  ) : field.type === 'dropdown-multi' ? (
+                     <div className="mb-4 w-full">
+                       <p className="text-xs text-slate-500 mb-2 font-medium">Select one or more options:</p>
+                       <div className="flex flex-col gap-1.5 max-h-[45vh] overflow-y-auto pr-1">
+                         {(field.options || []).map((opt, i) => {
+                           const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
+                           const isSelected = currentArr.includes(opt);
+                           return (
+                             <button
+                               key={i}
+                               type="button"
+                               onClick={() => {
+                                 setAnswers(prev => {
+                                   const arr = Array.isArray(prev[field.id]) ? [...prev[field.id]] : [];
+                                   const next = isSelected ? arr.filter(o => o !== opt) : [...arr, opt];
+                                   return { ...prev, [field.id]: next };
+                                 });
+                               }}
+                               className={`text-left w-full py-2.5 px-3 border rounded-lg text-[0.85rem] md:text-[0.9rem] font-medium transition flex items-center justify-between cursor-pointer group hover:bg-slate-800 ${isSelected ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-500'}`}
+                             >
+                               <span className="flex items-center gap-3 leading-snug break-words">{opt}</span>
+                               <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isSelected ? 'border-blue-400 bg-blue-500' : 'border-slate-500 group-hover:border-slate-400 bg-slate-800/50'}`}>
+                                 {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                               </div>
+                             </button>
+                           );
+                         })}
+                       </div>
+                     </div>
                   ) : null}
 
-                  <div className="flex flex-col sm:flex-row items-center gap-4 mt-8 w-full">
+                  <div className="flex flex-col sm:flex-row items-center gap-3 mt-4 w-full">
                     <button 
                       onClick={handleNext}
-                      className="bg-blue-600 w-full sm:w-auto text-white px-10 py-5 rounded-xl text-xl font-black hover:bg-blue-500 transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 active:scale-95"
+                      className="bg-blue-600 w-full sm:w-auto text-white px-8 py-4 rounded-xl text-lg font-black hover:bg-blue-500 transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 active:scale-95"
                     >
                       Continue <ChevronRight className="w-6 h-6"/>
                     </button>
