@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, Hash, List, MousePointerClick, MessageSquareText } from 'lucide-react';
+import { Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, Hash, List, MousePointerClick, MessageSquareText, CheckSquare } from 'lucide-react';
 
 const API_URL = 'http://localhost:5002/api';
 
@@ -26,7 +26,7 @@ export default function FeedbackForm() {
         
         let parsedFields = data.fields;
         if (typeof parsedFields === 'string') {
-           try { parsedFields = JSON.parse(parsedFields); } catch(e) {}
+           try { parsedFields = JSON.parse(parsedFields); } catch(e) { console.error('Failed to parse fields schema', e); }
         }
         setFields(Array.isArray(parsedFields) ? parsedFields : []);
         
@@ -36,6 +36,7 @@ export default function FeedbackForm() {
         }
         setAnswers(initialAnswers);
       } catch (err) {
+        console.error('Failed to fetch form configuration', err);
         setError('Endpoint restricted or unavailable.');
       } finally {
         setLoading(false);
@@ -59,7 +60,9 @@ export default function FeedbackForm() {
     }
 
     for (const f of fields) {
-      if (f.required && !answers[f.id]) {
+      const val = answers[f.id];
+      const isEmpty = val === undefined || val === null || val === '' || (Array.isArray(val) && val.length === 0);
+      if (f.required && isEmpty) {
         setSubmitError(`A required entry is missing: ${f.label}`);
         return;
       }
@@ -223,6 +226,31 @@ export default function FeedbackForm() {
                             <span className={`font-bold text-sm ${answers[field.id] === opt ? 'text-blue-900' : 'text-slate-600'}`}>{opt}</span>
                           </label>
                         ))}
+                      </div>
+                    ) : field.type === 'checkbox' ? (
+                      <div className="flex flex-col sm:flex-row flex-wrap gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <div className="w-full flex items-center gap-2 mb-1 text-slate-400 text-xs font-black uppercase tracking-widest"><CheckSquare className="w-4 h-4"/> Select all that apply</div>
+                        {(field.options || []).map((opt, i) => {
+                          const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
+                          const isSelected = currentArr.includes(opt);
+                          return (
+                            <label key={i} className={`flex items-center gap-3 cursor-pointer px-4 py-3 rounded-xl transition border-2 ${isSelected ? 'bg-white border-blue-500 shadow-md' : 'bg-white border-transparent hover:border-slate-300 shadow-sm'}`}>
+                              <input 
+                                type="checkbox" 
+                                name={field.id}
+                                value={opt}
+                                checked={isSelected}
+                                onChange={(e) => {
+                                  const arr = Array.isArray(answers[field.id]) ? [...answers[field.id]] : [];
+                                  const next = e.target.checked ? [...arr, opt] : arr.filter(o => o !== opt);
+                                  handleChange(field.id, next);
+                                }}
+                                className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 accent-blue-600"
+                              />
+                              <span className={`font-bold text-sm ${isSelected ? 'text-blue-900' : 'text-slate-600'}`}>{opt}</span>
+                            </label>
+                          )
+                        })}
                       </div>
                     ) : null}
                   </div>

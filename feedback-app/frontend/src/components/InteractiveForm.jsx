@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, Info, ShieldCheck } from 'lucide-react';
+import { Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, Info, ShieldCheck, CheckSquare, Check } from 'lucide-react';
 
 const API_URL = 'http://localhost:5002/api';
 
@@ -75,7 +75,9 @@ export default function InteractiveForm() {
   const handleNext = () => {
     if (currentIndex >= 0 && currentIndex < fields.length) {
       const field = fields[currentIndex];
-      if (field.required && !answersRef.current[field.id]) {
+      const val = answersRef.current[field.id];
+      const isEmpty = val === undefined || val === null || val === '' || (Array.isArray(val) && val.length === 0);
+      if (field.required && isEmpty) {
         alert('Please fill out this field before continuing.');
         return;
       }
@@ -259,6 +261,43 @@ export default function InteractiveForm() {
                              </span>
                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${isSelected ? 'border-blue-400 bg-blue-500' : 'border-slate-500 group-hover:border-slate-400'}`}>
                                {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                             </div>
+                           </label>
+                         )
+                       })}
+                     </fieldset>
+                  ) : field.type === 'checkbox' ? (
+                     <fieldset className="flex flex-col gap-3 mb-8 w-full">
+                       <legend className="sr-only">{field.label}</legend>
+                       {(field.options || []).map((opt, i) => {
+                         const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
+                         const isSelected = currentArr.includes(opt);
+                         return (
+                           <label 
+                             key={i}
+                             className={`text-left w-full py-3 px-4 border rounded-xl text-[0.9rem] md:text-[1rem] font-medium transition flex items-center justify-between cursor-pointer group hover:bg-slate-800 focus-within:ring-2 focus-within:ring-blue-500/50 ${isSelected ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-500'}`}
+                           >
+                             <input 
+                               type="checkbox" 
+                               name={field.id}
+                               value={opt}
+                               className="sr-only"
+                               autoFocus={i === 0 && (!answers[field.id] || answers[field.id].length === 0)}
+                               checked={isSelected}
+                               onChange={(e) => {
+                                 setAnswers(prev => {
+                                    const arr = Array.isArray(prev[field.id]) ? [...prev[field.id]] : [];
+                                    const next = e.target.checked ? [...arr, opt] : arr.filter(o => o !== opt);
+                                    return { ...prev, [field.id]: next };
+                                 });
+                                 // No auto-advance for checkbox lists
+                               }}
+                             />
+                             <span className="flex items-center gap-3 leading-snug break-words">
+                               {opt}
+                             </span>
+                             <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isSelected ? 'border-blue-400 bg-blue-500' : 'border-slate-500 group-hover:border-slate-400 bg-slate-800/50'}`}>
+                               {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
                              </div>
                            </label>
                          )

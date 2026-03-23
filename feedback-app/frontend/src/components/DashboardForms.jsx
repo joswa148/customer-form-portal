@@ -35,12 +35,25 @@ export default function DashboardForms() {
   }, []);
 
   const addField = (type) => {
+    const defaultOptions = [
+      'Corp Tax Registration / Amendments',
+      'VAT Registration / Amendments',
+      'CT Filing',
+      'VAT Filing',
+      'Book Keeping & Auditing',
+      'POA',
+      'Biz Set up / License Renewal',
+      'Visa Services',
+      'Business account opening',
+      'Other'
+    ];
+
     const newField = {
       id: `field_${Date.now()}`,
       type,
-      label: `New ${type} question`,
+      label: type === 'checkbox' && fields.length === 0 ? 'Which services are you interested in?' : `New ${type} question`,
       required: false,
-      options: type === 'radio' || type === 'select' ? ['Option 1', 'Option 2'] : undefined
+      options: type === 'radio' || type === 'select' || type === 'checkbox' ? defaultOptions : undefined
     };
     setFields([...fields, newField]);
   };
@@ -164,7 +177,8 @@ export default function DashboardForms() {
                       <span className="bg-white border border-indigo-100 px-4 py-2 rounded-xl text-indigo-700 font-black uppercase text-[10px] tracking-widest flex items-center gap-2 shadow-sm">
                         {field.type === 'text' && <AlignLeft className="w-4 h-4"/>}
                         {field.type === 'number' && <Hash className="w-4 h-4"/>}
-                        {field.type === 'select' && <DropdownIcon className="w-4 h-4"/>}
+                        {field.type === 'select' && <AlignLeft className="w-4 h-4"/>}
+                        {field.type === 'checkbox' && <CheckSquare className="w-4 h-4"/>}
                         {field.type === 'radio' && <ToggleLeft className="w-4 h-4"/>}
                         {field.type === 'textarea' && <AlignLeft className="w-4 h-4"/>}
                         {field.type} Field
@@ -176,7 +190,7 @@ export default function DashboardForms() {
                       </label>
                     </div>
                     
-                    {(field.type === 'radio' || field.type === 'select') && (
+                    {(field.type === 'radio' || field.type === 'select' || field.type === 'checkbox') && (
                       <div className="mt-2 bg-gradient-to-b from-slate-50 to-white p-6 border border-slate-200 rounded-2xl shadow-inner">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2"><CheckSquare className="w-4 h-4 text-slate-400"/> Options</p>
                         <input 
@@ -201,7 +215,8 @@ export default function DashboardForms() {
                 <button onClick={() => addField('text')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><AlignLeft className="w-5 h-5 text-blue-400"/> Short Text</button>
                 <button onClick={() => addField('textarea')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><AlignLeft className="w-5 h-5 text-emerald-400"/> Long Text</button>
                 <button onClick={() => addField('radio')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><ToggleLeft className="w-5 h-5 text-purple-400"/> Single Choice</button>
-                <button onClick={() => addField('select')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><CheckSquare className="w-5 h-5 text-amber-400"/> Dropdown</button>
+                <button onClick={() => addField('checkbox')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><CheckSquare className="w-5 h-5 text-indigo-400"/> Multiple Choice</button>
+                <button onClick={() => addField('select')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><AlignLeft className="w-5 h-5 text-amber-400"/> Dropdown</button>
                 <button onClick={() => addField('number')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><Hash className="w-5 h-5 text-pink-400"/> Number</button>
               </div>
             </div>

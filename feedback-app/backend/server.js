@@ -154,15 +154,22 @@ app.post('/api/responses', async (req, res) => {
         for (const field of formFields) {
             const val = answers[field.id];
             
-            if (field.required && (val === undefined || val === null || val === '')) {
+            const isEmpty = val === undefined || val === null || val === '' || (Array.isArray(val) && val.length === 0);
+            if (field.required && isEmpty) {
                 return res.status(400).json({ error: `Field '${field.label}' is required.` });
             }
-            if (val !== undefined && val !== null && val !== '') {
+            if (!isEmpty) {
                 if (field.type === 'number') {
                     if (isNaN(Number(val))) return res.status(400).json({ error: `Field '${field.label}' must be a number.` });
                 }
                 if ((field.type === 'radio' || field.type === 'select') && Array.isArray(field.options)) {
                     if (!field.options.includes(String(val))) return res.status(400).json({ error: `Invalid option selected for '${field.label}'.` });
+                }
+                if (field.type === 'checkbox' && Array.isArray(field.options)) {
+                    if (!Array.isArray(val)) return res.status(400).json({ error: `Field '${field.label}' must be an array of selections.` });
+                    for (const v of val) {
+                        if (!field.options.includes(String(v))) return res.status(400).json({ error: `Invalid option selected for '${field.label}'.` });
+                    }
                 }
             }
         }
@@ -174,9 +181,16 @@ app.post('/api/responses', async (req, res) => {
         const rawAnswersArray = [];
         for (const field of formFields) {
             const answer = answers[field.id];
+            const isValidAnswer = answer !== undefined && answer !== null && answer !== '' && (!Array.isArray(answer) || answer.length > 0);
+            
+            let displayAnswer = null;
+            if (isValidAnswer) {
+                displayAnswer = Array.isArray(answer) ? answer.join(', ') : answer;
+            }
+
             rawAnswersArray.push({
                 label: field.label,
-                answer: answer !== undefined && answer !== null && answer !== '' ? answer : null
+                answer: displayAnswer
             });
         }
 
