@@ -4,6 +4,8 @@ import FeedbackForm from './components/FeedbackForm';
 import Dashboard from './components/Dashboard';
 import DashboardForms from './components/DashboardForms';
 
+import InteractiveForm from './components/InteractiveForm';
+
 function App() {
   return (
     <Router>
@@ -11,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard/forms" />} />
           <Route path="/f/:uuid" element={<FeedbackForm />} />
+          <Route path="/interactive/:uuid" element={<InteractiveForm />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/forms" element={<DashboardForms />} />
         </Routes>

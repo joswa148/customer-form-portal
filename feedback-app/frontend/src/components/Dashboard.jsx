@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { BarChart, Database, Filter, LayoutTemplate, Clock, Mail, CheckCircle2, ChevronRight, PieChart } from 'lucide-react';
+import { Database, Filter, LayoutTemplate, Clock, Mail, CheckCircle2, ChevronRight, PieChart } from 'lucide-react';
 
 const API_URL = 'http://localhost:5002/api';
 
@@ -9,7 +9,9 @@ export default function Dashboard() {
   const [responses, setResponses] = useState([]);
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedForm, setSelectedForm] = useState('');
+  const queryParams = new URLSearchParams(window.location.search);
+  const initialFormId = queryParams.get('formId') || '';
+  const [selectedForm, setSelectedForm] = useState(initialFormId);
 
   useEffect(() => {
     const init = async () => {
@@ -34,7 +36,7 @@ export default function Dashboard() {
     if (!form) return fieldId;
     let schema = form.fields;
     if (typeof schema === 'string') {
-      try { schema = JSON.parse(schema); } catch(e) { return fieldId; }
+      try { schema = JSON.parse(schema); } catch(e) { console.error('Failed to parse schema', e); return fieldId; }
     }
     if (!Array.isArray(schema)) return fieldId;
     
@@ -42,7 +44,7 @@ export default function Dashboard() {
     return field ? field.label : fieldId;
   };
 
-  if (loading) return <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center font-black text-indigo-300 text-xl tracking-widest uppercase animate-pulse"><Database className="w-12 h-12 mb-3 text-indigo-200"/> Synchronizing Analytics...</div>;
+  if (loading) return <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center font-black text-indigo-300 text-xl tracking-widest uppercase animate-pulse"><Database className="w-12 h-12 mb-3 text-indigo-200"/> Loading Responses...</div>;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans p-6 md:p-12">
@@ -54,9 +56,9 @@ export default function Dashboard() {
            <div className="relative z-10">
              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight flex items-center gap-4">
                <PieChart className="w-12 h-12 text-indigo-600" />
-               Analytics Matrix
+               Responses Dashboard
              </h1>
-             <p className="text-slate-500 mt-3 font-semibold text-lg ml-1">Live aggregated response registries.</p>
+             <p className="text-slate-500 mt-3 font-semibold text-lg ml-1">View your form responses.</p>
            </div>
            
            <div className="flex flex-col sm:flex-row gap-5 mt-8 xl:mt-0 relative z-10 w-full xl:w-auto items-center">
@@ -69,7 +71,7 @@ export default function Dashboard() {
                   onChange={e => setSelectedForm(e.target.value)}
                   className="w-full sm:w-64 p-4 pl-12 bg-slate-50 border border-slate-200 text-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-400 font-bold transition shadow-sm appearance-none cursor-pointer"
                 >
-                  <option value="">Global Overview (All Campaigns)</option>
+                  <option value="">All Forms</option>
                   {forms.map(f => (
                     <option key={f.id} value={f.id}>{f.title}</option>
                   ))}
@@ -77,7 +79,7 @@ export default function Dashboard() {
               </div>
               
               <Link to="/dashboard/forms" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-2xl hover:from-slate-900 hover:to-black font-black shadow-lg shadow-slate-900/30 transition flex justify-center items-center gap-2 transform hover:-translate-y-1">
-                <LayoutTemplate className="w-5 h-5" /> Engine Dashboard
+                <LayoutTemplate className="w-5 h-5" /> Manage Forms
               </Link>
            </div>
         </div>
@@ -86,15 +88,15 @@ export default function Dashboard() {
         {responses.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-32 bg-white rounded-3xl border-2 border-dashed border-slate-200 shadow-sm text-center">
             <CheckCircle2 className="w-20 h-20 text-slate-200 mb-6" />
-            <h2 className="text-2xl font-bold text-slate-400">Zero Inbound Telemetry</h2>
-            <p className="text-slate-400 font-medium mt-2">Adjust your filters or deploy a new campaign.</p>
+            <h2 className="text-2xl font-bold text-slate-400">No Responses Yet</h2>
+            <p className="text-slate-400 font-medium mt-2">Adjust filters or share your form to get responses.</p>
           </div>
         ) : (
           <div className="columns-1 md:columns-2 xl:columns-3 gap-8 space-y-8">
             {responses.map(fb => {
               let parsedAnswers = fb.answers || {};
               if (typeof parsedAnswers === 'string') {
-                 try { parsedAnswers = JSON.parse(parsedAnswers); } catch(e) {}
+                 try { parsedAnswers = JSON.parse(parsedAnswers); } catch(e) { console.error('Failed to parse answers', e); }
               }
               const formDoc = forms.find(x => x.id === fb.form_id);
 
@@ -105,9 +107,9 @@ export default function Dashboard() {
                   {/* Card Header */}
                   <div className="flex justify-between items-start mb-6">
                      <div>
-                        <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-sm inline-block mb-3">Target ID #{fb.form_id}</span>
+                        <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-sm inline-block mb-3">Form ID #{fb.form_id}</span>
                         <h3 className="font-extrabold text-lg text-slate-800 leading-tight">
-                          {formDoc ? formDoc.title : 'Legacy Payload'}
+                          {formDoc ? formDoc.title : 'Untitled Form'}
                         </h3>
                      </div>
                   </div>
@@ -118,7 +120,7 @@ export default function Dashboard() {
                        <Mail className="w-5 h-5"/>
                     </div>
                     <div className="overflow-hidden">
-                       <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Origin Node</p>
+                       <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Respondent Email</p>
                        <p className="font-bold text-slate-700 truncate" title={fb.user_email}>{fb.user_email || 'Anonymous'}</p>
                     </div>
                   </div>

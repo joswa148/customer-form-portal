@@ -72,23 +72,23 @@ export default function FeedbackForm() {
         userEmail,
         answers
       });
-      setSubmitSuccess('Payload successful! Check your inbox securely for logged response metrics.');
+      setSubmitSuccess('Success! Your response has been submitted.');
       setAnswers(fields.reduce((acc, f) => ({ ...acc, [f.id]: '' }), {}));
       setUserEmail('');
     } catch (err) {
-      setSubmitError(err.response?.data?.error || 'Rejected by strict constraints Node API.');
+      setSubmitError(err.response?.data?.error || 'An error occurred during submission.');
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center font-black text-blue-300 text-xl tracking-widest uppercase animate-pulse"><ShieldCheck className="w-10 h-10 mr-3 text-indigo-300"/> Validating Secure Tunnel...</div>;
+  if (loading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center font-black text-blue-300 text-xl tracking-widest uppercase animate-pulse"><ShieldCheck className="w-10 h-10 mr-3 text-indigo-300"/> Loading...</div>;
   
   if (error) return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
        <div className="flex flex-col items-center bg-white p-12 shadow-2xl rounded-3xl border border-red-100 max-w-lg">
           <AlertCircle className="w-20 h-20 text-red-500 mb-6 drop-shadow-md"/>
-          <h2 className="text-2xl font-black text-slate-800 mb-2">Connection Rejected</h2>
+          <h2 className="text-2xl font-black text-slate-800 mb-2">Connection Failed</h2>
           <p className="text-slate-500 font-medium text-center">{error}</p>
        </div>
     </div>
@@ -116,7 +116,7 @@ export default function FeedbackForm() {
             <div className="mb-10 p-6 bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold shadow-sm rounded-2xl flex items-start gap-4 transform transition">
               <CheckCircle2 className="w-8 h-8 shrink-0 text-emerald-500"/> 
               <div>
-                <span className="block text-lg mb-1">Transmission Established</span>
+                <span className="block text-lg mb-1">Success!</span>
                 <span className="text-emerald-600 font-medium text-sm block">{submitSuccess}</span>
               </div>
             </div>
@@ -126,17 +126,17 @@ export default function FeedbackForm() {
             {/* Target Origin Identity */}
             <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl border border-blue-100/60 shadow-inner group">
               <label className="text-sm font-black text-blue-900 mb-3 tracking-widest uppercase flex items-center gap-2">
-                <Mail className="w-5 h-5 text-blue-500" /> Identity Address <span className="text-red-500 ml-1 text-lg leading-none">*</span>
+                <Mail className="w-5 h-5 text-blue-500" /> Email Address <span className="text-red-500 ml-1 text-lg leading-none">*</span>
               </label>
               <input 
                 type="email" 
                 value={userEmail} 
                 onChange={e => setUserEmail(e.target.value)} 
                 className="w-full md:w-3/4 p-4 text-lg border border-blue-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white transition shadow-sm placeholder:text-blue-200 font-semibold text-slate-800"
-                placeholder="Secure email registry (e.g. user@domain.com)"
+                placeholder="Enter your email address"
                 required
               />
-              <p className="text-xs font-bold text-blue-400 mt-3 flex items-center gap-1 uppercase tracking-widest"><ShieldCheck className="w-3 h-3"/> SSL Transmission Secured</p>
+              <p className="text-xs font-bold text-blue-400 mt-3 flex items-center gap-1 uppercase tracking-widest"><ShieldCheck className="w-3 h-3"/> Secure Connection</p>
             </div>
 
             <div className="space-y-8 relative">
@@ -148,7 +148,7 @@ export default function FeedbackForm() {
                   
                   <label className="text-lg font-black text-slate-800 mb-5 flex items-start gap-4">
                     <span className="bg-slate-100 text-slate-500 rounded-lg px-2.5 py-1 text-sm shrink-0 border border-slate-200 shadow-inner">0{idx + 1}</span>
-                    <span className="mt-0.5">{field.label} {field.required && <span className="text-red-500 ml-1 font-bold text-xl leading-none" title="Must supply constraint">*</span>}</span>
+                    <span className="mt-0.5">{field.label} {field.required && <span className="text-red-500 ml-1 font-bold text-xl leading-none" title="Required field">*</span>}</span>
                   </label>
                   
                   <div className="pl-0 md:pl-14">
@@ -163,7 +163,7 @@ export default function FeedbackForm() {
                           onChange={e => handleChange(field.id, e.target.value)}
                           className="w-full p-4 pl-12 text-slate-700 border border-slate-300 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-slate-50 focus:bg-white transition font-medium"
                           required={field.required}
-                          placeholder="Provide context..."
+                          placeholder="Enter your answer..."
                         />
                       </div>
                     ) : field.type === 'number' ? (
@@ -177,7 +177,7 @@ export default function FeedbackForm() {
                           onChange={e => handleChange(field.id, e.target.value)}
                           className="w-full p-4 pl-12 text-slate-700 border border-slate-300 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-slate-50 focus:bg-white transition font-black"
                           required={field.required}
-                          placeholder="Numeric value"
+                          placeholder="Enter a number"
                         />
                       </div>
                     ) : field.type === 'textarea' ? (
@@ -187,7 +187,7 @@ export default function FeedbackForm() {
                         rows="4"
                         className="w-full p-5 text-slate-700 border border-slate-300 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-slate-50 focus:bg-white resize-y transition font-medium leading-relaxed"
                         required={field.required}
-                        placeholder="Expand your observations..."
+                        placeholder="Enter your details..."
                       />
                     ) : field.type === 'select' ? (
                       <div className="relative w-full md:w-2/3">
@@ -200,7 +200,7 @@ export default function FeedbackForm() {
                           className="w-full p-4 pl-12 text-slate-700 border border-slate-300 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 bg-slate-50 focus:bg-white cursor-pointer transition font-bold appearance-none"
                           required={field.required}
                         >
-                          <option value="" disabled>-- Access parameter table --</option>
+                          <option value="" disabled>-- Select an option --</option>
                           {(field.options || []).map((opt, i) => (
                             <option key={i} value={opt} className="font-medium text-slate-800">{opt}</option>
                           ))}
@@ -208,7 +208,7 @@ export default function FeedbackForm() {
                       </div>
                     ) : field.type === 'radio' ? (
                       <div className="flex flex-col sm:flex-row flex-wrap gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                        <div className="w-full flex items-center gap-2 mb-1 text-slate-400 text-xs font-black uppercase tracking-widest"><MousePointerClick className="w-4 h-4"/> Selection Context</div>
+                        <div className="w-full flex items-center gap-2 mb-1 text-slate-400 text-xs font-black uppercase tracking-widest"><MousePointerClick className="w-4 h-4"/> Select an option</div>
                         {(field.options || []).map((opt, i) => (
                           <label key={i} className={`flex items-center gap-3 cursor-pointer px-4 py-3 rounded-xl transition border-2 ${answers[field.id] === opt ? 'bg-white border-blue-500 shadow-md' : 'bg-white border-transparent hover:border-slate-300 shadow-sm'}`}>
                             <input 
@@ -238,11 +238,11 @@ export default function FeedbackForm() {
               {submitLoading ? (
                 <>
                   <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Executing Constraints Validator...
+                  Submitting...
                 </>
               ) : (
                 <>
-                  Submit Encrypted Payload <ShieldCheck className="w-6 h-6" />
+                  Submit Form <ShieldCheck className="w-6 h-6" />
                 </>
               )}
             </button>

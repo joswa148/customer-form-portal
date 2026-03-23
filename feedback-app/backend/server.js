@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { v4: uuidv4 } = require('uuid');
-const nodemailer = require('nodemailer');
+const emailService = require('./utils/emailService');
 
 const db = require('./db');
 const app = express();
@@ -11,16 +11,38 @@ const PORT = process.env.PORT || 5002;
 app.use(cors());
 app.use(express.json());
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false, 
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-    tls: { rejectUnauthorized: false }
-});
+// --- SIMPLE EMAIL QUEUE ---
+// Warning: This is an in-memory queue. For a production scale with multiple instances, use Redis + BullMQ.
+const emailQueue = [];
+let isProcessingQueue = false;
+
+const processEmailQueue = async () => {
+    if (isProcessingQueue || emailQueue.length === 0) return;
+    isProcessingQueue = true;
+
+    while (emailQueue.length > 0) {
+        const job = emailQueue[0];
+        try {
+            await emailService.sendFeedbackNotifications(job.formTitle, job.userEmail, job.adminEmail, job.rawAnswersArray);
+            console.log(`[Queue] Sent dynamic HTML emails for form: ${job.formTitle}`);
+            emailQueue.shift(); // Remove job from queue on success
+        } catch (err) {
+            console.error(`[Queue] Failed to process email job for form: ${job.formTitle}. Error:`, err.message);
+            job.retries = (job.retries || 0) + 1;
+            if (job.retries > 3) {
+                console.error(`[Queue] Job failed after max retries. Discarding job.`);
+                emailQueue.shift();
+            } else {
+                // Wait 5 seconds before retrying
+                await new Promise(res => setTimeout(res, 5000));
+            }
+        }
+    }
+    isProcessingQueue = false;
+};
+
+// Periodically wake up queue processing in case it stalled
+setInterval(processEmailQueue, 10000);
 
 // --- FORMS ENDPOINTS ---
 
@@ -148,37 +170,29 @@ app.post('/api/responses', async (req, res) => {
         const insertQuery = `INSERT INTO responses (form_id, user_email, answers) VALUES (?, ?, ?)`;
         const [result] = await db.query(insertQuery, [formId, userEmail.trim(), JSON.stringify(answers)]);
 
-        // Build Email Dynamic Content
-        let summaryText = '';
+        // Build raw answers array for dynamic HTML template
+        const rawAnswersArray = [];
         for (const field of formFields) {
             const answer = answers[field.id];
-            summaryText += `${field.label}:\n${answer !== undefined && answer !== null && answer !== '' ? answer : 'N/A'}\n\n`;
+            rawAnswersArray.push({
+                label: field.label,
+                answer: answer !== undefined && answer !== null && answer !== '' ? answer : null
+            });
         }
 
-        const adminMailOptions = {
-            from: process.env.EMAIL_FROM,
-            to: process.env.EMAIL_TO,
-            subject: `New submission on Form: ${formTitle}`,
-            text: `A new response was received for the form "${formTitle}".\nUser Email: ${userEmail}\n\n--- Responses ---\n${summaryText}`
-        };
+        // Push the job to the queue
+        emailQueue.push({
+            formTitle,
+            userEmail,
+            adminEmail: process.env.EMAIL_TO || null,
+            rawAnswersArray,
+            retries: 0
+        });
 
-        const userMailOptions = {
-            from: process.env.EMAIL_FROM,
-            to: userEmail,
-            subject: `Thank you for your feedback – ${formTitle}`,
-            text: `Hi there,\n\nThank you for providing your feedback on "${formTitle}". We truly appreciate your time.\n\nHere is a summary of what you submitted:\n${summaryText}\nBest regards,\nThynk Unlimited`
-        };
+        // Trigger queue processing asynchronously without blocking loop
+        setImmediate(processEmailQueue);
 
-        try {
-            Promise.all([
-                transporter.sendMail(adminMailOptions),
-                transporter.sendMail(userMailOptions)
-            ]).catch(err => console.error('Internal email failure (non-blocking):', err));
-        } catch (emailError) {
-            console.error('Error in email sending block:', emailError);
-        }
-
-        res.status(201).json({ success: true, id: result.insertId });
+        res.status(202).json({ success: true, id: result.insertId, message: "Accepted and queued." });
 
     } catch (error) {
         console.error('Error saving response:', error);
