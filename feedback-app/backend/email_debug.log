@@ -1,0 +1,14 @@
+[2026-03-23T06:56:16.117Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2b083529e8asm102617625ad.20 - gsmtp
+[2026-03-23T06:56:22.493Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2b083656b51sm121718275ad.54 - gsmtp
+[2026-03-23T06:56:29.094Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-c74665ca1f8sm6885590a12.20 - gsmtp
+[2026-03-23T06:56:35.461Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2b08366c36fsm126580875ad.61 - gsmtp
+[2026-03-23T06:57:03.192Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-82b0409f409sm8295789b3a.31 - gsmtp
+[2026-03-23T06:57:09.517Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 41be03b00d2f7-c74665ca1f8sm6887703a12.20 - gsmtp
+[2026-03-23T06:57:15.891Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2b08354b109sm128486425ad.31 - gsmtp

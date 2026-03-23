@@ -14,6 +14,8 @@ export default function InteractiveForm() {
 
   const [currentIndex, setCurrentIndex] = useState(-1); // -1 is intro, N is length (email step)
   const [answers, setAnswers] = useState({});
+  const answersRef = useRef(answers);
+  useEffect(() => { answersRef.current = answers; }, [answers]);
   const [userEmail, setUserEmail] = useState('');
   
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -31,7 +33,7 @@ export default function InteractiveForm() {
         if (savedAnswers) setAnswers(savedAnswers);
         if (savedIndex !== undefined) setCurrentIndex(savedIndex);
         if (savedEmail) setUserEmail(savedEmail);
-      } catch(e) {}
+      } catch (e) { console.error('Failed to parse saved progress', e); }
     }
   }, [uuid]);
 
@@ -50,10 +52,11 @@ export default function InteractiveForm() {
         
         let parsedFields = data.fields;
         if (typeof parsedFields === 'string') {
-           try { parsedFields = JSON.parse(parsedFields); } catch(e) {}
+           try { parsedFields = JSON.parse(parsedFields); } catch(e) { console.error('Failed to parse fields schema', e); }
         }
         setFields(Array.isArray(parsedFields) ? parsedFields : []);
       } catch (err) {
+        console.error('Failed to fetch form', err);
         setError('Form not found or unavailable.');
       } finally {
         setLoading(false);
@@ -72,7 +75,7 @@ export default function InteractiveForm() {
   const handleNext = () => {
     if (currentIndex >= 0 && currentIndex < fields.length) {
       const field = fields[currentIndex];
-      if (field.required && !answers[field.id]) {
+      if (field.required && !answersRef.current[field.id]) {
         alert('Please fill out this field before continuing.');
         return;
       }
@@ -129,9 +132,14 @@ export default function InteractiveForm() {
       
       {/* Progress Bar */}
       {!isIntro && !submitSuccess && (
-        <div className="absolute top-6 w-full max-w-3xl px-6 flex justify-between items-center text-slate-400 text-sm font-bold tracking-widest uppercase">
-          <button onClick={handlePrev} className="hover:text-white transition flex items-center gap-1"><ChevronLeft className="w-4 h-4"/> Back</button>
-          <span>{Math.min(currentIndex + 1, fields.length)} / {fields.length}</span>
+        <div className="absolute top-6 w-full max-w-3xl px-6 flex flex-col gap-3">
+          <div className="flex justify-between items-center text-slate-400 text-sm font-bold tracking-widest uppercase">
+            <button onClick={handlePrev} className="hover:text-white transition flex items-center gap-1"><ChevronLeft className="w-4 h-4"/> Back</button>
+            <span>Question {Math.min(currentIndex + 1, fields.length)} of {fields.length}</span>
+          </div>
+          <div className="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden shadow-inner">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full transition-all duration-500 ease-out" style={{ width: `${(Math.min(currentIndex + 1, fields.length) / fields.length) * 100}%` }}></div>
+          </div>
         </div>
       )}
 
@@ -145,30 +153,30 @@ export default function InteractiveForm() {
             <p className="mt-8 text-slate-500">You can safely close this window.</p>
           </div>
         ) : isIntro ? (
-          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-up">
-             <h1 className="text-5xl md:text-6xl font-black mb-6 leading-tight">{formConfig.title}</h1>
-             <p className="text-xl md:text-2xl text-slate-300 mb-12 font-medium leading-relaxed max-w-2xl mx-auto">{formConfig.description}</p>
+          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-up px-4">
+             <h1 className="text-3xl md:text-4xl font-black mb-4 leading-tight">{formConfig.title}</h1>
+             <p className="text-lg md:text-xl text-slate-300 mb-8 font-medium leading-relaxed max-w-2xl mx-auto">{formConfig.description}</p>
              <button 
                onClick={handleNext} 
-               className="bg-white text-slate-900 px-10 py-5 rounded-2xl text-xl font-bold shadow-xl shadow-white/10 hover:shadow-white/20 hover:-translate-y-1 transition transform flex items-center gap-3 mx-auto"
+               className="bg-white text-slate-900 px-8 py-4 rounded-xl text-lg font-bold shadow-xl shadow-white/10 hover:shadow-white/20 hover:-translate-y-1 transition transform flex items-center justify-center gap-3 w-full md:w-auto md:mx-auto"
              >
-               Start Questionnaire <ChevronRight className="w-6 h-6"/>
+               Start Questionnaire <ChevronRight className="w-5 h-5"/>
              </button>
              <p className="mt-6 text-slate-500 text-sm flex items-center justify-center gap-2"><Info className="w-4 h-4"/> Takes about 2 minutes</p>
           </div>
         ) : isOutro ? (
-          <div className="transform transition opacity-100 scale-100 animate-fade-in-right">
-             <h2 className="text-3xl md:text-4xl font-black mb-4">You're almost done.</h2>
-             <p className="text-xl text-slate-400 mb-10">Please provide your email address so we know who this feedback is from.</p>
+          <div className="transform transition opacity-100 scale-100 animate-fade-in-right px-4">
+             <h2 className="text-2xl md:text-3xl font-black mb-3">You're almost done.</h2>
+             <p className="text-base md:text-lg text-slate-400 mb-8">Please provide your email address so we know who this feedback is from.</p>
              
              {submitError && (
-                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center gap-3 font-medium">
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center gap-3 font-medium text-sm">
                   <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}
                 </div>
              )}
 
-             <div className="relative mb-8 group">
-               <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 group-focus-within:text-blue-400 transition" />
+             <div className="relative mb-6 group">
+               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-400 transition" />
                <input 
                  ref={inputRef}
                  type="email" 
@@ -176,33 +184,33 @@ export default function InteractiveForm() {
                  onChange={e => setUserEmail(e.target.value)}
                  onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
                  placeholder="name@company.com"
-                 className="w-full bg-slate-800/50 border-2 border-slate-700/50 text-white px-6 py-6 pl-16 rounded-2xl text-2xl outline-none focus:border-blue-500 focus:bg-slate-800 transition"
+                 className="w-full bg-slate-800/50 border border-slate-700/50 text-white p-4 pl-12 rounded-xl text-lg outline-none focus:border-blue-500 focus:bg-slate-800 transition"
                />
              </div>
              
              <button 
                onClick={handleSubmit} 
                disabled={submitLoading}
-               className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-10 py-5 rounded-2xl text-xl font-bold shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-1 transition transform flex items-center gap-3 disabled:opacity-50"
+               className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition transform flex items-center justify-center gap-2 disabled:opacity-50"
              >
-               {submitLoading ? 'Submitting...' : <>Submit Feedback <ShieldCheck className="w-6 h-6"/></>}
+               {submitLoading ? 'Submitting...' : <>Submit Feedback <ShieldCheck className="w-5 h-5"/></>}
              </button>
              <p className="mt-6 text-slate-500 text-sm">Press <strong>Enter ↵</strong> to submit</p>
           </div>
         ) : (
-          <div className="transform transition opacity-100 scale-100 animate-fade-in-right">
+          <div className="transform transition opacity-100 scale-100 animate-fade-in-right px-4">
             {/* Field Rendering */}
             {(() => {
               const field = fields[currentIndex];
               return (
-                <div>
-                  <h2 className="text-3xl md:text-4xl font-black mb-8 leading-tight flex flex-col md:flex-row md:items-start gap-4">
-                     <span className="text-blue-500 text-2xl md:text-3xl">{currentIndex + 1}</span> {field.label}
-                     {field.required && <span className="text-red-500 text-3xl">*</span>}
+                <div className="w-full max-w-[720px] mx-auto">
+                  <h2 className="text-[1.125rem] md:text-[1.25rem] font-normal mb-4 leading-snug flex items-start gap-3">
+                     <span className="text-blue-500 font-bold">{currentIndex + 1}.</span> {field.label}
+                     {field.required && <span className="text-red-500">*</span>}
                   </h2>
                   
                   {field.type === 'text' || field.type === 'email' || field.type === 'number' ? (
-                     <div className="mb-8">
+                     <div className="mb-6">
                        <input 
                          ref={inputRef}
                          type={field.type}
@@ -210,55 +218,62 @@ export default function InteractiveForm() {
                          onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
                          onKeyDown={handleKeyDown}
                          placeholder="Type your answer here..."
-                         className="w-full bg-slate-800/50 border-b-2 border-slate-600 text-white px-2 py-4 text-3xl outline-none focus:border-blue-500 transition placeholder:text-slate-600"
+                         className="w-full bg-slate-800/50 border-b border-slate-600 text-white px-0 py-3 text-lg md:text-xl outline-none focus:border-blue-500 transition placeholder:text-slate-600/80"
                        />
                      </div>
                   ) : field.type === 'textarea' ? (
-                     <div className="mb-8">
+                     <div className="mb-6">
                        <textarea 
                          ref={inputRef}
                          value={answers[field.id] || ''}
                          onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
                          placeholder="Type your detailed feedback here..."
                          rows="4"
-                         className="w-full bg-slate-800/50 border-2 border-slate-700 rounded-2xl text-white p-6 text-2xl outline-none focus:border-blue-500 transition placeholder:text-slate-600 resize-y"
+                         className="w-full bg-slate-800/50 border border-slate-700 rounded-xl text-white p-4 text-base md:text-lg outline-none focus:border-blue-500 transition placeholder:text-slate-600/80 resize-y"
                        />
                      </div>
                   ) : field.type === 'radio' || field.type === 'select' ? (
-                     <div className="flex flex-col gap-4 mb-8">
+                     <fieldset className="flex flex-col gap-3 mb-8 w-full">
+                       <legend className="sr-only">{field.label}</legend>
                        {(field.options || []).map((opt, i) => {
                          const isSelected = answers[field.id] === opt;
                          return (
-                           <button 
+                           <label 
                              key={i}
-                             autoFocus={i === 0 && !answers[field.id]}
-                             onClick={() => {
-                               setAnswers(prev => ({...prev, [field.id]: opt}));
-                               setTimeout(handleNext, 300); // auto-advance on radio selection
-                             }}
-                             className={`text-left w-full p-6 border-2 rounded-2xl text-xl font-bold transition flex items-center justify-between group ${isSelected ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-500 hover:bg-slate-800'}`}
+                             className={`text-left w-full py-3 px-4 border rounded-xl text-[0.9rem] md:text-[1rem] font-medium transition flex items-center justify-between cursor-pointer group hover:bg-slate-800 focus-within:ring-2 focus-within:ring-blue-500/50 ${isSelected ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-500'}`}
                            >
-                             <div className="flex items-center gap-4">
-                               <div className={`w-8 h-8 rounded border-2 flex items-center justify-center font-black text-sm transition ${isSelected ? 'border-blue-400 bg-blue-500 text-white' : 'border-slate-600 text-slate-500 group-hover:border-slate-400'}`}>
-                                  {String.fromCharCode(65 + i)}
-                               </div>
+                             <input 
+                               type="radio" 
+                               name={field.id}
+                               value={opt}
+                               className="sr-only"
+                               autoFocus={i === 0 && !answers[field.id]}
+                               checked={isSelected}
+                               onChange={() => {
+                                 setAnswers(prev => ({...prev, [field.id]: opt}));
+                                 setTimeout(handleNext, 300);
+                               }}
+                             />
+                             <span className="flex items-center gap-3 leading-snug break-words">
                                {opt}
+                             </span>
+                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${isSelected ? 'border-blue-400 bg-blue-500' : 'border-slate-500 group-hover:border-slate-400'}`}>
+                               {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                              </div>
-                             {isSelected && <CheckCircle2 className="w-6 h-6 text-blue-400"/>}
-                           </button>
+                           </label>
                          )
                        })}
-                     </div>
+                     </fieldset>
                   ) : null}
 
-                  <div className="flex items-center gap-4 mt-10">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 mt-8 w-full">
                     <button 
                       onClick={handleNext}
-                      className="bg-blue-600 text-white px-8 py-4 rounded-xl text-xl font-bold hover:bg-blue-500 transition shadow-lg shadow-blue-600/20 flex items-center gap-2"
+                      className="bg-blue-600 w-full sm:w-auto text-white px-10 py-5 rounded-xl text-xl font-black hover:bg-blue-500 transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 active:scale-95"
                     >
-                      OK <CheckCircle2 className="w-5 h-5"/>
+                      Continue <ChevronRight className="w-6 h-6"/>
                     </button>
-                    <span className="text-slate-500 text-sm">Press <strong>Enter ↵</strong></span>
+                    <span className="text-slate-500 text-sm hidden sm:inline-block">Press <strong>Enter ↵</strong></span>
                   </div>
                 </div>
               );
