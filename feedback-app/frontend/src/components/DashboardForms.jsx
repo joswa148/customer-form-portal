@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Plus, Link as LinkIcon, Trash2, ArrowLeft, BarChart2, LayoutTemplate, Settings2, FileText, Hash, CheckSquare, AlignLeft, ToggleLeft, ClipboardCheck, MessageCircle, Edit2, ChevronRight } from 'lucide-react';
+import { Plus, Link as LinkIcon, Trash2, ArrowLeft, BarChart2, LayoutTemplate, Settings2, FileText, Hash, CheckSquare, AlignLeft, ToggleLeft, ClipboardCheck, MessageCircle, Edit2, ChevronRight, ShieldCheck } from 'lucide-react';
 
 const API_URL = 'http://localhost:5002/api/forms';
 
@@ -123,120 +123,141 @@ export default function DashboardForms() {
 
   if (mode === 'build') {
     return (
-      <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8 font-sans text-slate-800">
-        <div className="w-[95%] md:w-[90%] max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl shadow-blue-900/5 border border-slate-100 overflow-hidden transform transition-all">
-          {/* Header */}
-          <div className="bg-gradient-to-br from-blue-700 via-indigo-600 to-purple-700 p-6 md:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full bg-white opacity-5 mix-blend-overlay"></div>
-            <div className="z-10">
-              <h1 className="text-2xl md:text-3xl font-black flex items-center gap-3 drop-shadow-md">
-                <LayoutTemplate className="w-7 h-7 opacity-90" /> 
-                {editingId ? 'Edit Form' : 'Form Builder'}
+      <div className="min-h-screen bg-slate-50 py-8 px-6 font-sans">
+        <div className="max-w-4xl mx-auto bg-white shadow-sm border border-slate-200 rounded-3xl overflow-hidden relative">
+          <div className="absolute top-0 w-full h-1 bg-indigo-600"></div>
+          
+          {/* Builder Header */}
+          <header className="p-8 pb-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Form Architect</p>
+              <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
+                {editingId ? 'Edit Questionnaire' : 'Create New Form'}
               </h1>
-              <p className="text-blue-100 mt-1 font-medium tracking-wide text-sm">{editingId ? 'Update your form details below.' : 'Create and manage your custom forms.'}</p>
             </div>
-            <button onClick={() => setMode('list')} className="w-max z-10 flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-sm backdrop-blur-sm">
-              <ArrowLeft className="w-4 h-4" /> Back
+            <button onClick={() => setMode('list')} className="px-4 py-2 text-[10px] font-black text-slate-500 uppercase tracking-widest border border-slate-200 rounded-xl hover:bg-slate-50 transition active:scale-95 flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" /> Exit Builder
             </button>
-          </div>
+          </header>
 
-          <div className="p-8 md:p-12 space-y-12">
-             {/* Base Info */}
-            <div className="space-y-6 bg-blue-50/30 p-8 rounded-3xl border border-blue-100/50 shadow-inner">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                  <FileText className="text-blue-400 w-6 h-6" />
-                </div>
-                <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Form Title" className="w-full text-2xl md:text-3xl font-black text-slate-800 border-b-2 border-slate-200 focus:border-blue-600 outline-none pb-2 pl-10 transition bg-transparent placeholder:text-slate-300" />
+          <div className="p-8 space-y-10">
+             {/* Base Info: Clean and balanced */}
+            <section className="space-y-4">
+              <div className="group">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block ml-1">Form Title</label>
+                <input 
+                  type="text" 
+                  value={title} 
+                  onChange={e => setTitle(e.target.value)} 
+                  placeholder="e.g. Service Satisfaction Survey" 
+                  className="w-full text-2xl font-black text-slate-900 border border-slate-100 bg-slate-50/30 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition placeholder:text-slate-200" 
+                />
               </div>
-              <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Form Description" className="w-full text-slate-600 border border-slate-200 rounded-2xl p-5 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 bg-white transition resize-y font-medium shadow-sm" rows="3" />
-            </div>
+              <div className="group">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block ml-1">Context / Description</label>
+                <textarea 
+                  value={description} 
+                  onChange={e => setDescription(e.target.value)} 
+                  placeholder="What is this form for?" 
+                  className="w-full text-slate-600 border border-slate-100 bg-slate-50/30 rounded-2xl p-4 outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition resize-none font-semibold text-sm h-24" 
+                />
+              </div>
+            </section>
 
-            {/* Field Map */}
-            <div className="space-y-6">
-              <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-3 mb-6 border-b border-slate-100 pb-3">
-                <Settings2 className="w-5 h-5 text-indigo-400" /> Form Fields
-              </h2>
-              {fields.length === 0 && (
-                <div className="text-center p-16 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50 text-slate-400 flex flex-col items-center">
-                   <ClipboardCheck className="w-12 h-12 mb-4 text-slate-300"/>
-                   <span className="font-bold text-lg">No fields added yet.</span>
-                   <span className="text-sm font-medium mt-1">Use the buttons below to add fields.</span>
+            {/* Questions Mapping: Inherit card style from FeedbackForm */}
+            <section className="space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <h2 className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                  <Settings2 className="w-3.5 h-3.5 text-indigo-500" /> Structure & Questions
+                </h2>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{fields.length} Questions Total</span>
+              </div>
+              
+              {fields.length === 0 ? (
+                <div className="text-center py-16 bg-slate-50/50 border border-dashed border-slate-200 rounded-3xl flex flex-col items-center">
+                   <ClipboardCheck className="w-10 h-10 mb-3 text-slate-200"/>
+                   <p className="font-black text-slate-400 text-sm uppercase tracking-widest">Workspace Empty</p>
+                   <p className="text-[10px] font-medium text-slate-400 mt-1 uppercase tracking-tighter">Use the tools below to start adding questions</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {fields.map((field, idx) => (
+                    <div key={field.id} className="p-6 bg-white border border-slate-200 rounded-2xl relative shadow-sm hover:border-indigo-400 transition-colors duration-200 group">
+                      <div className="absolute top-4 right-4 flex items-center gap-2">
+                         <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter border border-slate-100 rounded-md px-1.5 py-0.5">Q{idx+1}</span>
+                         <button onClick={() => removeField(field.id)} className="text-slate-300 hover:text-red-500 transition p-1" title="Remove Question">
+                            <Trash2 className="w-4 h-4" />
+                         </button>
+                      </div>
+                      
+                      <div className="flex flex-col gap-5 pr-12">
+                        <div className="space-y-1">
+                          <label className="text-[9px] font-black text-indigo-600 uppercase tracking-wider mb-1 block">Question Label</label>
+                          <input 
+                            type="text" 
+                            value={field.label} 
+                            onChange={e => updateField(field.id, 'label', e.target.value)}
+                            className="w-full font-black text-slate-800 text-sm p-4 border border-slate-50 bg-slate-50/50 focus:bg-white rounded-xl outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-500 transition shadow-inner"
+                          />
+                        </div>
+                        
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 shadow-sm">
+                            {field.type} Mode
+                          </span>
+                          <label className="flex items-center gap-2 cursor-pointer text-[9px] font-black uppercase bg-white px-3 py-1.5 rounded-lg border border-slate-200 hover:border-indigo-500 transition shadow-sm select-none tracking-widest">
+                            <input type="checkbox" checked={field.required} onChange={e => updateField(field.id, 'required', e.target.checked)} className="w-3.5 h-3.5 text-indigo-600 rounded focus:ring-indigo-500 accent-indigo-600 cursor-pointer" />
+                            Required
+                          </label>
+                        </div>
+                        
+                        {(field.type === 'radio' || field.type === 'select' || field.type === 'checkbox' || field.type === 'dropdown-multi') && (
+                          <div className="bg-slate-50 p-4 border border-slate-100 rounded-xl space-y-2">
+                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">Choice Config <span className="text-slate-300 normal-case font-medium">(comma separated)</span></p>
+                            <input 
+                              type="text" 
+                              value={field.options?.join(', ')} 
+                              onChange={e => updateField(field.id, 'options', e.target.value.split(',').map(s=>s.trim()))}
+                              className="w-full p-3 border border-slate-200 rounded-lg text-[11px] bg-white focus:bg-indigo-50 transition outline-none font-bold text-slate-700 shadow-sm"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
-              {fields.map((field, idx) => (
-                <div key={field.id} className="p-7 bg-white border border-slate-200 rounded-3xl relative shadow-sm hover:shadow-xl hover:border-slate-300 transition duration-300 group">
-                  <div className="absolute top-0 right-0 bg-gradient-to-b from-slate-100 to-white text-slate-400 font-black px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl text-xs shadow-sm border-b border-l border-slate-100">#{idx+1}</div>
-                  
-                  <button onClick={() => removeField(field.id)} className="absolute top-8 right-8 text-slate-300 hover:text-white hover:bg-red-500 p-2 rounded-xl transition bg-slate-50 border border-slate-200 group-hover:border-red-100 group-hover:text-red-500 shadow-sm" title="Remove Field">
-                    <Trash2 className="w-5 h-5" />
+            </section>
+
+            {/* Toolbox: Minimalist grid of tools */}
+            <section className="bg-slate-900 p-8 rounded-3xl border border-black shadow-2xl relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 to-transparent pointer-events-none"></div>
+              <h3 className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6 flex items-center gap-2 relative z-10"><Plus className="w-4 h-4 text-indigo-400"/> Interactive Field Toolbox</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
+                {[
+                  { id: 'text', icon: AlignLeft, label: 'Short Text' },
+                  { id: 'textarea', icon: AlignLeft, label: 'Long Text' },
+                  { id: 'radio', icon: ToggleLeft, label: 'Single Choice' },
+                  { id: 'checkbox', icon: CheckSquare, label: 'Multi Choice' },
+                  { id: 'select', icon: AlignLeft, label: 'Dropdown' },
+                  { id: 'dropdown-multi', icon: CheckSquare, label: 'Multi Select' },
+                  { id: 'number', icon: Hash, label: 'Number' },
+                ].map(tool => (
+                  <button 
+                    key={tool.id}
+                    onClick={() => addField(tool.id)} 
+                    className="px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-xl hover:bg-slate-700 hover:border-slate-500 transition font-black text-slate-200 text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-lg active:scale-95 whitespace-nowrap"
+                  >
+                    <tool.icon className="w-4 h-4 text-indigo-400"/> {tool.label}
                   </button>
-                  
-                  <div className="flex flex-col gap-6 pr-20 w-full">
-                    <div>
-                      <label className="text-[10px] font-black text-blue-500 uppercase tracking-wider mb-2 block">Question Text</label>
-                      <input 
-                        type="text" 
-                        value={field.label} 
-                        onChange={e => updateField(field.id, 'label', e.target.value)}
-                        className="font-extrabold text-slate-800 text-lg w-full md:w-4/5 p-4 border border-slate-200 bg-slate-50 focus:bg-white rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 transition shadow-inner"
-                        placeholder="e.g. Rate your service experience"
-                      />
-                    </div>
-                    
-                    <div className="flex flex-wrap items-center gap-5 text-sm text-slate-600 bg-slate-50 p-3 rounded-2xl border border-slate-200 w-max shadow-sm">
-                      <span className="bg-white border border-indigo-100 px-4 py-2 rounded-xl text-indigo-700 font-black uppercase text-[10px] tracking-widest flex items-center gap-2 shadow-sm">
-                        {field.type === 'text' && <AlignLeft className="w-4 h-4"/>}
-                        {field.type === 'number' && <Hash className="w-4 h-4"/>}
-                        {field.type === 'select' && <AlignLeft className="w-4 h-4"/>}
-                        {field.type === 'checkbox' && <CheckSquare className="w-4 h-4"/>}
-                        {field.type === 'radio' && <ToggleLeft className="w-4 h-4"/>}
-                        {field.type === 'textarea' && <AlignLeft className="w-4 h-4"/>}
-                        {field.type} Field
-                      </span>
-                      <div className="h-8 w-px bg-slate-200"></div>
-                      <label className="flex items-center gap-3 cursor-pointer font-bold text-slate-700 bg-white px-4 py-2 rounded-xl border border-slate-200 hover:border-blue-400 transition shadow-sm select-none">
-                        <input type="checkbox" checked={field.required} onChange={e => updateField(field.id, 'required', e.target.checked)} className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 accent-blue-600 cursor-pointer" />
-                        Required
-                      </label>
-                    </div>
-                    
-                    {(field.type === 'radio' || field.type === 'select' || field.type === 'checkbox' || field.type === 'dropdown-multi') && (
-                      <div className="mt-2 bg-gradient-to-b from-slate-50 to-white p-6 border border-slate-200 rounded-2xl shadow-inner">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2"><CheckSquare className="w-4 h-4 text-slate-400"/> Options</p>
-                        <input 
-                          type="text" 
-                          value={field.options?.join(', ')} 
-                          onChange={e => updateField(field.id, 'options', e.target.value.split(',').map(s=>s.trim()))}
-                          className="w-full p-4 border border-slate-300 rounded-xl text-sm bg-white focus:bg-blue-50 transition outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 font-bold text-slate-700 shadow-sm"
-                          placeholder="e.g. Yes, No, Undecided (Comma separated)"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Toolset */}
-            <div className="bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-700 flex flex-col gap-5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-slate-800 rounded-full blur-3xl opacity-50 -mr-20 -mt-20"></div>
-              <span className="block text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 relative z-10"><Plus className="w-4 h-4 text-blue-400"/> Add Fields</span>
-              <div className="flex flex-wrap gap-4 relative z-10">
-                <button onClick={() => addField('text')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><AlignLeft className="w-5 h-5 text-blue-400"/> Short Text</button>
-                <button onClick={() => addField('textarea')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><AlignLeft className="w-5 h-5 text-emerald-400"/> Long Text</button>
-                <button onClick={() => addField('radio')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><ToggleLeft className="w-5 h-5 text-purple-400"/> Single Choice</button>
-                <button onClick={() => addField('checkbox')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><CheckSquare className="w-5 h-5 text-indigo-400"/> Multiple Choice</button>
-                <button onClick={() => addField('select')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><AlignLeft className="w-5 h-5 text-amber-400"/> Dropdown</button>
-                <button onClick={() => addField('dropdown-multi')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><CheckSquare className="w-5 h-5 text-teal-400"/> Multi Dropdown</button>
-                <button onClick={() => addField('number')} className="px-5 py-3 bg-slate-800 border border-slate-600 rounded-xl hover:bg-slate-700 hover:border-slate-400 transition font-bold text-slate-200 flex items-center gap-2 shadow-lg hover:-translate-y-0.5"><Hash className="w-5 h-5 text-pink-400"/> Number</button>
+                ))}
               </div>
-            </div>
+            </section>
 
-            {/* Submission */}
-            <div className="pt-6 border-t border-slate-100">
-              <button onClick={handleSaveForm} disabled={saving} className="w-full py-6 text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-black text-xl uppercase tracking-widest rounded-2xl shadow-2xl shadow-blue-600/30 transition transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-50">
-                {saving ? 'Saving Form...' : 'Save Form'}
+            {/* Save Action */}
+            <div className="pt-6">
+              <button onClick={handleSaveForm} disabled={saving} className="w-full py-5 text-white bg-slate-900 hover:bg-black font-black text-lg uppercase tracking-[0.2em] rounded-2xl shadow-xl transition transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3">
+                {saving ? 'Synchronizing...' : <>Commit Save <ShieldCheck className="w-5 h-5"/></>}
               </button>
             </div>
           </div>
@@ -246,76 +267,78 @@ export default function DashboardForms() {
   }
 
   // --- LIST MODE ---
-  if (loading) return <div className="min-h-screen bg-slate-50 flex flex-col gap-4 items-center justify-center font-black text-blue-300 text-xl tracking-widest uppercase animate-pulse"><LayoutTemplate className="w-12 h-12 mb-2 text-indigo-200"/><span>Loading Forms...</span></div>;
+  if (loading) return <div className="min-h-screen bg-slate-50 flex flex-col gap-4 items-center justify-center font-black text-indigo-300 text-sm tracking-[0.2em] uppercase animate-pulse"><LayoutTemplate className="w-10 h-10 mb-2 opacity-30"/><span>Loading Forms...</span></div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8 font-sans">
-      <div className="w-[95%] md:w-[90%] max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center py-6 border-b border-slate-200 mb-8 bg-white rounded-3xl shadow-md shadow-slate-200/40 px-6 md:px-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-blue-50 to-transparent pointer-events-none"></div>
-          <div className="relative z-10 w-full md:w-auto">
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight drop-shadow-sm flex items-center gap-3">
-              <LayoutTemplate className="w-7 h-7 text-blue-600" />
-              Customer Feedback Forms
-            </h2>
-            <p className="text-slate-500 mt-1 font-medium text-sm ml-1">Manage and create custom forms</p>
+    <div className="min-h-screen bg-slate-50 py-8 px-6 font-sans">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header: Minimalist & Balanced */}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center py-6 border-b border-slate-200 gap-4">
+          <div>
+            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Form Administration</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              <LayoutTemplate className="w-7 h-7 text-slate-400" />
+              Manage Feedback Forms
+            </h1>
           </div>
-          <div className="flex flex-col sm:flex-row w-full md:w-auto justify-end gap-3 mt-6 md:mt-0 relative z-10">
-            <Link to="/dashboard" className="px-5 py-2.5 text-sm bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 font-black shadow-sm transition flex justify-center items-center gap-2 hover:border-slate-400 hover:text-slate-900">
-              <BarChart2 className="w-4 h-4 text-indigo-500" /> View Responses
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <Link to="/dashboard" className="flex-1 md:flex-none px-5 py-2.5 text-[11px] bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 font-black uppercase tracking-widest shadow-sm transition flex justify-center items-center gap-2">
+              <BarChart2 className="w-4 h-4 text-slate-400" /> Responses
             </Link>
             <button onClick={() => {
               setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build');
-            }} className="px-5 py-2.5 text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-black shadow-md shadow-blue-500/30 transition flex justify-center items-center gap-2 transform hover:-translate-y-0.5">
-              <Plus className="w-4 h-4" /> Create New Form
+            }} className="flex-1 md:flex-none px-5 py-2.5 text-[11px] bg-slate-900 text-white rounded-xl hover:bg-black font-black uppercase tracking-widest shadow-lg transition flex justify-center items-center gap-2 transform active:scale-95">
+              <Plus className="w-4 h-4" /> Create Form
             </button>
           </div>
-        </div>
+        </header>
 
         {forms.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 px-4 bg-white rounded-3xl border-2 border-dashed border-slate-200 shadow-sm text-center">
-            <LayoutTemplate className="w-16 h-16 text-slate-200 mb-4" />
-            <h2 className="text-xl font-bold text-slate-400 mb-2">No forms yet</h2>
-            <p className="text-slate-400 font-medium mb-6">Create your first form to start collecting feedback.</p>
-            <button onClick={() => { setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build'); }} className="px-6 py-3 text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-black shadow-md shadow-blue-500/30 transition flex justify-center items-center gap-2 transform hover:-translate-y-0.5">
-              <Plus className="w-4 h-4" /> Create New Form
+          <div className="flex flex-col items-center justify-center py-24 px-4 bg-white rounded-3xl border border-slate-200 shadow-sm text-center">
+            <div className="bg-slate-50 p-6 rounded-full border border-slate-100 mb-6"><LayoutTemplate className="w-12 h-12 text-slate-300" /></div>
+            <h2 className="text-xl font-black text-slate-900 mb-2">No active forms</h2>
+            <p className="text-slate-400 text-sm font-medium mb-8 max-w-sm">Every great relationship starts with feedback. Build your first questionnaire to start gathering insights.</p>
+            <button onClick={() => { setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build'); }} className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg hover:bg-indigo-700 transition">
+              Launch Builder
             </button>
           </div>
         ) : (
-          <div className="grid gap-6 md:gap-8" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))' }}>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {forms.map(form => (
-              <div key={form.id} className="bg-white p-5 md:p-6 rounded-3xl shadow-sm hover:shadow-lg border border-slate-200 flex flex-col justify-between transition-shadow duration-300 relative group">
-                <div className="flex flex-col">
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="font-extrabold text-2xl text-slate-800 break-words leading-tight tracking-tight">{form.title}</h3>
-                    <span className="shrink-0 bg-slate-100 text-slate-500 border border-slate-200 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md">ID {form.id}</span>
-                  </div>
+              <div key={form.id} className="bg-white p-6 rounded-3xl shadow-sm hover:shadow-md border border-slate-200 flex flex-col justify-between transition-all duration-300 relative group">
+                <div className="absolute top-4 right-4 text-[9px] font-black text-slate-300 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">ID {form.id}</div>
+                
+                <div className="flex flex-col mb-6">
+                  <h3 className="font-black text-xl text-slate-900 leading-tight tracking-tight mb-3 group-hover:text-indigo-600 transition-colors uppercase">{form.title}</h3>
+                  <p className="text-slate-500 font-medium text-[11px] line-clamp-3 min-h-[3rem] leading-relaxed">
+                    {form.description || <span className="text-slate-300 italic">No description provided</span>}
+                  </p>
                   
-                  {form.description ? (
-                    <p className="text-slate-500 font-medium text-sm truncate">{form.description}</p>
-                  ) : (
-                    <p className="text-slate-400 font-medium text-sm italic cursor-pointer hover:text-blue-500 transition inline-block truncate" onClick={() => editForm(form)}>*No description – click to edit*</p>
-                  )}
-                  
-                  <div className="mt-5 mb-2 inline-flex items-center gap-2 bg-indigo-50/70 text-indigo-700 border border-indigo-100/70 text-xs font-bold px-3 py-1.5 rounded-lg w-max">
-                    <BarChart2 className="w-4 h-4"/> {form.response_count || 0} Responses
+                  <div className="mt-6 flex items-center gap-2">
+                    <span className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1.5 uppercase">
+                       <BarChart2 className="w-3 h-3"/> {form.response_count || 0}
+                    </span>
+                    <span className="bg-slate-50 text-slate-400 border border-slate-100 text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
+                       {form.fields && (typeof form.fields === 'string' ? JSON.parse(form.fields).length : form.fields.length)} Fields
+                    </span>
                   </div>
                 </div>
 
-                <div className="mt-8 flex flex-col gap-3">
-                  <Link to={`/dashboard?formId=${form.id}`} aria-label={`View responses for ${form.title}`} className="w-full flex justify-center items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl transition shadow-sm">
-                    View Responses <ChevronRight className="w-4 h-4"/>
+                <div className="space-y-3 pt-6 border-t border-slate-100">
+                  <Link to={`/dashboard?formId=${form.id}`} className="w-full flex justify-center items-center gap-2 bg-slate-900 border border-slate-900 hover:bg-black text-white font-black uppercase text-[10px] tracking-widest py-3 rounded-xl transition shadow-sm active:scale-[0.98]">
+                    View Data <ChevronRight className="w-3 h-3"/>
                   </Link>
                   
-                  <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full">
-                    <button onClick={() => shareWhatsApp(form.uuid, form.title)} aria-label={`Share ${form.title} via WhatsApp`} className="flex-1 min-w-[30%] flex justify-center items-center gap-1.5 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold bg-white border border-slate-200 hover:border-emerald-200 py-3 px-2 rounded-2xl transition shadow-sm whitespace-nowrap">
-                      <MessageCircle className="w-4 h-4" /> Share
+                  <div className="grid grid-cols-3 gap-2">
+                    <button onClick={() => shareWhatsApp(form.uuid, form.title)} title="Share via WhatsApp" className="flex justify-center items-center bg-white border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 p-2.5 rounded-xl transition shadow-sm">
+                      <MessageCircle className="w-4 h-4" />
                     </button>
-                    <button onClick={() => { copyLink(form.uuid); alert('Link copied!'); }} aria-label={`Copy link for ${form.title}`} className="flex-1 min-w-[30%] flex justify-center items-center gap-1.5 text-slate-600 hover:text-blue-700 hover:bg-blue-50 text-xs font-bold bg-white border border-slate-200 hover:border-blue-200 py-3 px-2 rounded-2xl transition shadow-sm whitespace-nowrap">
-                      <LinkIcon className="w-4 h-4" /> Copy
+                    <button onClick={() => { copyLink(form.uuid); }} title="Copy Link" className="flex justify-center items-center bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 p-2.5 rounded-xl transition shadow-sm">
+                      <LinkIcon className="w-4 h-4" />
                     </button>
-                    <button onClick={() => editForm(form)} aria-label={`Edit form ${form.title}`} className="flex-none flex justify-center items-center gap-1.5 text-slate-600 hover:text-orange-700 hover:bg-orange-50 text-xs font-bold bg-white border border-slate-200 hover:border-orange-200 py-3 px-4 rounded-2xl transition shadow-sm" title="Edit Form">
-                      <Edit2 className="w-4 h-4" /> Edit
+                    <button onClick={() => editForm(form)} title="Edit Form" className="flex justify-center items-center bg-white border border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600 hover:text-orange-700 p-2.5 rounded-xl transition shadow-sm">
+                      <Edit2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

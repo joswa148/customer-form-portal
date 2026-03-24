@@ -143,233 +143,185 @@ export default function InteractiveForm() {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-slate-900 flex items-center justify-center font-bold text-white text-xl animate-pulse">Loading...</div>;
-  if (error) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-red-400 p-6 text-center text-xl">{error}</div>;
+  if (loading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center font-black text-indigo-300 text-sm tracking-[0.2em] uppercase animate-pulse">Initializing Experience...</div>;
+  if (error) return <div className="min-h-screen bg-slate-50 flex items-center justify-center text-red-500 p-6 text-center font-black tracking-tight text-2xl"><AlertCircle className="w-8 h-8 mr-3"/>{error}</div>;
 
   const isIntro = currentIndex === -1;
   const isOutro = currentIndex === fields.length;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white font-sans flex flex-col justify-center items-center p-6 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600"></div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col justify-center items-center p-6 relative overflow-hidden">
+      {/* Visual Accent */}
+      <div className="absolute top-0 w-full h-1.5 bg-indigo-600"></div>
       
-      {/* Progress Bar */}
+      {/* Progress Architecture */}
       {!isIntro && !submitSuccess && (
-        <div className="absolute top-6 w-full max-w-3xl px-6 flex flex-col gap-3">
-          <div className="flex justify-between items-center text-slate-400 text-sm font-bold tracking-widest uppercase">
-            <button onClick={handlePrev} className="hover:text-white transition flex items-center gap-1"><ChevronLeft className="w-4 h-4"/> Back</button>
-            <span>Question {Math.min(currentIndex + 1, fields.length)} of {fields.length}</span>
+        <div className="absolute top-8 w-full max-w-2xl px-6 flex flex-col gap-4">
+          <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            <button onClick={handlePrev} className="hover:text-indigo-600 transition flex items-center gap-1.5 active:scale-95"><ChevronLeft className="w-3.5 h-3.5"/> Step Back</button>
+            <span>Progress {Math.min(currentIndex + 1, fields.length)} / {fields.length}</span>
           </div>
-          <div className="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden shadow-inner">
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full transition-all duration-500 ease-out" style={{ width: `${(Math.min(currentIndex + 1, fields.length) / fields.length) * 100}%` }}></div>
+          <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden shadow-inner">
+            <div className="bg-indigo-600 h-full transition-all duration-700 ease-out" style={{ width: `${(Math.min(currentIndex + 1, fields.length) / fields.length) * 100}%` }}></div>
           </div>
         </div>
       )}
 
-      <div className="w-full max-w-3xl relative z-10 transition-all duration-500 ease-in-out">
+      <div className="w-full max-w-2xl relative z-10">
         
         {submitSuccess ? (
-          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-up">
-            <CheckCircle2 className="w-24 h-24 text-emerald-400 mx-auto mb-8 drop-shadow-lg" />
-            <h1 className="text-4xl md:text-5xl font-black mb-4">All Set!</h1>
-            <p className="text-xl text-slate-300 font-medium">{submitSuccess}</p>
-            <p className="mt-8 text-slate-500">You can safely close this window.</p>
+          <div className="text-center py-16 px-8 bg-white rounded-[2.5rem] border border-slate-200 shadow-2xl animate-fade-in-up">
+            <div className="bg-emerald-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-100 shadow-sm">
+               <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+            </div>
+            <h1 className="text-4xl font-black mb-4 tracking-tight">Mission Accomplished</h1>
+            <p className="text-lg text-slate-500 font-medium leading-relaxed">{submitSuccess}</p>
+            <div className="mt-12 pt-12 border-t border-slate-100 italic text-slate-300 text-xs font-bold uppercase tracking-widest">
+               Submission Securely Processed
+            </div>
           </div>
         ) : isIntro ? (
-          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-up px-4 max-w-lg mx-auto">
-             <h1 className="text-3xl md:text-4xl font-black mb-3 leading-tight">{formConfig.title}</h1>
-             <p className="text-lg text-slate-300 mb-6 font-medium leading-relaxed">{formConfig.description}</p>
+          <div className="bg-white p-10 md:p-12 rounded-[2.5rem] border border-slate-200 shadow-2xl animate-fade-in-up">
+             <div className="text-center mb-10">
+               <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2">Welcome</p>
+               <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">{formConfig.title}</h1>
+               <div className="h-1 w-12 bg-indigo-600 mx-auto rounded-full opacity-20 mb-4"></div>
+               <p className="text-slate-500 font-medium leading-relaxed">{formConfig.description}</p>
+             </div>
              
-             <div className="space-y-4 mb-8 text-left">
-               <div>
-                 <label className="block text-slate-400 text-sm font-bold mb-1 ml-1">Full Name <span className="text-red-400">*</span></label>
-                 <input type="text" value={userName} onChange={e => setUserName(e.target.value)} placeholder="John Doe" className="w-full bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500" />
+             <div className="space-y-6 mb-10">
+               {/* Identity Section: Same as FeedbackForm */}
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-1">
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name <span className="text-red-400">*</span></label>
+                   <input type="text" value={userName} onChange={e => setUserName(e.target.value)} placeholder="e.g. John Doe" className="w-full bg-slate-50/50 border border-slate-100 p-4 rounded-xl text-slate-900 font-semibold outline-none focus:border-indigo-600 focus:bg-white transition" />
+                 </div>
+                 <div className="space-y-1">
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email <span className="text-red-400">*</span></label>
+                   <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} placeholder="name@domain.com" className="w-full bg-slate-50/50 border border-slate-100 p-4 rounded-xl text-slate-900 font-semibold outline-none focus:border-indigo-600 focus:bg-white transition" />
+                 </div>
                </div>
-               <div>
-                 <label className="block text-slate-400 text-sm font-bold mb-1 ml-1">Email Address <span className="text-red-400">*</span></label>
-                 <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} placeholder="name@company.com" className="w-full bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500" />
-               </div>
-               <div>
-                 <label className="block text-slate-400 text-sm font-bold mb-1 ml-1">Phone Number <span className="text-red-400">*</span></label>
+               <div className="space-y-1">
+                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Cellular Contact <span className="text-red-400">*</span></label>
                  <div className="flex gap-2">
-                   <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="w-1/3 bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500 shrink-0 appearance-none">
-                     {countryCodes.map((c, i) => <option key={i} value={c.code}>{c.name}</option>)}
+                   <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="w-1/3 bg-slate-50/50 border border-slate-100 p-4 rounded-xl text-slate-900 font-bold outline-none focus:border-indigo-600 focus:bg-white transition appearance-none">
+                     {countryCodes.map((c, i) => <option key={i} value={c.code}>{c.name} ({c.code})</option>)}
                    </select>
-                   <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value)} placeholder="234 567 8900" className="w-2/3 bg-slate-800/80 border border-slate-700 p-3 rounded-xl text-white outline-none focus:border-indigo-500" />
+                   <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value)} placeholder="000 000 0000" className="w-2/3 bg-slate-50/50 border border-slate-100 p-4 rounded-xl text-slate-900 font-bold outline-none focus:border-indigo-600 focus:bg-white transition" />
                  </div>
                </div>
              </div>
              
              <button 
                onClick={handleNext} 
-               className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 transition transform flex items-center justify-center gap-3 w-full"
+               className="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-black text-white px-8 py-5 rounded-2xl text-lg font-black uppercase tracking-widest shadow-xl transition transform active:scale-[0.98]"
              >
-               Start Questionnaire <ChevronRight className="w-5 h-5"/>
+               Initialize Questionnaire <ChevronRight className="w-5 h-5"/>
              </button>
           </div>
         ) : isOutro ? (
-          <div className="text-center transform transition opacity-100 scale-100 animate-fade-in-right px-4">
-             <h2 className="text-3xl md:text-4xl font-black mb-3">You're almost done!</h2>
-             <p className="text-lg md:text-xl text-slate-400 mb-8">Click submit below to finish securely sending your questionnaire.</p>
+          <div className="bg-white p-12 rounded-[2.5rem] border border-slate-200 shadow-2xl animate-fade-in-right text-center">
+             <div className="bg-indigo-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 border border-indigo-100">
+                <Info className="w-10 h-10 text-indigo-600" />
+             </div>
+             <h2 className="text-3xl font-black mb-3 tracking-tight">One Last Step</h2>
+             <p className="text-slate-500 font-medium mb-10 leading-relaxed">Please review your entries. Once ready, click the button below to synchronize your data securely with our systems.</p>
              
              {submitError && (
-                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center justify-center gap-3 font-medium text-sm">
-                  <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}
+                <div className="mb-8 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-3 font-bold text-xs uppercase tracking-tight">
+                  <AlertCircle className="w-5 h-5 shrink-0 opacity-70"/> {submitError}
                 </div>
              )}
 
              <button 
                onClick={handleSubmit} 
                disabled={submitLoading}
-               className="w-full md:w-auto md:mx-auto bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-10 py-4 rounded-xl text-xl font-bold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-1 transition transform flex items-center justify-center gap-3 disabled:opacity-50"
+               className="w-full bg-slate-900 hover:bg-black text-white px-10 py-5 rounded-2xl text-xl font-black uppercase tracking-[0.2em] shadow-2xl transition transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4"
              >
-               {submitLoading ? 'Submitting...' : <>Finish & Submit <ShieldCheck className="w-6 h-6"/></>}
+               {submitLoading ? 'Synchronizing...' : <>Commit & Submit <ShieldCheck className="w-6 h-6"/></>}
              </button>
           </div>
         ) : (
-          <div className="transform transition opacity-100 scale-100 animate-fade-in-right px-4">
+          <div className="animate-fade-in-right">
             {/* Field Rendering */}
             {(() => {
               const field = fields[currentIndex];
               return (
-                <div className="w-full max-w-[720px] mx-auto">
-                  <h2 className="text-[1.125rem] md:text-[1.25rem] font-normal mb-4 leading-snug flex items-start gap-3">
-                     <span className="text-blue-500 font-bold">{currentIndex + 1}.</span> {field.label}
-                     {field.required && <span className="text-red-500">*</span>}
+                <div className="w-full max-w-xl mx-auto space-y-1">
+                  <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] ml-1 mb-2">Question {currentIndex + 1}</p>
+                  <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-8">
+                     {field.label} {field.required && <span className="text-indigo-400">*</span>}
                   </h2>
                   
-                  {field.type === 'text' || field.type === 'email' || field.type === 'number' ? (
-                     <div className="mb-6">
+                  <div className="space-y-6">
+                    {field.type === 'text' || field.type === 'email' || field.type === 'number' ? (
                        <input 
                          ref={inputRef}
                          type={field.type}
                          value={answers[field.id] || ''}
                          onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
                          onKeyDown={handleKeyDown}
-                         placeholder="Type your answer here..."
-                         className="w-full bg-slate-800/50 border-b border-slate-600 text-white px-0 py-3 text-lg md:text-xl outline-none focus:border-blue-500 transition placeholder:text-slate-600/80"
+                         placeholder="Synthesize your response..."
+                         className="w-full bg-transparent border-b-2 border-slate-200 text-2xl md:text-3xl font-black text-indigo-600 py-3 outline-none focus:border-indigo-600 transition placeholder:text-slate-200"
                        />
-                     </div>
-                  ) : field.type === 'textarea' ? (
-                     <div className="mb-6">
+                    ) : field.type === 'textarea' ? (
                        <textarea 
                          ref={inputRef}
                          value={answers[field.id] || ''}
                          onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
-                         placeholder="Type your detailed feedback here..."
-                         rows="4"
-                         className="w-full bg-slate-800/50 border border-slate-700 rounded-xl text-white p-4 text-base md:text-lg outline-none focus:border-blue-500 transition placeholder:text-slate-600/80 resize-y"
+                         placeholder="Provide detailed feedback..."
+                         rows="5"
+                         className="w-full bg-white border border-slate-200 rounded-2xl text-slate-900 p-5 text-lg font-semibold outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 transition shadow-sm"
                        />
-                     </div>
-                  ) : field.type === 'radio' || field.type === 'select' ? (
-                     <fieldset className="flex flex-col gap-3 mb-8 w-full">
-                       <legend className="sr-only">{field.label}</legend>
-                       {(field.options || []).map((opt, i) => {
-                         const isSelected = answers[field.id] === opt;
-                         return (
-                           <label 
-                             key={i}
-                             className={`text-left w-full py-3 px-4 border rounded-xl text-[0.9rem] md:text-[1rem] font-medium transition flex items-center justify-between cursor-pointer group hover:bg-slate-800 focus-within:ring-2 focus-within:ring-blue-500/50 ${isSelected ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-500'}`}
-                           >
-                             <input 
-                               type="radio" 
-                               name={field.id}
-                               value={opt}
-                               className="sr-only"
-                               autoFocus={i === 0 && !answers[field.id]}
-                               checked={isSelected}
-                               onChange={() => {
-                                 setAnswers(prev => ({...prev, [field.id]: opt}));
-                                 setTimeout(handleNext, 300);
-                               }}
-                             />
-                             <span className="flex items-center gap-3 leading-snug break-words">
-                               {opt}
-                             </span>
-                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${isSelected ? 'border-blue-400 bg-blue-500' : 'border-slate-500 group-hover:border-slate-400'}`}>
-                               {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
-                             </div>
-                           </label>
-                         )
-                       })}
-                     </fieldset>
-                  ) : field.type === 'checkbox' ? (
-                     <fieldset className="flex flex-col gap-3 mb-8 w-full">
-                       <legend className="sr-only">{field.label}</legend>
-                       {(field.options || []).map((opt, i) => {
-                         const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
-                         const isSelected = currentArr.includes(opt);
-                         return (
-                           <label 
-                             key={i}
-                             className={`text-left w-full py-3 px-4 border rounded-xl text-[0.9rem] md:text-[1rem] font-medium transition flex items-center justify-between cursor-pointer group hover:bg-slate-800 focus-within:ring-2 focus-within:ring-blue-500/50 ${isSelected ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-500'}`}
-                           >
-                             <input 
-                               type="checkbox" 
-                               name={field.id}
-                               value={opt}
-                               className="sr-only"
-                               autoFocus={i === 0 && (!answers[field.id] || answers[field.id].length === 0)}
-                               checked={isSelected}
-                               onChange={(e) => {
-                                 setAnswers(prev => {
-                                    const arr = Array.isArray(prev[field.id]) ? [...prev[field.id]] : [];
-                                    const next = e.target.checked ? [...arr, opt] : arr.filter(o => o !== opt);
-                                    return { ...prev, [field.id]: next };
-                                 });
-                                 // No auto-advance for checkbox lists
-                               }}
-                             />
-                             <span className="flex items-center gap-3 leading-snug break-words">
-                               {opt}
-                             </span>
-                             <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isSelected ? 'border-blue-400 bg-blue-500' : 'border-slate-500 group-hover:border-slate-400 bg-slate-800/50'}`}>
-                               {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
-                             </div>
-                           </label>
-                         )
-                       })}
-                     </fieldset>
-                  ) : field.type === 'dropdown-multi' ? (
-                     <div className="mb-4 w-full">
-                       <p className="text-xs text-slate-500 mb-2 font-medium">Select one or more options:</p>
-                       <div className="flex flex-col gap-1.5 max-h-[45vh] overflow-y-auto pr-1">
+                    ) : (field.type === 'radio' || field.type === 'select' || field.type === 'checkbox' || field.type === 'dropdown-multi') ? (
+                       <div className="flex flex-col gap-3">
                          {(field.options || []).map((opt, i) => {
+                           const isMulti = field.type === 'checkbox' || field.type === 'dropdown-multi';
                            const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
-                           const isSelected = currentArr.includes(opt);
+                           const isSelected = isMulti ? currentArr.includes(opt) : answers[field.id] === opt;
+                           
                            return (
-                             <button
+                             <button 
                                key={i}
-                               type="button"
                                onClick={() => {
-                                 setAnswers(prev => {
-                                   const arr = Array.isArray(prev[field.id]) ? [...prev[field.id]] : [];
-                                   const next = isSelected ? arr.filter(o => o !== opt) : [...arr, opt];
-                                   return { ...prev, [field.id]: next };
-                                 });
+                                 if (isMulti) {
+                                   setAnswers(prev => {
+                                     const arr = Array.isArray(prev[field.id]) ? [...prev[field.id]] : [];
+                                     const next = isSelected ? arr.filter(o => o !== opt) : [...arr, opt];
+                                     return { ...prev, [field.id]: next };
+                                   });
+                                 } else {
+                                   setAnswers(prev => ({...prev, [field.id]: opt}));
+                                   setTimeout(handleNext, 400);
+                                 }
                                }}
-                               className={`text-left w-full py-2.5 px-3 border rounded-lg text-[0.85rem] md:text-[0.9rem] font-medium transition flex items-center justify-between cursor-pointer group hover:bg-slate-800 ${isSelected ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:border-slate-500'}`}
+                               className={`group w-full p-4 rounded-xl border text-left flex items-center justify-between transition-all active:scale-[0.99] ${isSelected ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-400 shadow-sm'}`}
                              >
-                               <span className="flex items-center gap-3 leading-snug break-words">{opt}</span>
-                               <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isSelected ? 'border-blue-400 bg-blue-500' : 'border-slate-500 group-hover:border-slate-400 bg-slate-800/50'}`}>
-                                 {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
-                               </div>
+                                <span className={`font-black text-sm uppercase tracking-widest ${isSelected ? 'text-white' : 'text-slate-900 group-hover:text-indigo-600'}`}>{opt}</span>
+                                {isMulti ? (
+                                   <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-white bg-white/20' : 'border-slate-300'}`}>
+                                      {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={4} />}
+                                   </div>
+                                ) : (
+                                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-white bg-white/20' : 'border-slate-300'}`}>
+                                      {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                                   </div>
+                                )}
                              </button>
-                           );
+                           )
                          })}
                        </div>
-                     </div>
-                  ) : null}
+                    ) : null}
 
-                  <div className="flex flex-col sm:flex-row items-center gap-3 mt-4 w-full">
-                    <button 
-                      onClick={handleNext}
-                      className="bg-blue-600 w-full sm:w-auto text-white px-8 py-4 rounded-xl text-lg font-black hover:bg-blue-500 transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 active:scale-95"
-                    >
-                      Continue <ChevronRight className="w-6 h-6"/>
-                    </button>
-                    <span className="text-slate-500 text-sm hidden sm:inline-block">Press <strong>Enter ↵</strong></span>
+                    <div className="flex flex-col sm:flex-row items-center gap-4 pt-10">
+                      <button 
+                        onClick={handleNext}
+                        className="w-full sm:w-auto px-10 py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-black transition shadow-xl active:scale-[0.98] flex items-center justify-center gap-3"
+                      >
+                        Continue <ChevronRight className="w-5 h-5"/>
+                      </button>
+                      <span className="text-slate-400 text-[10px] uppercase font-black tracking-widest hidden sm:inline-block opacity-40">Press Enter ↵</span>
+                    </div>
                   </div>
                 </div>
               );
@@ -379,16 +331,10 @@ export default function InteractiveForm() {
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInRight {
-          from { opacity: 0; transform: translateX(30px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
-        .animate-fade-in-right { animation: fadeInRight 0.5s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: translateX(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade-in-right { animation: fadeInRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}} />
     </div>
   );
