@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { useParams } from 'react-router-dom';
 import { 
-  Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, 
-  Hash, List, MousePointerClick, MessageSquareText, CheckSquare,
-  User, Phone, Zap, ArrowRight, Star
+  Mail, CheckCircle2, ShieldCheck, AlertCircle, MessageSquareText, CheckSquare,
+  User, Zap, Star
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 
