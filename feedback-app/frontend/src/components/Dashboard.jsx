@@ -118,91 +118,63 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Main Analysis Architecture */}
+      {/* NEW: Horizontal Question Stepper Ribbon */}
+      <div className="bg-white border-b border-slate-100 px-6 py-3 shrink-0 flex items-center gap-6 overflow-hidden">
+        <div className="shrink-0 flex items-center gap-3 pr-6 border-r border-slate-100">
+           <div className="relative w-48">
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 pointer-events-none" />
+              <input 
+                type="text"
+                value={qSearch}
+                placeholder="Find question..."
+                onChange={(e) => setQSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-600 outline-none focus:border-indigo-500 focus:bg-white transition"
+              />
+           </div>
+           {qSearch && (
+              <button onClick={() => setQSearch('')} className="text-[9px] font-black text-indigo-500 uppercase">Reset</button>
+           )}
+        </div>
+
+        <div className="flex-1 overflow-x-auto custom-scrollbar flex items-center gap-2 pb-1 pr-4">
+           {allFields
+            .filter(f => !qSearch || (f.label && f.label.toLowerCase().includes(qSearch.toLowerCase())))
+            .map((f, i) => {
+              const originalIndex = allFields.findIndex(orig => orig.id === f.id);
+              const isActive = activeQuestionIndex === originalIndex;
+              return (
+                <button 
+                  key={f.id || i}
+                  onClick={() => {
+                    setActiveQuestionIndex(originalIndex);
+                    setActiveOptionFilter(null);
+                  }}
+                  className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all active:scale-95 whitespace-nowrap ${isActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100' : 'bg-slate-50 border-slate-100 text-slate-500 hover:border-slate-300 hover:bg-white'}`}
+                >
+                  <span className={`w-4 h-4 rounded flex items-center justify-center text-[9px] font-black ${isActive ? 'bg-white/20' : 'bg-slate-200 text-slate-500'}`}>
+                    {originalIndex + 1}
+                  </span>
+                  <span className="text-[10px] font-bold max-w-[150px] truncate">
+                    {f.label || 'Step'}
+                  </span>
+                  <ChevronRight className={`w-3 h-3 transition-opacity ${isActive ? 'opacity-100' : 'opacity-0'}`} />
+                </button>
+              );
+           })}
+        </div>
+      </div>
+
       <main className="flex-1 overflow-hidden p-6 grid grid-cols-12 gap-6">
         
-        {/* Left Surface: Question Navigator & Distribution (40%) */}
-        <section className="col-span-12 lg:col-span-5 xl:col-span-4 flex flex-col gap-6 overflow-hidden">
-          
-          {/* Question Navigator */}
-          <div className="bg-white rounded-[1.5rem] border border-slate-200 p-5 shadow-sm flex flex-col h-[320px]">
-             <div className="flex items-center justify-between mb-4 shrink-0">
-                <div>
-                  <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <LayoutTemplate className="w-4 h-4 text-emerald-500" /> Question Navigator
-                  </h2>
-                  <p className="text-[9px] font-bold text-slate-300 uppercase mt-0.5 tracking-tighter">Explore form structure</p>
-                </div>
-                {qSearch && (
-                  <button 
-                    onClick={() => setQSearch('')}
-                    className="text-[9px] font-black text-indigo-500 hover:text-indigo-700 uppercase"
-                  >
-                    Clear Search
-                  </button>
-                )}
-             </div>
-
-             {/* Search Bar */}
-             <div className="relative mb-3 shrink-0">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 pointer-events-none" />
-                <input 
-                  type="text"
-                  value={qSearch}
-                  placeholder="Find question..."
-                  onChange={(e) => setQSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[11px] font-bold text-slate-600 outline-none focus:border-indigo-500 focus:bg-white transition"
-                />
-             </div>
-
-             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1.5 pr-1">
-                {allFields
-                  .filter(f => !qSearch || (f.label && f.label.toLowerCase().includes(qSearch.toLowerCase())))
-                  .map((f, i) => {
-                    const originalIndex = allFields.findIndex(orig => orig.id === f.id);
-                    return (
-                      <button 
-                        key={f.id || i}
-                        onClick={() => {
-                          setActiveQuestionIndex(originalIndex);
-                          setActiveOptionFilter(null);
-                        }}
-                        className={`w-full p-3 rounded-2xl border text-left flex items-center gap-3 transition-all group relative overflow-hidden active:scale-[0.98] ${activeQuestionIndex === originalIndex ? 'bg-indigo-50 border-indigo-200 shadow-sm ring-1 ring-indigo-100 z-10' : 'bg-white border-slate-50 hover:border-slate-200 hover:bg-slate-50/50'}`}
-                      >
-                        {activeQuestionIndex === originalIndex && (
-                          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-600 rounded-r-full shadow-[2px_0_8px_rgba(79,70,229,0.4)]" />
-                        )}
-                        <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black transition-colors ${activeQuestionIndex === originalIndex ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-slate-100 text-slate-400 group-hover:bg-slate-200 group-hover:text-slate-600'}`}>
-                          {originalIndex + 1}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-[12px] font-black leading-tight truncate ${activeQuestionIndex === originalIndex ? 'text-indigo-900 font-black' : 'text-slate-600 font-bold'}`}>
-                            {f.label || 'Unnamed Question'}
-                          </p>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className={`text-[8px] font-black uppercase tracking-widest ${activeQuestionIndex === originalIndex ? 'text-indigo-400' : 'text-slate-300'}`}>
-                              {f.type || 'Field'}
-                            </span>
-                          </div>
-                        </div>
-                        {activeQuestionIndex === originalIndex && (
-                           <ChevronRight className="w-4 h-4 text-indigo-400" />
-                        )}
-                      </button>
-                    );
-                })}
-                {allFields.length === 0 && <div className="text-[10px] font-bold text-slate-400 text-center py-10 italic">No questions found for this form.</div>}
-             </div>
-          </div>
-
-          {/* Distribution Insights Chart */}
+        {/* Left Surface: Full-Height Distribution (40%) */}
+        <section className="col-span-12 lg:col-span-12 xl:col-span-4 flex flex-col overflow-hidden">
           <div className="bg-white rounded-[1.5rem] border border-slate-200 p-5 shadow-sm flex-1 flex flex-col overflow-hidden">
              <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex flex-col">
                   <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                     <PieChart className="w-4 h-4 text-indigo-500" /> Distribution Insight
                   </h2>
-                  <p className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">Click bars to filter leads</p>
+                  <p className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">Click bars to filter lead matrix</p>
                 </div>
                 {activeOptionFilter && (
                    <button 
@@ -214,28 +186,30 @@ export default function Dashboard() {
                 )}
              </div>
              
-             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
-                {distributionData.length === 0 ? (
+             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-2">
+                {!activeQuestion ? (
+                  <div className="h-full flex items-center justify-center opacity-30 italic text-[11px] text-slate-400">Loading form structure...</div>
+                ) : distributionData.length === 0 ? (
                    <div className="h-full flex flex-col items-center justify-center opacity-30 italic text-[11px] text-slate-400">No responses recorded for this step.</div>
                 ) : (
                   distributionData.map((d, i) => (
                     <button 
                       key={i} 
                       onClick={() => setActiveOptionFilter(d.label === activeOptionFilter ? null : d.label)}
-                      className={`w-full group text-left p-1 rounded-xl transition-all ${activeOptionFilter === d.label ? 'bg-indigo-50/50 ring-1 ring-indigo-100' : 'hover:bg-slate-50'}`}
+                      className={`w-full group text-left p-1.5 rounded-xl transition-all ${activeOptionFilter === d.label ? 'bg-indigo-50 shadow-sm ring-1 ring-indigo-100' : 'hover:bg-slate-50'}`}
                     >
                       <div className="flex justify-between items-end mb-1 px-1">
                         <span 
-                          className={`text-[11px] font-black uppercase tracking-tight truncate max-w-[80%] ${activeOptionFilter === d.label ? 'text-indigo-600' : 'text-slate-600'}`}
+                          className={`text-[10px] font-black uppercase tracking-tight truncate max-w-[85%] ${activeOptionFilter === d.label ? 'text-indigo-600' : 'text-slate-600'}`}
                           title={d.label}
                         >
                           {d.label}
                         </span>
-                        <span className="text-[10px] font-black text-slate-300">{d.pct}%</span>
+                        <span className="text-[9px] font-black text-slate-300">{d.pct}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+                      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
                         <div 
-                          className={`h-full transition-all duration-1000 ease-out rounded-full ${activeOptionFilter === d.label ? 'bg-indigo-600 shadow-[0_0_8px_rgba(79,70,229,0.4)]' : 'bg-indigo-300 group-hover:bg-indigo-400'}`}
+                          className={`h-full transition-all duration-1000 ease-out rounded-full ${activeOptionFilter === d.label ? 'bg-indigo-600 shadow-[0_0_8px_rgba(79,70,229,0.4)]' : 'bg-indigo-400 group-hover:bg-indigo-500'}`}
                           style={{ width: `${d.pct}%` }}
                         ></div>
                       </div>
@@ -247,7 +221,7 @@ export default function Dashboard() {
         </section>
 
         {/* Right Surface: Filtered Response Matrix (60%) */}
-        <section className="col-span-12 lg:col-span-7 xl:col-span-8 bg-white rounded-[2rem] border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+        <section className="col-span-12 lg:col-span-12 xl:col-span-8 bg-white rounded-[2rem] border border-slate-200 shadow-sm flex flex-col overflow-hidden">
            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
               <div className="flex flex-col">
                 <h2 className="text-sm font-black text-slate-800 tracking-tight flex items-center gap-2 uppercase">
@@ -259,12 +233,29 @@ export default function Dashboard() {
                    </span>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                 <span className="text-[10px] font-black px-2 py-1 bg-white border border-slate-100 rounded-lg text-slate-500">
-                    {filteredResponses.length} Matches
-                 </span>
+              <div className="flex items-center gap-3">
+                 <div className="text-[10px] font-black px-2 py-1 bg-white border border-slate-100 rounded-lg text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-500" /> {filteredResponses.length} Records
+                 </div>
               </div>
            </div>
+           
+           <div className="flex-1 overflow-hidden relative">
+              <ResponsesTable 
+                responses={filteredResponses} 
+                forms={forms} 
+                allFields={allFields}
+                activeQuestionIndex={activeQuestionIndex}
+                onDelete={async (id) => {
+                   if (!window.confirm("Purge this lead?")) return;
+                   try {
+                     await axios.delete(`${API_URL}/responses/${id}`);
+                     setResponses(prev => prev.filter(r => r.id !== id));
+                   } catch(e) { console.error(e); }
+                }}
+              />
+           </div>
+        </section>
            
            <div className="flex-1 overflow-hidden relative">
               <ResponsesTable 
