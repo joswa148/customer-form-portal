@@ -111,22 +111,22 @@ export default function FeedbackForm() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-12 px-6 font-sans flex flex-col items-center relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 py-6 px-4 font-sans flex flex-col items-center relative overflow-hidden selection:bg-indigo-500 selection:text-white">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
       
       <div className="w-full max-w-2xl relative z-10 animate-fade-in-up">
-        <header className="text-center mb-8">
-           <div className="w-12 h-1 bg-indigo-500 mx-auto mb-6 rounded-full"></div>
-           <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-3">Enterprise Feedback Node</p>
-           <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight mb-3 uppercase">{formConfig.title}</h1>
-           {formConfig.description && <p className="text-slate-400 text-xs font-bold max-w-xl mx-auto leading-relaxed">{formConfig.description}</p>}
+        <header className="text-center mb-6">
+           <div className="w-10 h-1 bg-indigo-500 mx-auto mb-4 rounded-full"></div>
+           <p className="text-[8px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-2">Feedback Node</p>
+           <h1 className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight mb-2 uppercase">{formConfig.title}</h1>
+           {formConfig.description && <p className="text-slate-400 text-[11px] font-bold max-w-lg mx-auto leading-relaxed">{formConfig.description}</p>}
         </header>
 
         <div className="bg-white/95 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.4)] border border-white/20 rounded-[2rem] overflow-hidden relative group">
           <div className="absolute top-0 w-full h-2 bg-indigo-600"></div>
           
-          <div className="p-6 md:p-10">
+          <div className="p-5 md:p-8">
             {submitError && (
               <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 font-black text-[11px] uppercase tracking-wider rounded-2xl flex items-center gap-4 animate-shake">
                 <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}

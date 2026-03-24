@@ -252,7 +252,7 @@ export default function InteractiveForm() {
   const isOutro = currentIndex === fields.length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col justify-center items-center p-4 md:p-12 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col justify-center items-center p-2 md:p-6 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
       {/* Background Glow */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
@@ -282,7 +282,7 @@ export default function InteractiveForm() {
       <div className="w-full max-w-[540px] relative z-10 animate-fade-in-up">
         
         {!submitSuccess && !isIntro && (
-          <div className="mb-6 flex justify-between items-end px-4">
+          <div className="mb-4 flex justify-between items-end px-3">
             <button 
               onClick={handlePrev} 
               className="text-[10px] font-black text-slate-500 hover:text-indigo-400 uppercase tracking-[0.3em] flex items-center gap-2 transition-all active:scale-[0.95] outline-none group"
@@ -299,7 +299,7 @@ export default function InteractiveForm() {
         )}
 
         {/* Form Container: Glass-Matrix Aesthetic */}
-        <div className="bg-white/95 backdrop-blur-xl p-6 md:p-10 rounded-[2rem] shadow-[0_30px_80px_rgba(0,0,0,0.4)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
+        <div className="bg-white/95 backdrop-blur-xl p-4 md:p-8 rounded-[1.5rem] shadow-[0_30px_80px_rgba(0,0,0,0.4)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
           <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
           
           {submitSuccess ? (
@@ -318,14 +318,14 @@ export default function InteractiveForm() {
             </div>
           ) : isIntro ? (
             <div className="animate-fade-in-up">
-               <header className="text-center mb-8">
-                 <div className="w-12 h-1 bg-indigo-600 mx-auto mb-6 rounded-full"></div>
+               <header className="text-center mb-6">
+                 <div className="w-10 h-1 bg-indigo-600 mx-auto mb-4 rounded-full"></div>
                  <p className="text-[9px] font-black text-indigo-600 uppercase tracking-[0.4em] mb-2">Secure Intake Session</p>
                  <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-3 uppercase">{formConfig.title}</h1>
                  <p className="text-slate-500 text-[12px] font-bold leading-relaxed max-w-xs mx-auto opacity-70">{formConfig.description}</p>
                </header>
                
-               <div className="space-y-6 mb-10">
+               <div className="space-y-4 mb-8">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2">
                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
@@ -418,15 +418,15 @@ export default function InteractiveForm() {
                
                <button 
                  onClick={handleNext} 
-                 className="w-full group/btn flex items-center justify-center gap-4 bg-slate-950 hover:bg-black text-white px-8 py-6 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all transform active:scale-[0.97] hover:shadow-[0_25px_50px_rgba(79,70,229,0.2)]"
+                 className="w-full group/btn flex items-center justify-center gap-3 bg-slate-950 hover:bg-black text-white px-6 py-5 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_15px_30px_rgba(0,0,0,0.3)] transition-all transform active:scale-[0.97]"
                >
-                 Start Data Entry <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform"/>
+                 Start Entry <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"/>
                </button>
 
-               <div className="mt-8 flex items-center gap-3 bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100/50">
-                  <ShieldCheck className="w-5 h-5 text-indigo-500 shrink-0"/>
-                  <p className="text-[10px] font-black text-indigo-700/60 leading-tight uppercase tracking-wider">
-                     Secure 256-bit encryption active for this submission session.
+               <div className="mt-6 flex items-center gap-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/50">
+                  <ShieldCheck className="w-4 h-4 text-indigo-500 shrink-0"/>
+                  <p className="text-[9px] font-black text-indigo-700/60 leading-tight uppercase tracking-widest">
+                     Secure 256-bit encryption active.
                   </p>
                </div>
             </div>
@@ -461,12 +461,12 @@ export default function InteractiveForm() {
                 <h2 
                   ref={questionHeadingRef} 
                   tabIndex="-1" 
-                  className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-8 outline-none focus:text-indigo-600 transition-colors uppercase"
+                  className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight mb-6 outline-none focus:text-indigo-600 transition-colors uppercase"
                 >
                    {fields[currentIndex]?.label} {fields[currentIndex]?.required && <span className="text-indigo-400 font-black ml-1">*</span>}
                 </h2>
                 
-                <div className="space-y-8">
+                <div className="space-y-6">
                    {(() => {
                      const field = fields[currentIndex];
                      if (!field) return null;
@@ -494,9 +494,9 @@ export default function InteractiveForm() {
                             ref={inputRef}
                             value={answers[field.id] || ''}
                             onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
-                            placeholder="Provide deep-dive context here..."
-                            rows="5"
-                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] text-slate-900 p-8 text-md font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[16px] focus:ring-indigo-600/5 transition shadow-sm resize-none placeholder:text-slate-300"
+                            placeholder="Provide context..."
+                            rows="3"
+                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl text-slate-900 p-4 text-sm font-black outline-none focus:border-indigo-600 focus:bg-white transition shadow-sm resize-none placeholder:text-slate-300"
                           />
                         );
                      }
@@ -532,15 +532,15 @@ export default function InteractiveForm() {
                                         autoAdvanceTimer.current = setTimeout(handleNext, 400);
                                      }
                                    }}
-                                   className={`group w-full p-5 rounded-2xl border-2 text-left flex items-center justify-between transition-all duration-300 active:scale-[0.97] outline-none ${isSelected ? 'bg-indigo-600 border-indigo-600 shadow-[0_15px_30px_rgba(79,70,229,0.3)]' : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'}`}
+                                   className={`group w-full p-3.5 rounded-xl border-2 text-left flex items-center justify-between transition-all duration-300 active:scale-[0.97] outline-none ${isSelected ? 'bg-indigo-600 border-indigo-600 shadow-md' : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'}`}
                                  >
-                                    <span className={`font-black text-[11px] uppercase tracking-[0.2em] ${isSelected ? 'text-white' : 'text-slate-800'}`}>{label}</span>
+                                    <span className={`font-black text-[9px] uppercase tracking-[0.1em] ${isSelected ? 'text-white' : 'text-slate-800'}`}>{label}</span>
                                     {isSelected ? (
-                                       <CheckCircle2 className="w-5 h-5 text-white animate-fade-in-up" strokeWidth={3} />
+                                       <CheckCircle2 className="w-4 h-4 text-white animate-fade-in-up" strokeWidth={3} />
                                     ) : (
-                                       <div className={`w-5 h-5 rounded-lg border-2 border-slate-200 transition-colors ${isMulti ? 'rounded-md' : 'rounded-full'}`} />
+                                       <div className={`w-4 h-4 rounded-md border-2 border-slate-200 transition-colors ${isMulti ? 'rounded-sm' : 'rounded-full'}`} />
                                     )}
-                                 </button>
+                                  </button>
                                )
                              })}
                           </div>
@@ -549,10 +549,10 @@ export default function InteractiveForm() {
                      return null;
                    })()}
 
-                   <div className="flex flex-col sm:flex-row items-center gap-6 pt-6 border-t border-slate-100 mt-8">
+                   <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-slate-100 mt-6">
                      <button 
                        onClick={handleNext}
-                       className="w-full sm:w-auto px-10 py-5 bg-slate-950 hover:bg-black text-white rounded-xl font-black uppercase tracking-[0.4em] text-[10px] transition-all shadow-[0_15px_30px_rgba(0,0,0,0.3)] active:scale-[0.97] flex items-center justify-center gap-3"
+                       className="w-full sm:w-auto px-8 py-4 bg-slate-950 hover:bg-black text-white rounded-lg font-black uppercase tracking-[0.3em] text-[10px] transition-all shadow-md active:scale-[0.97] flex items-center justify-center gap-3"
                      >
                         Confirm Entry <ArrowRight className="w-4 h-4"/>
                      </button>
@@ -567,12 +567,12 @@ export default function InteractiveForm() {
         </div>
         
         {/* Footer Meta */}
-        <div className="mt-12 flex justify-between items-center px-4">
-           <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Secure Link Active</span>
+        <div className="mt-8 flex justify-between items-center px-4">
+           <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Secure session</span>
            </div>
-           <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest opacity-40">Antigravity Response Engine v2.4</span>
+           <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest opacity-30">Antigravity Engine v2.4</span>
         </div>
       </div>
 
