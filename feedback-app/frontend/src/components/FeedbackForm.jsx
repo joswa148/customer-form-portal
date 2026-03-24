@@ -115,18 +115,18 @@ export default function FeedbackForm() {
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
       
-      <div className="w-full max-w-3xl relative z-10">
-        <header className="text-center mb-12">
-           <div className="w-16 h-1 bg-indigo-500 mx-auto mb-6 rounded-full"></div>
-           <p className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-3">Enterprise Feedback Node</p>
-           <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-none mb-4 uppercase">{formConfig.title}</h1>
-           {formConfig.description && <p className="text-slate-400 text-sm font-bold max-w-xl mx-auto leading-relaxed">{formConfig.description}</p>}
+      <div className="w-full max-w-2xl relative z-10 animate-fade-in-up">
+        <header className="text-center mb-8">
+           <div className="w-12 h-1 bg-indigo-500 mx-auto mb-6 rounded-full"></div>
+           <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-3">Enterprise Feedback Node</p>
+           <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight mb-3 uppercase">{formConfig.title}</h1>
+           {formConfig.description && <p className="text-slate-400 text-xs font-bold max-w-xl mx-auto leading-relaxed">{formConfig.description}</p>}
         </header>
 
-        <div className="bg-white/95 backdrop-blur-xl shadow-[0_40px_100px_rgba(0,0,0,0.5)] border border-white/20 rounded-[2.5rem] overflow-hidden relative group">
+        <div className="bg-white/95 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.4)] border border-white/20 rounded-[2rem] overflow-hidden relative group">
           <div className="absolute top-0 w-full h-2 bg-indigo-600"></div>
           
-          <div className="p-8 md:p-12">
+          <div className="p-6 md:p-10">
             {submitError && (
               <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 font-black text-[11px] uppercase tracking-wider rounded-2xl flex items-center gap-4 animate-shake">
                 <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}

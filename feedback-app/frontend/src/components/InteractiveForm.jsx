@@ -299,7 +299,7 @@ export default function InteractiveForm() {
         )}
 
         {/* Form Container: Glass-Matrix Aesthetic */}
-        <div className="bg-white/95 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
+        <div className="bg-white/95 backdrop-blur-xl p-6 md:p-10 rounded-[2rem] shadow-[0_30px_80px_rgba(0,0,0,0.4)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
           <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
           
           {submitSuccess ? (
@@ -466,7 +466,7 @@ export default function InteractiveForm() {
                    {fields[currentIndex]?.label} {fields[currentIndex]?.required && <span className="text-indigo-400 font-black ml-1">*</span>}
                 </h2>
                 
-                <div className="space-y-12">
+                <div className="space-y-8">
                    {(() => {
                      const field = fields[currentIndex];
                      if (!field) return null;
@@ -481,9 +481,9 @@ export default function InteractiveForm() {
                               onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
                               onKeyDown={handleKeyDown}
                               placeholder="Type response..."
-                              className="w-full bg-transparent border-b-4 border-slate-100 text-2xl md:text-3xl font-black text-indigo-600 py-6 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-100 active:scale-[0.99] focus:placeholder:opacity-0"
+                              className="w-full bg-transparent border-b-2 border-slate-100 text-xl md:text-2xl font-black text-indigo-600 py-4 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-100 active:scale-[0.99] focus:placeholder:opacity-0"
                             />
-                            <div className="absolute right-0 bottom-6 text-[10px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-focus-within:opacity-100 transition-opacity">Press Enter ↵</div>
+                            <div className="absolute right-0 bottom-4 text-[9px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-focus-within:opacity-100 transition-opacity">Press Enter ↵</div>
                           </div>
                         );
                      }
@@ -549,7 +549,7 @@ export default function InteractiveForm() {
                      return null;
                    })()}
 
-                   <div className="flex flex-col sm:flex-row items-center gap-8 pt-8 border-t border-slate-100 mt-12">
+                   <div className="flex flex-col sm:flex-row items-center gap-6 pt-6 border-t border-slate-100 mt-8">
                      <button 
                        onClick={handleNext}
                        className="w-full sm:w-auto px-10 py-5 bg-slate-950 hover:bg-black text-white rounded-xl font-black uppercase tracking-[0.4em] text-[10px] transition-all shadow-[0_15px_30px_rgba(0,0,0,0.3)] active:scale-[0.97] flex items-center justify-center gap-3"
