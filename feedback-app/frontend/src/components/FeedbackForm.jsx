@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, Hash, List, MousePointerClick, MessageSquareText, CheckSquare } from 'lucide-react';
+import { 
+  Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, 
+  Hash, List, MousePointerClick, MessageSquareText, CheckSquare,
+  User, Phone, Zap, ArrowRight
+} from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 
 const API_URL = 'http://localhost:5002/api';
@@ -81,7 +85,7 @@ export default function FeedbackForm() {
         userPhone: `${userPhoneCode} ${userPhoneNumber.trim()}`,
         answers
       });
-      setSubmitSuccess('Success! Your response has been submitted.');
+      setSubmitSuccess('Your data has been committed to the secure hub.');
       setAnswers(fields.reduce((acc, f) => ({ ...acc, [f.id]: '' }), {}));
       setUserEmail('');
       setUserName('');
@@ -94,173 +98,191 @@ export default function FeedbackForm() {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center font-black text-blue-300 text-xl tracking-widest uppercase animate-pulse"><ShieldCheck className="w-10 h-10 mr-3 text-indigo-300"/> Loading...</div>;
+  if (loading) return <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center font-black text-indigo-400 text-xs tracking-[0.4em] uppercase animate-pulse"><Zap className="w-12 h-12 mb-4 text-indigo-500"/> Synchronizing Form Node...</div>;
   
   if (error) return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-       <div className="flex flex-col items-center bg-white p-12 shadow-2xl rounded-3xl border border-red-100 max-w-lg">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
+       <div className="flex flex-col items-center bg-white p-12 shadow-2xl rounded-[2.5rem] border border-red-100 max-w-lg">
           <AlertCircle className="w-20 h-20 text-red-500 mb-6 drop-shadow-md"/>
-          <h2 className="text-2xl font-black text-slate-800 mb-2">Connection Failed</h2>
-          <p className="text-slate-500 font-medium text-center">{error}</p>
+          <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">Access Denied</h2>
+          <p className="text-slate-500 font-bold text-center">{error}</p>
        </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-6 font-sans flex flex-col items-center">
-      {/* Container: Balanced max-width and spacing */}
-      <div className="w-full max-w-3xl bg-white shadow-sm border border-slate-200 rounded-3xl overflow-hidden relative">
-        <div className="absolute top-0 w-full h-1 bg-indigo-600"></div>
-        
-        {/* Header: Professional and clean */}
-        <header className="p-8 pb-4 border-b border-slate-100 bg-white relative">
-          <div className="absolute top-8 right-8 pointer-events-none opacity-5"><ShieldCheck className="w-16 h-16 text-indigo-100"/></div>
-          <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-2">Customer Questionnaire</p>
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">{formConfig.title}</h1>
-          {formConfig.description && <p className="text-slate-500 text-sm font-semibold max-w-2xl leading-relaxed">{formConfig.description}</p>}
+    <div className="min-h-screen bg-slate-950 text-slate-100 py-12 px-6 font-sans flex flex-col items-center relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
+      
+      <div className="w-full max-w-3xl relative z-10">
+        <header className="text-center mb-12">
+           <div className="w-16 h-1 bg-indigo-500 mx-auto mb-6 rounded-full"></div>
+           <p className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-3">Enterprise Feedback Node</p>
+           <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-none mb-4 uppercase">{formConfig.title}</h1>
+           {formConfig.description && <p className="text-slate-400 text-sm font-bold max-w-xl mx-auto leading-relaxed">{formConfig.description}</p>}
         </header>
 
-        <div className="p-8">
-          {submitError && (
-            <div className="mb-8 p-4 bg-red-50 border border-red-100 text-red-700 text-xs font-black shadow-inner rounded-xl flex items-center gap-3">
-              <AlertCircle className="w-4 h-4 shrink-0"/> {submitError}
-            </div>
-          )}
+        <div className="bg-white/95 backdrop-blur-xl shadow-[0_40px_100px_rgba(0,0,0,0.5)] border border-white/20 rounded-[2.5rem] overflow-hidden relative group">
+          <div className="absolute top-0 w-full h-2 bg-indigo-600"></div>
           
-          {submitSuccess && (
-            <div className="mb-8 p-5 bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-xl flex items-start gap-4">
-              <CheckCircle2 className="w-6 h-6 shrink-0 text-emerald-500"/> 
-              <div>
-                <span className="block text-sm font-black uppercase tracking-tight mb-1">Response Received</span>
-                <span className="text-emerald-600 font-semibold text-xs block">{submitSuccess}</span>
+          <div className="p-8 md:p-12">
+            {submitError && (
+              <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 font-black text-[11px] uppercase tracking-wider rounded-2xl flex items-center gap-4 animate-shake">
+                <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}
               </div>
-            </div>
-          )}
+            )}
+            
+            {submitSuccess && (
+              <div className="mb-12 text-center p-10 bg-emerald-50 border-2 border-emerald-100 rounded-[2rem] animate-fade-in-up">
+                <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3">
+                   <CheckCircle2 className="w-8 h-8 text-white" strokeWidth={3}/> 
+                </div>
+                <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Committed</h2>
+                <p className="text-slate-500 font-bold text-sm leading-relaxed">{submitSuccess}</p>
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Identity Card: Compact and professional */}
-            <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-200 relative overflow-hidden">
-              <div className="absolute top-1/2 right-4 -translate-y-1/2 opacity-[0.03] pointer-events-none hover:opacity-10 transition">
-                <Info className="w-20 h-20 text-slate-900" />
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                 <div className="col-span-full">
-                   <label className="text-[10px] font-black text-slate-500 mb-2 tracking-widest uppercase flex items-center gap-2">
-                     Full Name <span className="text-indigo-400 leading-none">*</span>
-                   </label>
-                   <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-white font-bold text-slate-800 placeholder:text-slate-300 transition" placeholder="Your name" required />
-                 </div>
-                 <div>
-                   <label className="text-[10px] font-black text-slate-500 mb-2 tracking-widest uppercase flex items-center gap-2">
-                     Email <span className="text-indigo-400 leading-none">*</span>
-                   </label>
-                   <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-white font-bold text-slate-800 placeholder:text-slate-300 transition" placeholder="name@company.com" required />
-                 </div>
-                 <div>
-                   <label className="text-[10px] font-black text-slate-500 mb-2 tracking-widest uppercase flex items-center gap-2">
-                     Phone Number <span className="text-indigo-400 leading-none">*</span>
-                   </label>
-                   <div className="flex gap-2">
-                     <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="w-[100px] px-3 py-3 text-sm border border-slate-200 rounded-xl outline-none bg-white font-bold text-slate-800 cursor-pointer appearance-none shrink-0">
-                       {countryCodes.map((c, i) => <option key={i} value={c.code}>{c.name}</option>)}
-                     </select>
-                     <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value)} className="flex-1 px-4 py-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 bg-white font-bold text-slate-800 placeholder:text-slate-300 transition" placeholder="Phone number" required />
-                   </div>
-                 </div>
-              </div>
-            </div>
-
-            {/* Questions List: Distinct card design */}
-            <div className="space-y-4">
-              {fields.map((field, idx) => (
-                <div key={field.id} className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:border-indigo-200 transition-colors duration-200 relative group overflow-hidden">
-                  <label className="block text-sm font-black text-slate-800 mb-4 flex items-start gap-3">
-                    <span className="bg-slate-50 text-slate-400 rounded-md px-1.5 py-0.5 text-[9px] shrink-0 border border-slate-100 flex items-center justify-center font-black uppercase">Q{idx + 1}</span>
-                    <span className="leading-tight">{field.label} {field.required && <span className="text-indigo-500 font-bold ml-0.5" title="Required">*</span>}</span>
-                  </label>
-                  
-                  <div className="pl-0 md:pl-10">
-                    {field.type === 'text' || field.type === 'email' ? (
-                      <div className="relative">
-                        <input 
-                          type={field.type} 
-                          value={answers[field.id] || ''}
-                          onChange={e => handleChange(field.id, e.target.value)}
-                          className="w-full px-4 py-3 border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-400 bg-slate-50/50 focus:bg-white transition text-xs font-bold text-slate-700"
-                          required={field.required}
-                          placeholder="Type your answer..."
-                        />
+            {!submitSuccess && (
+              <form onSubmit={handleSubmit} className="space-y-12">
+                {/* ID Card */}
+                <div className="space-y-6">
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3">
+                    <User className="w-4 h-4 text-indigo-400"/> Authentication Matrix
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="col-span-full">
+                      <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Identity Name</label>
+                      <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-300" placeholder="e.g. Liam Anderson" required />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Email Verification</label>
+                      <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-600/5 transition text-sm placeholder:text-slate-300" placeholder="name@domain.com" required />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Mobile Access</label>
+                      <div className="flex gap-1">
+                        <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="w-[80px] bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-[11px] font-black outline-none appearance-none cursor-pointer hover:bg-slate-100 text-slate-700">
+                          {countryCodes.map((c, i) => <option key={i} value={c.code}>{c.flag}</option>)}
+                        </select>
+                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-300" placeholder="000 000 0000" required />
                       </div>
-                    ) : field.type === 'number' ? (
-                      <input 
-                        type="number" 
-                        value={answers[field.id] || ''}
-                        onChange={e => handleChange(field.id, e.target.value)}
-                        className="w-full md:w-1/2 px-4 py-3 border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-400 bg-slate-50/50 focus:bg-white transition text-xs font-black text-slate-700"
-                        required={field.required}
-                        placeholder="0"
-                      />
-                    ) : field.type === 'textarea' ? (
-                      <textarea 
-                        value={answers[field.id] || ''}
-                        onChange={e => handleChange(field.id, e.target.value)}
-                        rows="3"
-                        className="w-full px-4 py-3 border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-400 bg-slate-50/50 focus:bg-white transition text-xs font-bold text-slate-700 resize-none leading-relaxed"
-                        required={field.required}
-                        placeholder="Share your thoughts..."
-                      />
-                    ) : (field.type === 'select' || field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown-multi') ? (
-                      <div className="flex flex-col gap-2">
-                        {(field.options || []).map((opt, i) => {
-                          const isSelection = field.type === 'radio' || field.type === 'select';
-                          const isSelected = isSelection ? answers[field.id] === opt : (Array.isArray(answers[field.id]) && answers[field.id].includes(opt));
-                          
-                          return (
-                            <label key={i} className={`flex items-center gap-3 cursor-pointer px-4 py-3 rounded-xl border transition-all ${isSelected ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' : 'bg-slate-50/50 border-slate-100 hover:border-slate-300 text-slate-600'}`}>
-                              <input 
-                                type={isSelection ? "radio" : "checkbox"}
-                                name={field.id}
-                                value={opt}
-                                checked={isSelected}
-                                onChange={(e) => {
-                                  if (isSelection) {
-                                    handleChange(field.id, opt);
-                                  } else {
-                                    const arr = Array.isArray(answers[field.id]) ? [...answers[field.id]] : [];
-                                    const next = e.target.checked ? [...arr, opt] : arr.filter(o => o !== opt);
-                                    handleChange(field.id, next);
-                                  }
-                                }}
-                                className="sr-only"
-                              />
-                              <div className={`w-3 h-3 rounded-full flex items-center justify-center border-2 transition-colors ${isSelected ? 'bg-white border-white' : 'border-slate-300'}`}>
-                                {isSelected && <div className="w-1 h-1 bg-indigo-600 rounded-full" />}
-                              </div>
-                              <span className="text-[10px] font-black uppercase tracking-tight break-all">{opt}</span>
-                            </label>
-                          )
-                        })}
-                      </div>
-                    ) : null}
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            <button 
-              type="submit" 
-              disabled={submitLoading}
-              className="w-full py-4 bg-slate-900 border border-black hover:bg-black text-white font-black text-sm tracking-[0.2em] uppercase rounded-xl shadow-lg disabled:opacity-50 transition transform active:scale-[0.98] flex items-center justify-center gap-2"
-            >
-              {submitLoading ? 'Processing...' : <>Submit Feedback <ShieldCheck className="w-4 h-4" /></>}
-            </button>
-          </form>
+                {/* Questionnaire */}
+                <div className="space-y-10">
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3">
+                    <MessageSquareText className="w-4 h-4 text-indigo-400"/> Data Accumulation
+                  </h3>
+                  <div className="grid gap-8">
+                    {fields.map((field, idx) => (
+                      <div key={field.id} className="relative group/field">
+                        <label className="block text-[15px] font-black text-slate-800 mb-5 leading-tight flex items-start gap-4 uppercase tracking-tighter">
+                          <span className="bg-indigo-600 text-white rounded-lg px-2 py-1 text-[10px] font-black tracking-widest shadow-lg shadow-indigo-100">Q{idx + 1}</span>
+                          {field.label} {field.required && <span className="text-indigo-500 font-black ml-1">*</span>}
+                        </label>
+                        
+                        <div className="pl-0 md:pl-14">
+                          {field.type === 'text' || field.type === 'email' ? (
+                            <input 
+                              type={field.type} 
+                              value={answers[field.id] || ''}
+                              onChange={e => handleChange(field.id, e.target.value)}
+                              className="w-full bg-transparent border-b-4 border-slate-100 py-4 text-xl font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-100"
+                              required={field.required}
+                              placeholder="Synchronize response..."
+                            />
+                          ) : field.type === 'number' ? (
+                            <input 
+                              type="number" 
+                              value={answers[field.id] || ''}
+                              onChange={e => handleChange(field.id, e.target.value)}
+                              className="w-full md:w-48 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-xl font-black text-indigo-600 outline-none focus:border-indigo-600 transition"
+                              required={field.required}
+                              placeholder="0"
+                            />
+                          ) : field.type === 'textarea' ? (
+                            <textarea 
+                              value={answers[field.id] || ''}
+                              onChange={e => handleChange(field.id, e.target.value)}
+                              rows="4"
+                              className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-6 text-sm font-black text-slate-700 outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition resize-none placeholder:text-slate-200"
+                              required={field.required}
+                              placeholder="Provide extended context matrix..."
+                            />
+                          ) : (field.type === 'select' || field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown-multi') ? (
+                            <div className="grid sm:grid-cols-2 gap-3">
+                              {(field.options || []).map((opt, i) => {
+                                const isSelection = field.type === 'radio' || field.type === 'select';
+                                const isSelected = isSelection ? answers[field.id] === opt : (Array.isArray(answers[field.id]) && answers[field.id].includes(opt));
+                                const label = typeof opt === 'string' ? opt : opt.label;
+                                
+                                return (
+                                  <label key={i} className={`flex items-center justify-between gap-3 cursor-pointer p-4 rounded-2xl border-2 transition-all active:scale-[0.97] ${isSelected ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-100' : 'bg-white border-slate-100 hover:border-slate-300 text-slate-800'}`}>
+                                    <input 
+                                      type={isSelection ? "radio" : "checkbox"}
+                                      name={field.id}
+                                      value={label}
+                                      checked={isSelected}
+                                      onChange={(e) => {
+                                        if (isSelection) {
+                                          handleChange(field.id, label);
+                                        } else {
+                                          const arr = Array.isArray(answers[field.id]) ? [...answers[field.id]] : [];
+                                          const next = e.target.checked ? [...arr, label] : arr.filter(o => o !== label);
+                                          handleChange(field.id, next);
+                                        }
+                                      }}
+                                      className="sr-only"
+                                    />
+                                    <span className="text-[10px] font-black uppercase tracking-widest leading-none">{label}</span>
+                                    {isSelected ? <CheckSquare className="w-4 h-4 text-white"/> : <div className="w-4 h-4 rounded-md border-2 border-slate-200" />}
+                                  </label>
+                                )
+                              })}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-10 flex flex-col items-center gap-6">
+                   <button 
+                     type="submit" 
+                     disabled={submitLoading}
+                     className="w-full bg-slate-950 hover:bg-black text-white px-10 py-6 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_30px_60px_rgba(0,0,0,0.3)] bg-gradient-to-r from-slate-900 to-black transition transform active:scale-[0.97] group flex items-center justify-center gap-4"
+                   >
+                     {submitLoading ? 'Synchronizing...' : <>Commit Submission <Zap className="w-5 h-5 fill-current"/></>}
+                   </button>
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                     <ShieldCheck className="w-3.5 h-3.5 text-indigo-400"/> Cryptographic verification enabled
+                   </p>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
+        
+        <footer className="mt-16 text-center">
+           <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] opacity-30">Antigravity Design Protocol </span>
+        </footer>
       </div>
-      
-      <p className="mt-8 text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-        <Mail className="w-3 h-3"/> Secure Data Transmission Verified
-      </p>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+        
+        body { font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; }
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+        .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-shake { animation: shake 0.2s ease-in-out infinite; }
+      `}} />
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, Info, ShieldCheck, Check, WifiOff, X } from 'lucide-react';
+import { 
+  Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, 
+  Info, ShieldCheck, Check, WifiOff, X, User, Phone, Zap 
+} from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
 
@@ -242,133 +245,161 @@ export default function InteractiveForm() {
 
   const activeCountry = countryCodes.find(c => c.code === userPhoneCode) || countryCodes[0];
 
-  if (loading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center font-black text-indigo-400 text-xs tracking-[0.4em] uppercase animate-pulse">Initializing v2.0...</div>;
-  if (error) return <div className="min-h-screen bg-slate-50 flex items-center justify-center text-red-500 p-8 text-center font-black tracking-tight text-xl"><AlertCircle className="w-6 h-6 mr-3"/>{error}</div>;
+  if (loading) return <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center font-black text-indigo-400 text-xs tracking-[0.4em] uppercase animate-pulse"><Zap className="w-12 h-12 mb-4 text-indigo-500"/> Initializing Secure Portal...</div>;
+  if (error) return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-red-500 p-8 text-center font-black tracking-tight text-xl"><AlertCircle className="w-6 h-6 mr-3"/>{error}</div>;
 
   const isIntro = currentIndex === -1;
   const isOutro = currentIndex === fields.length;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col justify-center items-center p-4 md:p-12 relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col justify-center items-center p-4 md:p-12 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+      {/* Background Glow */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+
       {/* Accessibility: Screen Reader Announcements */}
       <div aria-live="polite" className="sr-only">{announcement}</div>
 
       {/* Offline Banner */}
       {!isOnline && (
         <div className="fixed top-2 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-2xl animate-fade-in-up">
-           <WifiOff className="w-3 h-3" /> System Offline — Saving Locally
+           <WifiOff className="w-3 h-3" /> Connection Interrupted — Syncing to Vault
         </div>
       )}
 
-      {/* Progress Architecture: Anchored */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-slate-200/50 z-50">
+      {/* Progress Architecture: Premium Gradient Glow Bar */}
+      <div className="fixed top-0 left-0 w-full h-1.5 bg-white/5 z-50 shadow-inner">
          {!isIntro && !submitSuccess && (
            <div 
-             className="h-full bg-indigo-600 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(79,70,229,0.4)]" 
+             className="h-full bg-gradient-to-r from-indigo-500 via-indigo-400 to-indigo-600 transition-all duration-1000 ease-out shadow-[0_0_25px_rgba(99,102,241,0.8)] relative" 
              style={{ width: `${(Math.max(0, currentIndex + 1) / (fields.length + 1)) * 100}%` }}
-           ></div>
+           >
+              <div className="absolute top-0 right-0 w-4 h-full bg-white blur-sm"></div>
+           </div>
          )}
       </div>
 
-      <div className="w-full max-w-[640px] relative z-10">
+      <div className="w-full max-w-[680px] relative z-10">
         
         {!submitSuccess && !isIntro && (
-          <div className="mb-4 flex justify-between items-end px-2">
+          <div className="mb-6 flex justify-between items-end px-4">
             <button 
               onClick={handlePrev} 
-              className="text-[11px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-[0.2em] flex items-center gap-2 transition-all active:scale-[0.98] outline-none focus:text-indigo-600"
+              className="text-[10px] font-black text-slate-500 hover:text-indigo-400 uppercase tracking-[0.3em] flex items-center gap-2 transition-all active:scale-[0.95] outline-none group"
             >
-              <ChevronLeft className="w-3 h-3"/> Step Back
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform"/> Step Back
             </button>
-            <div className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
-               <span className="opacity-60">Step {currentIndex + 1} of {fields.length}</span>
-               <div className="h-1 w-8 bg-slate-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-indigo-600" style={{ width: `${Math.round(((currentIndex + 1) / (fields.length + 1)) * 100)}%` }}></div>
+            <div className="flex flex-col items-end gap-1">
+               <span className="text-[9px] font-black text-indigo-400 uppercase tracking-[0.4em]">Checkpoint {currentIndex + 1} <span className="text-slate-600">/</span> {fields.length}</span>
+               <div className="h-1 w-24 bg-white/5 rounded-full overflow-hidden flex">
+                  <div className="h-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" style={{ width: `${Math.round(((currentIndex + 1) / (fields.length + 1)) * 100)}%` }}></div>
                </div>
             </div>
           </div>
         )}
 
-        <div className="bg-white p-6 md:p-8 rounded-[24px] border border-slate-200 shadow-2xl overflow-hidden relative transition-all duration-500 hover:border-slate-300">
+        {/* Form Container: Glass-Matrix Aesthetic */}
+        <div className="bg-white/95 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
+          <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
           
           {submitSuccess ? (
             <div className="text-center py-12 animate-fade-in-up">
-              <div className="bg-emerald-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-100 shadow-sm">
-                 <CheckCircle2 className="w-12 h-12 text-emerald-500" />
+              <div className="bg-emerald-500 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-10 border-4 border-emerald-100 shadow-[0_20px_40px_rgba(16,185,129,0.3)] rotate-3">
+                 <CheckCircle2 className="w-12 h-12 text-white" strokeWidth={3} />
               </div>
-              <h1 className="text-2xl font-black mb-4 tracking-tight uppercase">Success</h1>
-              <p className="text-md text-slate-500 font-medium leading-relaxed max-w-xs mx-auto">{submitSuccess}</p>
-              <div className="mt-12 pt-8 border-t border-slate-50 italic text-slate-300 text-[10px] font-black uppercase tracking-widest">
-                 Reference ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
+              <h1 className="text-3xl font-black text-slate-900 mb-4 tracking-tight uppercase">Data Transmitted</h1>
+              <p className="text-md text-slate-500 font-bold leading-relaxed max-w-sm mx-auto">{submitSuccess}</p>
+              <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col items-center gap-2">
+                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Digital Signature Hash</span>
+                 <code className="bg-slate-100 px-4 py-2 rounded-xl text-slate-600 text-[11px] font-black tracking-tighter">
+                    {Math.random().toString(36).substr(2, 12).toUpperCase()}
+                 </code>
               </div>
             </div>
           ) : isIntro ? (
             <div className="animate-fade-in-up">
-               <header className="text-center mb-10">
-                 <p className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-4">Onboarding</p>
-                 <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-none mb-3">{formConfig.title}</h1>
-                 <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-sm mx-auto opacity-80">{formConfig.description}</p>
+               <header className="text-center mb-12">
+                 <div className="w-16 h-1 bg-indigo-600 mx-auto mb-8 rounded-full"></div>
+                 <p className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.4em] mb-4">Secure Intake Session</p>
+                 <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter leading-none mb-4 uppercase">{formConfig.title}</h1>
+                 <p className="text-slate-500 text-sm font-bold leading-relaxed max-w-sm mx-auto opacity-70">{formConfig.description}</p>
                </header>
                
-               <div className="space-y-4 mb-8">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div className="space-y-1.5">
-                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Full Identity</label>
-                     <input type="text" value={userName} onChange={e => setUserName(e.target.value)} placeholder="e.g. Liam Anderson" className="w-full bg-slate-50/50 border border-slate-100 p-4 rounded-xl text-slate-900 font-bold outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-600/5 transition text-sm active:scale-[0.99]" />
+               <div className="space-y-6 mb-10">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+                       <User className="w-3 h-3 text-indigo-400"/> Full Identity
+                     </label>
+                     <input 
+                       type="text" 
+                       value={userName} 
+                       onChange={e => setUserName(e.target.value)} 
+                       placeholder="e.g. Liam Anderson" 
+                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-300" 
+                     />
                    </div>
-                   <div className="space-y-1.5">
-                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Email Metric</label>
-                     <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} placeholder="name@domain.com" className="w-full bg-slate-50/50 border border-slate-100 p-4 rounded-xl text-slate-900 font-bold outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-600/5 transition text-sm active:scale-[0.99]" />
+                   <div className="space-y-2">
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+                       <Mail className="w-3 h-3 text-indigo-400"/> Email Matrix
+                     </label>
+                     <input 
+                       type="email" 
+                       value={userEmail} 
+                       onChange={e => setUserEmail(e.target.value)} 
+                       placeholder="name@domain.com" 
+                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-300" 
+                     />
                    </div>
                  </div>
                  
-                 <div className="space-y-1.5 relative">
-                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Cellular Contact</label>
-                   <div className="flex gap-0 bg-slate-50/50 border border-slate-100 rounded-xl overflow-visible focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-indigo-600/5 transition">
-                     
-                     {/* Industry-Level Country Picker */}
-                     <div className="relative shrink-0 border-r border-slate-100/50">
-                        <button 
-                          type="button"
-                          onClick={() => setIsPhonePickerOpen(!isPhonePickerOpen)}
-                          className="h-full flex items-center gap-2 px-4 hover:bg-slate-100/50 transition outline-none"
-                        >
-                          <span className="text-xl">{activeCountry.flag}</span>
-                          <span className="text-sm font-black text-slate-700">{activeCountry.code}</span>
-                        </button>
+                 <div className="space-y-2 relative">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+                       <Phone className="w-3 h-3 text-indigo-400"/> Mobile Gateway
+                    </label>
+                    <div className="flex gap-0 bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-visible focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition">
+                      <div className="relative shrink-0 border-r-2 border-slate-100">
+                         <button 
+                           type="button"
+                           onClick={() => setIsPhonePickerOpen(!isPhonePickerOpen)}
+                           className="h-full flex items-center gap-2 px-5 hover:bg-slate-100 transition outline-none"
+                         >
+                           <span className="text-xl">{activeCountry.flag}</span>
+                           <span className="text-sm font-black text-slate-900">{activeCountry.code}</span>
+                         </button>
 
-                        {isPhonePickerOpen && (
-                          <div className="absolute top-full left-0 mt-2 w-[280px] bg-white border border-slate-200 rounded-2xl shadow-2xl z-[100] overflow-hidden animate-fade-in-up">
-                            <div className="p-3 border-b border-slate-100 bg-slate-50/50">
-                               <input 
-                                 type="text" 
-                                 autoFocus
-                                 placeholder="Search country..." 
-                                 value={phoneSearch}
-                                 onChange={e => setPhoneSearch(e.target.value)}
-                                 className="w-full bg-white border border-slate-200 p-2.5 rounded-lg text-xs font-bold outline-none focus:border-indigo-500"
-                               />
-                            </div>
-                            <div className="max-h-[240px] overflow-y-auto custom-scrollbar">
-                               {filteredCountries.map((c, i) => (
-                                 <button
-                                   key={i}
-                                   type="button"
-                                   onClick={() => {
-                                     setUserPhoneCode(c.code);
-                                     setIsPhonePickerOpen(false);
-                                     setPhoneSearch('');
-                                   }}
-                                   className="w-full flex items-center justify-between p-3 hover:bg-indigo-50 transition border-b border-slate-50 last:border-0"
-                                 >
-                                   <div className="flex items-center gap-3">
-                                     <span className="text-lg">{c.flag}</span>
-                                     <span className="text-[11px] font-bold text-slate-600">{c.name}</span>
-                                   </div>
-                                   <span className="text-[10px] font-black text-indigo-400">{c.code}</span>
-                                 </button>
-                               ))}
+                         {isPhonePickerOpen && (
+                           <div className="absolute top-full left-0 mt-3 w-[280px] bg-white border-2 border-slate-100 rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.2)] z-[100] overflow-hidden animate-fade-in-up">
+                             <div className="p-4 border-b border-slate-100 bg-slate-50">
+                                <input 
+                                  type="text" 
+                                  autoFocus
+                                  placeholder="Secure Country Search..." 
+                                  value={phoneSearch}
+                                  onChange={e => setPhoneSearch(e.target.value)}
+                                  className="w-full bg-white border border-slate-200 p-3 rounded-xl text-xs font-black outline-none focus:border-indigo-500"
+                                />
                              </div>
+                             <div className="max-h-[240px] overflow-y-auto custom-scrollbar">
+                                {filteredCountries.map((c, i) => (
+                                  <button
+                                    key={i}
+                                    type="button"
+                                    onClick={() => {
+                                      setUserPhoneCode(c.code);
+                                      setIsPhonePickerOpen(false);
+                                      setPhoneSearch('');
+                                    }}
+                                    className="w-full flex items-center justify-between p-4 hover:bg-indigo-50 transition border-b border-slate-50 last:border-0"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-lg">{c.flag}</span>
+                                      <span className="text-[11px] font-black text-slate-600">{c.name}</span>
+                                    </div>
+                                    <span className="text-[10px] font-black text-indigo-500">{c.code}</span>
+                                  </button>
+                                ))}
+                              </div>
                            </div>
                          )}
                       </div>
@@ -376,91 +407,84 @@ export default function InteractiveForm() {
                       <input 
                         type="tel" 
                         value={userPhoneNumber} 
-                        onChange={e => {
-                           const val = e.target.value.replace(/[^\d\s-]/g, '');
-                           setUserPhoneNumber(val);
-                        }} 
+                        onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} 
                         placeholder="000 000 0000" 
-                        className="flex-1 bg-transparent p-4 text-slate-900 font-bold outline-none text-sm active:scale-[0.98]" 
+                        className="flex-1 bg-transparent p-4 text-slate-900 font-black outline-none text-sm active:scale-[0.98] placeholder:text-slate-300" 
                       />
                     </div>
-                    
                     {isPhonePickerOpen && <div className="fixed inset-0 z-40" onClick={() => setIsPhonePickerOpen(false)}></div>}
-
-                    {/* Communication Consent */}
-                    <div className="flex items-start gap-2.5 px-1 pt-2 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                       <input 
-                         id="consent"
-                         type="checkbox" 
-                         checked={answers['consent'] !== false} // Default to true for better conversion, but trackable
-                         onChange={e => setAnswers(prev => ({...prev, consent: e.target.checked}))}
-                         className="mt-1 w-3.5 h-3.5 accent-indigo-600 cursor-pointer" 
-                       />
-                       <label htmlFor="consent" className="text-[10px] font-black text-slate-400 leading-tight uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition">
-                          I consent to receive automated WhatsApp/Email updates regarding my consultation.
-                       </label>
-                    </div>
-                  </div>
+                 </div>
                </div>
                
                <button 
                  onClick={handleNext} 
-                 className="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-black text-white px-8 py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl transition transform active:scale-[0.98] ring-offset-2 focus:ring-2 focus:ring-slate-900"
+                 className="w-full group/btn flex items-center justify-center gap-4 bg-slate-950 hover:bg-black text-white px-8 py-6 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-all transform active:scale-[0.97] hover:shadow-[0_25px_50px_rgba(79,70,229,0.2)]"
                >
-                 Initialize Process <ChevronRight className="w-4 h-4"/>
+                 Start Data Entry <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform"/>
                </button>
+
+               <div className="mt-8 flex items-center gap-3 bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100/50">
+                  <ShieldCheck className="w-5 h-5 text-indigo-500 shrink-0"/>
+                  <p className="text-[10px] font-black text-indigo-700/60 leading-tight uppercase tracking-wider">
+                     Secure 256-bit encryption active for this submission session.
+                  </p>
+               </div>
             </div>
           ) : isOutro ? (
             <div className="animate-fade-in-right text-center py-6">
-               <div className="bg-indigo-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8 border border-indigo-100 shadow-sm">
-                  <ShieldCheck className="w-10 h-10 text-indigo-600" strokeWidth={1.5} />
+               <div className="bg-indigo-600 w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-[0_20px_40px_rgba(79,70,229,0.3)] rotate-3">
+                  <ShieldCheck className="w-12 h-12 text-white" strokeWidth={2} />
                </div>
-               <h2 className="text-2xl font-black mb-3 tracking-tight">Final Synchronization</h2>
-               <p className="text-slate-500 text-sm font-medium mb-12 leading-relaxed px-6 opacity-80">All data points have been collected. Please confirm to commit your submission to our secure storage.</p>
+               <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tighter uppercase">Final Committal</h2>
+               <p className="text-slate-500 text-sm font-bold mb-12 leading-relaxed px-8 opacity-70">Review complete. Please execute the committal command to synchronize your responses to our secure analytics matrix.</p>
                
                {submitError && (
-                  <div className="mb-8 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-3 font-bold text-[11px] uppercase tracking-widest animate-shake">
-                    <AlertCircle className="w-4 h-4 shrink-0 opacity-70"/> {submitError}
+                  <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 rounded-2xl flex items-center gap-4 font-black text-[11px] uppercase tracking-[0.1em] animate-shake">
+                    <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}
                   </div>
                )}
 
                <button 
                  onClick={handleSubmit} 
                  disabled={submitLoading}
-                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl transition transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 focus:ring-4 focus:ring-indigo-600/20"
+                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-6 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_20px_40px_rgba(79,70,229,0.3)] transition-all transform active:scale-[0.97] disabled:opacity-50 flex items-center justify-center gap-4"
                >
-                 {submitLoading ? 'Synchronizing...' : <>Commit & Submit <ShieldCheck className="w-5 h-5"/></>}
+                 {submitLoading ? 'Synchronizing...' : <>Commit Submission <Zap className="w-5 h-5 fill-current"/></>}
                </button>
             </div>
           ) : (
             <div className="animate-fade-in-right" key={currentIndex}>
               <fieldset className="border-none p-0 m-0">
-                <legend className="sr-only">Question {currentIndex + 1}</legend>
+                <legend className="sr-only">Step {currentIndex + 1}</legend>
                 
+                <p className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-4">Question Matrix {currentIndex + 1}</p>
                 <h2 
                   ref={questionHeadingRef} 
                   tabIndex="-1" 
-                  className="text-lg md:text-xl font-semibold text-slate-900 tracking-tight leading-tight mb-10 outline-none focus:text-indigo-600 transition-colors"
+                  className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter leading-tight mb-12 outline-none focus:text-indigo-600 transition-colors uppercase"
                 >
-                   {fields[currentIndex]?.label} {fields[currentIndex]?.required && <span className="text-indigo-400 font-bold ml-1 opacity-50">*</span>}
+                   {fields[currentIndex]?.label} {fields[currentIndex]?.required && <span className="text-indigo-400 font-black ml-1">*</span>}
                 </h2>
                 
-                <div className="space-y-10">
+                <div className="space-y-12">
                    {(() => {
                      const field = fields[currentIndex];
                      if (!field) return null;
 
                      if (field.type === 'text' || field.type === 'email' || field.type === 'number') {
                         return (
-                          <input 
-                            ref={inputRef}
-                            type={field.type}
-                            value={answers[field.id] || ''}
-                            onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Input your response..."
-                            className="w-full bg-transparent border-b-2 border-slate-100 text-xl font-black text-indigo-600 py-4 outline-none focus:border-indigo-600 transition placeholder:text-slate-200 active:scale-[0.99] focus:placeholder:opacity-0"
-                          />
+                          <div className="relative group">
+                            <input 
+                              ref={inputRef}
+                              type={field.type}
+                              value={answers[field.id] || ''}
+                              onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
+                              onKeyDown={handleKeyDown}
+                              placeholder="Type response..."
+                              className="w-full bg-transparent border-b-4 border-slate-100 text-2xl md:text-3xl font-black text-indigo-600 py-6 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-100 active:scale-[0.99] focus:placeholder:opacity-0"
+                            />
+                            <div className="absolute right-0 bottom-6 text-[10px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-focus-within:opacity-100 transition-opacity">Press Enter ↵</div>
+                          </div>
                         );
                      }
 
@@ -470,9 +494,9 @@ export default function InteractiveForm() {
                             ref={inputRef}
                             value={answers[field.id] || ''}
                             onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
-                            placeholder="Provide detailed context..."
-                            rows="4"
-                            className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl text-slate-900 p-6 text-sm font-bold outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-600/5 transition shadow-sm resize-none overscroll-contain"
+                            placeholder="Provide deep-dive context here..."
+                            rows="5"
+                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] text-slate-900 p-8 text-md font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[16px] focus:ring-indigo-600/5 transition shadow-sm resize-none placeholder:text-slate-300"
                           />
                         );
                      }
@@ -484,11 +508,12 @@ export default function InteractiveForm() {
 
                         return (
                           <div 
-                            className={`grid gap-2 pr-2 custom-scrollbar overscroll-contain ${isLongList ? 'max-h-[60vh] overflow-y-auto' : ''} ${!isLongList && options.length > 3 ? 'sm:grid-cols-1' : 'sm:grid-cols-2'}`}
+                            className={`grid gap-3 pr-2 custom-scrollbar overscroll-contain ${isLongList ? 'max-h-[50vh] overflow-y-auto' : ''} ${!isLongList && options.length > 3 ? 'sm:grid-cols-1' : 'sm:grid-cols-2'}`}
                           >
                              {options.map((opt, i) => {
                                const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
                                const isSelected = isMulti ? currentArr.includes(opt) : answers[field.id] === opt;
+                               const label = typeof opt === 'string' ? opt : opt.label;
                                
                                return (
                                  <button 
@@ -507,11 +532,14 @@ export default function InteractiveForm() {
                                         autoAdvanceTimer.current = setTimeout(handleNext, 400);
                                      }
                                    }}
-                                   className={`group w-full p-3.5 rounded-xl border text-left flex items-center justify-between transition-all duration-300 active:scale-[0.98] outline-none ${isSelected ? 'bg-indigo-50 border-indigo-600 ring-2 ring-indigo-600/10' : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'}`}
+                                   className={`group w-full p-5 rounded-2xl border-2 text-left flex items-center justify-between transition-all duration-300 active:scale-[0.97] outline-none ${isSelected ? 'bg-indigo-600 border-indigo-600 shadow-[0_15px_30px_rgba(79,70,229,0.3)]' : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'}`}
                                  >
-                                    <span className={`font-black text-[11px] uppercase tracking-[0.1em] ${isSelected ? 'text-indigo-600' : 'text-slate-800'}`}>{opt}</span>
-                                    {isSelected && <Check className="w-4 h-4 text-indigo-600 transition-all scale-110" strokeWidth={5} />}
-                                    {!isSelected && isMulti && <div className="w-4 h-4 rounded border-2 border-slate-200 bg-white" />}
+                                    <span className={`font-black text-[11px] uppercase tracking-[0.2em] ${isSelected ? 'text-white' : 'text-slate-800'}`}>{label}</span>
+                                    {isSelected ? (
+                                       <CheckCircle2 className="w-5 h-5 text-white animate-fade-in-up" strokeWidth={3} />
+                                    ) : (
+                                       <div className={`w-5 h-5 rounded-lg border-2 border-slate-200 transition-colors ${isMulti ? 'rounded-md' : 'rounded-full'}`} />
+                                    )}
                                  </button>
                                )
                              })}
@@ -521,30 +549,41 @@ export default function InteractiveForm() {
                      return null;
                    })()}
 
-                   <div className="flex flex-col sm:flex-row items-center gap-6 pt-6 border-t border-slate-50 mt-10">
+                   <div className="flex flex-col sm:flex-row items-center gap-8 pt-8 border-t border-slate-100 mt-12">
                      <button 
                        onClick={handleNext}
-                       className={`w-full sm:w-auto px-12 py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] transition-all shadow-2xl active:scale-[0.98] flex items-center justify-center gap-3 ${currentIndex >= 0 && fields[currentIndex]?.type === 'checkbox' && (!answers[fields[currentIndex].id] || answers[fields[currentIndex].id].length === 0) ? 'animate-pulse' : ''}`}
+                       className="w-full sm:w-auto px-16 py-6 bg-slate-950 hover:bg-black text-white rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all shadow-[0_20px_40px_rgba(0,0,0,0.3)] active:scale-[0.97] flex items-center justify-center gap-4"
                      >
-                        Confirm <ChevronRight className="w-4 h-4"/>
+                        Confirm Entry <ArrowRight className="w-5 h-5"/>
                      </button>
-                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest hidden sm:inline-block">Synthesized Input Mode ↵</p>
+                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest hidden lg:flex items-center gap-3">
+                        <MousePointer2 className="w-4 h-4 text-indigo-400"/> Interactive Input Protocol
+                     </p>
                    </div>
                 </div>
               </fieldset>
             </div>
           )}
         </div>
+        
+        {/* Footer Meta */}
+        <div className="mt-12 flex justify-between items-center px-4">
+           <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Secure Link Active</span>
+           </div>
+           <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest opacity-40">Antigravity Response Engine v2.4</span>
+        </div>
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
         
-        body { font-family: 'Inter', sans-serif; font-feature-settings: 'calt' 1, 'kern' 1; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Outfit', sans-serif; font-feature-settings: 'calt' 1, 'kern' 1; -webkit-font-smoothing: antialiased; }
         
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
         .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-fade-in-right { animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -552,14 +591,14 @@ export default function InteractiveForm() {
 
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 20px; opacity: 0; transition: opacity 0.3s; }
-        .custom-scrollbar:hover::-webkit-scrollbar-thumb { opacity: 1; background: #cbd5e1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 20px; }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: #cbd5e1; }
 
         @media (prefers-reduced-motion: reduce) {
           .animate-fade-in-up, .animate-fade-in-right { animation: none !important; opacity: 1 !important; transform: none !important; }
-          .transition-all { transition: none !important; }
         }
       `}} />
     </div>
   );
 }
+const ArrowRight = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;
