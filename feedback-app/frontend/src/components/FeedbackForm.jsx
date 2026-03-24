@@ -110,22 +110,22 @@ export default function FeedbackForm() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-6 px-4 font-sans flex flex-col items-center relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+    <div className="h-screen bg-slate-950 text-slate-100 py-4 px-4 font-sans flex flex-col items-center relative overflow-hidden selection:bg-indigo-500 selection:text-white">
       {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
       
-      <div className="w-full max-w-2xl relative z-10 animate-fade-in-up">
-        <header className="text-center mb-6">
-           <div className="w-10 h-1 bg-indigo-500 mx-auto mb-4 rounded-full"></div>
-           <p className="text-[8px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-2">Feedback Node</p>
-           <h1 className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight mb-2 uppercase">{formConfig.title}</h1>
-           {formConfig.description && <p className="text-slate-400 text-[11px] font-bold max-w-lg mx-auto leading-relaxed">{formConfig.description}</p>}
+      <div className="w-full max-w-2xl relative z-10 animate-fade-in-up flex flex-col h-full max-h-[calc(100vh-2rem)]">
+        <header className="text-center mb-4 shrink-0">
+           <div className="w-8 h-1 bg-indigo-500 mx-auto mb-2 rounded-full"></div>
+           <p className="text-[8px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-1">Feedback Node</p>
+           <h1 className="text-lg md:text-xl font-black text-white tracking-tight leading-tight mb-1 uppercase">{formConfig.title}</h1>
+           {formConfig.description && <p className="text-slate-400 text-[10px] font-bold max-w-lg mx-auto leading-relaxed hidden md:block">{formConfig.description}</p>}
         </header>
 
-        <div className="bg-white/95 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.4)] border border-white/20 rounded-[2rem] overflow-hidden relative group">
-          <div className="absolute top-0 w-full h-2 bg-indigo-600"></div>
+        <div className="bg-white/95 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.4)] border border-white/20 rounded-[1.5rem] relative group flex flex-col min-h-0 flex-1">
+          <div className="absolute top-0 w-full h-1.5 bg-indigo-600 rounded-t-[1.5rem] z-10"></div>
           
-          <div className="p-5 md:p-8">
+          <div className="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-1 relative z-0">
             {submitError && (
               <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 font-black text-[11px] uppercase tracking-wider rounded-2xl flex items-center gap-4 animate-shake">
                 <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}
@@ -143,59 +143,59 @@ export default function FeedbackForm() {
             )}
 
             {!submitSuccess && (
-              <form onSubmit={handleSubmit} className="space-y-12">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* ID Card */}
-                <div className="space-y-6">
-                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3">
-                    <User className="w-4 h-4 text-indigo-400"/> Authentication Matrix
+                <div className="space-y-4">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
+                    <User className="w-3 h-3 text-indigo-400"/> Authentication Matrix
                   </h3>
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div className="col-span-full">
-                      <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Identity Name</label>
-                      <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-400" placeholder="e.g. Liam Anderson" required />
+                      <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Identity Name</label>
+                      <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="e.g. Liam Anderson" required />
                     </div>
                     <div>
-                      <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Email Verification</label>
-                      <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-600/5 transition text-sm placeholder:text-slate-400" placeholder="name@domain.com" required />
+                      <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Email Verification</label>
+                      <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="name@domain.com" required />
                     </div>
                     <div>
-                      <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Mobile Access</label>
+                      <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Mobile Access</label>
                       <div className="flex gap-2">
-                        <div className="relative w-[110px] shrink-0 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center justify-center hover:bg-slate-100 transition overflow-hidden">
+                        <div className="relative w-[110px] shrink-0 bg-slate-50 border-2 border-slate-100 rounded-xl flex items-center justify-center hover:bg-slate-100 transition overflow-hidden">
                           <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black appearance-none" title="Select Country">
                             {countryCodes.map((c, i) => <option key={i} value={c.code} className="text-black bg-white font-semibold">{c.name} ({c.code})</option>)}
                           </select>
                           <div className="flex items-center gap-1.5 pointer-events-none px-2">
-                            <span className="text-[15px] text-slate-800 font-black">{activeCountry.flag}</span>
-                            <span className="text-[11px] font-black text-slate-700">{activeCountry.code}</span>
+                            <span className="text-[14px] text-slate-800 font-black">{activeCountry.flag}</span>
+                            <span className="text-[10px] font-black text-slate-700">{activeCountry.code}</span>
                           </div>
                         </div>
-                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-400" placeholder="000 000 0000" required />
+                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="000 000 0000" required />
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Questionnaire */}
-                <div className="space-y-10">
-                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3">
-                    <MessageSquareText className="w-4 h-4 text-indigo-400"/> Data Accumulation
+                <div className="space-y-6">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
+                    <MessageSquareText className="w-3 h-3 text-indigo-400"/> Data Accumulation
                   </h3>
-                  <div className="grid gap-8">
+                  <div className="grid gap-6">
                     {fields.map((field, idx) => (
                       <div key={field.id} className="relative group/field">
-                        <label className="block text-[15px] font-black text-slate-800 mb-5 leading-tight flex items-start gap-4 uppercase tracking-tighter">
-                          <span className="bg-indigo-600 text-white rounded-lg px-2 py-1 text-[10px] font-black tracking-widest shadow-lg shadow-indigo-100">Q{idx + 1}</span>
+                        <label className="block text-[13px] font-black text-slate-800 mb-3 leading-tight flex items-start gap-3 uppercase tracking-tighter">
+                          <span className="bg-indigo-600 text-white rounded-md px-1.5 py-0.5 text-[9px] font-black tracking-widest shadow-md shadow-indigo-100">Q{idx + 1}</span>
                           {field.label} {field.required && <span className="text-indigo-500 font-black ml-1">*</span>}
                         </label>
                         
-                        <div className="pl-0 md:pl-14">
+                        <div className="pl-0 md:pl-10">
                           {field.type === 'text' || field.type === 'email' ? (
                             <input 
                               type={field.type} 
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
-                              className="w-full bg-transparent border-b-4 border-slate-100 py-4 text-xl font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-400"
+                              className="w-full bg-transparent border-b-2 border-slate-100 py-2 text-lg font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-400"
                               required={field.required}
                               placeholder="Synchronize response..."
                             />
@@ -204,7 +204,7 @@ export default function FeedbackForm() {
                               type="number" 
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
-                              className="w-full md:w-48 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-xl font-black text-indigo-600 outline-none focus:border-indigo-600 transition"
+                              className="w-full md:w-32 bg-slate-50 border-2 border-slate-100 p-2 rounded-xl text-lg font-black text-indigo-600 outline-none focus:border-indigo-600 transition"
                               required={field.required}
                               placeholder="0"
                             />
@@ -212,8 +212,8 @@ export default function FeedbackForm() {
                             <textarea 
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
-                              rows="4"
-                              className="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-6 text-sm font-black text-slate-700 outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition resize-none placeholder:text-slate-200"
+                              rows="3"
+                              className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-4 text-[13px] font-black text-slate-700 outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition resize-none placeholder:text-slate-400"
                               required={field.required}
                               placeholder="Provide extended context matrix..."
                             />
@@ -225,7 +225,7 @@ export default function FeedbackForm() {
                                 const label = typeof opt === 'string' ? opt : opt.label;
                                 
                                 return (
-                                  <label key={i} className={`flex items-center justify-between gap-3 cursor-pointer p-4 rounded-2xl border-2 transition-all active:scale-[0.97] ${isSelected ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-100' : 'bg-white border-slate-100 hover:border-slate-300 text-slate-800'}`}>
+                                  <label key={i} className={`flex items-center justify-between gap-2 cursor-pointer p-3 rounded-xl border-2 transition-all active:scale-[0.97] ${isSelected ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100' : 'bg-white border-slate-100 hover:border-slate-300 text-slate-800'}`}>
                                     <input 
                                       type={isSelection ? "radio" : "checkbox"}
                                       name={field.id}
@@ -269,13 +269,13 @@ export default function FeedbackForm() {
                   </div>
                 </div>
 
-                <div className="pt-10 flex flex-col items-center gap-6">
+                <div className="pt-6 mt-4 flex flex-col items-center gap-4">
                    <button 
                      type="submit" 
                      disabled={submitLoading}
-                     className="w-full bg-slate-950 hover:bg-black text-white px-10 py-6 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_30px_60px_rgba(0,0,0,0.3)] bg-gradient-to-r from-slate-900 to-black transition transform active:scale-[0.97] group flex items-center justify-center gap-4"
+                     className="w-full bg-slate-950 hover:bg-black text-white px-8 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_15px_30px_rgba(0,0,0,0.3)] bg-gradient-to-r from-slate-900 to-black transition transform active:scale-[0.97] group flex items-center justify-center gap-4"
                    >
-                     {submitLoading ? 'Synchronizing...' : <>Commit Submission <Zap className="w-5 h-5 fill-current"/></>}
+                     {submitLoading ? 'Synchronizing...' : <>Commit <Zap className="w-5 h-5 fill-current"/></>}
                    </button>
                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                      <ShieldCheck className="w-3.5 h-3.5 text-indigo-400"/> Cryptographic verification enabled
