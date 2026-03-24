@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Eye, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Trash2, Check, CheckCheck, Clock, AlertCircle } from 'lucide-react';
 import ResponseDetailModal from './ResponseDetailModal';
 
-export default function ResponsesTable({ responses, forms, onDelete, allFields }) {
+export default function ResponsesTable({ responses, forms, onDelete }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedResponse, setSelectedResponse] = useState(null);
   
@@ -49,8 +49,24 @@ export default function ResponsesTable({ responses, forms, onDelete, allFields }
                           {res.user_name ? res.user_name[0] : 'A'}
                         </div>
                         <div>
-                          <div className="font-black text-slate-900 text-[12px] truncate uppercase tracking-tight" title={res.user_name}>
-                            {res.user_name || 'Anonymous'}
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <div className="font-black text-slate-900 text-[12px] truncate uppercase tracking-tight" title={res.user_name}>
+                              {res.user_name || 'Anonymous'}
+                            </div>
+                            
+                            {/* WhatsApp Delivery Status Indicator */}
+                            {res.whatsapp_status && (
+                              <div className="group/status relative cursor-help">
+                                {res.whatsapp_status === 'sent' && <Clock className="w-3 h-3 text-slate-300" />}
+                                {(res.whatsapp_status === 'delivered') && <CheckCheck className="w-3 h-3 text-slate-300" />}
+                                {res.whatsapp_status === 'read' && <CheckCheck className="w-3 h-3 text-indigo-500" />}
+                                {(res.whatsapp_status === 'failed' || res.whatsapp_status === 'undelivered') && <AlertCircle className="w-3 h-3 text-red-400" />}
+                                
+                                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-slate-900 text-white text-[8px] font-black uppercase tracking-widest rounded-md opacity-0 group-hover/status:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-30 shadow-xl">
+                                  WhatsApp: {res.whatsapp_status} {res.whatsapp_error ? `(${res.whatsapp_error})` : ''}
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <div className="text-[9px] font-bold text-slate-400 truncate">{res.user_email || 'No email provided'}</div>
                         </div>

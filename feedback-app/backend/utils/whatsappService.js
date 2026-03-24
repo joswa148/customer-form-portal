@@ -4,10 +4,23 @@ const twilio = require('twilio');
  * WhatsApp Service v1.0
  * Handles messaging via Twilio WhatsApp Business API.
  */
-const client = twilio(
-    process.env.TWILIO_ACCOUNT_SID, 
-    process.env.TWILIO_AUTH_TOKEN
-);
+const getTwilioClient = () => {
+    const sid = process.env.TWILIO_ACCOUNT_SID;
+    const token = process.env.TWILIO_AUTH_TOKEN;
+    
+    if (!sid || !token) {
+        throw new Error('TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN is missing in .env');
+    }
+    return twilio(sid, token);
+};
+
+// Initialize client only if variables exist, or use a lazy getter
+let client; 
+try {
+    client = getTwilioClient();
+} catch (e) {
+    console.warn(`[WhatsAppService] ${e.message}. Service will fail on call.`);
+}
 
 const sendWhatsAppMessage = async (to, userName, feedbackLink, rawAnswersArray) => {
     try {
@@ -27,7 +40,8 @@ const sendWhatsAppMessage = async (to, userName, feedbackLink, rawAnswersArray) 
         const message = await client.messages.create({
             from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER || '+14155238886'}`,
             to: `whatsapp:${to}`,
-            body: `Hi ${userName}, thank you for reaching out to The VAT Consultant. we have received your submission.${qaSummary}\n\nWe'd love your feedback: ${feedbackLink}`
+            body: `Hi ${userName}, thank you for reaching out to The VAT Consultant. we have received your submission.${qaSummary}\n\nWe'd love your feedback: ${feedbackLink}`,
+            statusCallback: `${process.env.BACKEND_URL || 'http://localhost:5002'}/api/webhooks/whatsapp`
         });
 
         console.log(`[WhatsAppService] Message sent to ${to}. SID: ${message.sid}`);

@@ -13,11 +13,13 @@ app.use(cors());
 app.use(express.json());
 const initTrackingDB = async () => {
     try {
-        await db.query(`CREATE TABLE IF NOT EXISTS form_opens (
+        await db.query(`CREATE TABLE IF NOT EXISTS whatsapp_message_logs (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            form_id INT NOT NULL,
-            ref_id VARCHAR(255) NOT NULL,
-            opened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            response_id INT NOT NULL,
+            message_sid VARCHAR(255) UNIQUE NOT NULL,
+            status VARCHAR(50) DEFAULT 'queued',
+            error_code VARCHAR(50) NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`);
         try { await db.query(`ALTER TABLE responses ADD COLUMN ref_id VARCHAR(255) NULL`); } catch(e) {}
         try { await db.query(`ALTER TABLE responses ADD COLUMN user_name VARCHAR(255) NULL`); } catch(e) {}
@@ -47,7 +49,11 @@ const processEmailQueue = async () => {
             if (job.consent && job.userPhone) {
                 const feedbackLink = `http://${process.env.FRONTEND_DOMAIN || 'localhost:3000'}/feedback?id=${job.responseId}&name=${encodeURIComponent(job.userName)}`;
                 try {
-                    await whatsappService.sendWhatsAppMessage(job.userPhone, job.userName, feedbackLink, job.rawAnswersArray);
+                    const message = await whatsappService.sendWhatsAppMessage(job.userPhone, job.userName, feedbackLink, job.rawAnswersArray);
+                    if (message && message.sid) {
+                        await db.query('INSERT INTO whatsapp_message_logs (response_id, message_sid, status) VALUES (?, ?, ?)', 
+                            [job.responseId, message.sid, message.status || 'sent']);
+                    }
                 } catch (waErr) {
                     console.error(`[Queue] WhatsApp failed but email sent. SID: ${job.responseId}`, waErr.message);
                 }
@@ -170,15 +176,19 @@ app.get('/api/forms/:uuid', async (req, res) => {
 app.get('/api/responses', async (req, res) => {
     try {
         const { formId } = req.query;
-        let query = 'SELECT * FROM responses';
+        let query = `
+            SELECT r.*, wml.status as whatsapp_status, wml.error_code as whatsapp_error 
+            FROM responses r 
+            LEFT JOIN whatsapp_message_logs wml ON r.id = wml.response_id 
+        `;
         let params = [];
 
         if (formId) {
-            query += ' WHERE form_id = ?';
+            query += ' WHERE r.form_id = ?';
             params.push(formId);
         }
         
-        query += ' ORDER BY created_at DESC LIMIT 200';
+        query += ' ORDER BY r.created_at DESC LIMIT 200';
         
         const [rows] = await db.query(query, params);
         res.json(rows);
@@ -208,6 +218,29 @@ app.post('/api/track-open', async (req, res) => {
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to track' });
+    }
+});
+
+/**
+ * TWILIO WEBHOOK: Handles real-time WhatsApp status updates
+ */
+app.post('/api/webhooks/whatsapp', async (req, res) => {
+    try {
+        const { MessageSid, MessageStatus, ErrorCode } = req.body;
+        console.log(`[Webhook] WhatsApp Status Update: ${MessageSid} -> ${MessageStatus}`);
+
+        const updateQuery = `
+            UPDATE whatsapp_message_logs 
+            SET status = ?, error_code = ? 
+            WHERE message_sid = ?
+        `;
+        await db.query(updateQuery, [MessageStatus, ErrorCode || null, MessageSid]);
+        
+        // Respond with 200 immediately to acknowledge Twilio
+        res.status(200).send('OK');
+    } catch (err) {
+        console.error('[Webhook Error]', err.message);
+        res.status(500).send('Internal Error');
     }
 });
 

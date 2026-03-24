@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { 
   Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, 
-  Info, ShieldCheck, Check, WifiOff, X, User, Phone, Zap 
+  Info, ShieldCheck, Check, WifiOff, X, User, Phone, Zap, MousePointer2
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
@@ -279,7 +279,7 @@ export default function InteractiveForm() {
          )}
       </div>
 
-      <div className="w-full max-w-[680px] relative z-10">
+      <div className="w-full max-w-[540px] relative z-10 animate-fade-in-up">
         
         {!submitSuccess && !isIntro && (
           <div className="mb-6 flex justify-between items-end px-4">
@@ -318,11 +318,11 @@ export default function InteractiveForm() {
             </div>
           ) : isIntro ? (
             <div className="animate-fade-in-up">
-               <header className="text-center mb-12">
-                 <div className="w-16 h-1 bg-indigo-600 mx-auto mb-8 rounded-full"></div>
-                 <p className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.4em] mb-4">Secure Intake Session</p>
-                 <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter leading-none mb-4 uppercase">{formConfig.title}</h1>
-                 <p className="text-slate-500 text-sm font-bold leading-relaxed max-w-sm mx-auto opacity-70">{formConfig.description}</p>
+               <header className="text-center mb-8">
+                 <div className="w-12 h-1 bg-indigo-600 mx-auto mb-6 rounded-full"></div>
+                 <p className="text-[9px] font-black text-indigo-600 uppercase tracking-[0.4em] mb-2">Secure Intake Session</p>
+                 <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-3 uppercase">{formConfig.title}</h1>
+                 <p className="text-slate-500 text-[12px] font-bold leading-relaxed max-w-xs mx-auto opacity-70">{formConfig.description}</p>
                </header>
                
                <div className="space-y-6 mb-10">
@@ -457,11 +457,11 @@ export default function InteractiveForm() {
               <fieldset className="border-none p-0 m-0">
                 <legend className="sr-only">Step {currentIndex + 1}</legend>
                 
-                <p className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-4">Question Matrix {currentIndex + 1}</p>
+                <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-4">Question Matrix {currentIndex + 1}</p>
                 <h2 
                   ref={questionHeadingRef} 
                   tabIndex="-1" 
-                  className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter leading-tight mb-12 outline-none focus:text-indigo-600 transition-colors uppercase"
+                  className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-8 outline-none focus:text-indigo-600 transition-colors uppercase"
                 >
                    {fields[currentIndex]?.label} {fields[currentIndex]?.required && <span className="text-indigo-400 font-black ml-1">*</span>}
                 </h2>
@@ -552,9 +552,9 @@ export default function InteractiveForm() {
                    <div className="flex flex-col sm:flex-row items-center gap-8 pt-8 border-t border-slate-100 mt-12">
                      <button 
                        onClick={handleNext}
-                       className="w-full sm:w-auto px-16 py-6 bg-slate-950 hover:bg-black text-white rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all shadow-[0_20px_40px_rgba(0,0,0,0.3)] active:scale-[0.97] flex items-center justify-center gap-4"
+                       className="w-full sm:w-auto px-10 py-5 bg-slate-950 hover:bg-black text-white rounded-xl font-black uppercase tracking-[0.4em] text-[10px] transition-all shadow-[0_15px_30px_rgba(0,0,0,0.3)] active:scale-[0.97] flex items-center justify-center gap-3"
                      >
-                        Confirm Entry <ArrowRight className="w-5 h-5"/>
+                        Confirm Entry <ArrowRight className="w-4 h-4"/>
                      </button>
                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest hidden lg:flex items-center gap-3">
                         <MousePointer2 className="w-4 h-4 text-indigo-400"/> Interactive Input Protocol
@@ -601,4 +601,6 @@ export default function InteractiveForm() {
     </div>
   );
 }
-const ArrowRight = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>;
+function ArrowRight({ className }) { 
+  return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>; 
+}
