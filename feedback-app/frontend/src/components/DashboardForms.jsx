@@ -123,24 +123,30 @@ export default function DashboardForms() {
 
   if (mode === 'build') {
     return (
-      <div className="min-h-screen bg-slate-50 py-8 px-6 font-sans">
-        <div className="max-w-4xl mx-auto bg-white shadow-sm border border-slate-200 rounded-3xl overflow-hidden relative">
-          <div className="absolute top-0 w-full h-1 bg-indigo-600"></div>
-          
-          {/* Builder Header */}
-          <header className="p-8 pb-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Form Architect</p>
-               <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                {editingId ? 'Edit Questionnaire' : 'Create New Form'}
-               </h1>
+      <div className="h-screen bg-white font-sans overflow-hidden flex flex-col pt-2 selection:bg-indigo-100 selection:text-indigo-900">
+        
+        {/* Builder Header: Synced with Admin Header */}
+        <header className="bg-slate-900 px-6 py-4 flex items-center justify-between shadow-2xl z-20 shrink-0 mx-2 rounded-3xl">
+          <div className="flex items-center gap-4">
+            <div className="bg-white/10 p-2.5 rounded-2xl border border-white/5">
+              <ShieldCheck className="w-6 h-6 text-indigo-400" />
             </div>
-            <button onClick={() => setMode('list')} className="px-4 py-2 text-[10px] font-black text-slate-500 uppercase tracking-widest border border-slate-200 rounded-xl hover:bg-slate-50 transition active:scale-95 flex items-center gap-2">
-              <ArrowLeft className="w-4 h-4" /> Exit Builder
-            </button>
-          </header>
+            <div>
+              <h1 className="text-xl font-black text-white tracking-tight uppercase">
+                {editingId ? 'Node Architect' : 'Initialize Node'}
+              </h1>
+              <p className="text-[10px] font-bold text-indigo-300/60 uppercase tracking-widest">Structural Configuration & Logic</p>
+            </div>
+          </div>
 
-          <div className="p-8 space-y-10">
+          <button onClick={() => setMode('list')} className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-[10px] rounded-2xl font-black uppercase tracking-widest transition-all flex items-center gap-3 group active:scale-95">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Discard & Exit
+          </button>
+        </header>
+
+        {/* Builder Content Area */}
+        <div className="flex-1 overflow-y-auto bg-slate-50/50 custom-scrollbar">
+          <div className="max-w-4xl mx-auto p-8 space-y-10">
              {/* Base Info: Clean and balanced */}
             <section className="space-y-4">
               <div className="group">
@@ -267,85 +273,105 @@ export default function DashboardForms() {
   }
 
   // --- LIST MODE ---
-  if (loading) return <div className="min-h-screen bg-slate-50 flex flex-col gap-4 items-center justify-center font-black text-indigo-300 text-sm tracking-[0.2em] uppercase animate-pulse"><LayoutTemplate className="w-10 h-10 mb-2 opacity-30"/><span>Loading Forms...</span></div>;
+  if (loading) return <div className="h-screen bg-slate-50 flex flex-col items-center justify-center font-black text-indigo-300 text-xl tracking-widest uppercase animate-pulse"><LayoutTemplate className="w-12 h-12 mb-3 text-indigo-200"/> Loading Hub...</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-6 font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Header: Minimalist & Balanced */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center py-6 border-b border-slate-200 gap-4">
+    <div className="h-screen bg-white font-sans overflow-hidden flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
+      
+      {/* Premium Admin Header: Synced with Response Hub */}
+      <header className="bg-slate-900 px-6 py-4 flex items-center justify-between shadow-2xl z-20 shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="bg-indigo-500 p-2.5 rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.4)]">
+            <LayoutTemplate className="w-6 h-6 text-white" />
+          </div>
           <div>
-            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Form Administration</p>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              <LayoutTemplate className="w-6 h-6 text-slate-400" />
-              Manage Feedback Forms
-            </h1>
+            <h1 className="text-xl font-black text-white tracking-tight">Form Administration</h1>
+            <p className="text-[10px] font-bold text-indigo-300/60 uppercase tracking-widest">Architect & Manage Feedback Nodes</p>
           </div>
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <Link to="/dashboard" className="flex-1 md:flex-none px-5 py-2.5 text-[11px] bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 font-black uppercase tracking-widest shadow-sm transition flex justify-center items-center gap-2">
-              <BarChart2 className="w-4 h-4 text-slate-400" /> Responses
-            </Link>
-            <button onClick={() => {
-              setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build');
-            }} className="flex-1 md:flex-none px-5 py-2.5 text-[11px] bg-slate-900 text-white rounded-xl hover:bg-black font-black uppercase tracking-widest shadow-lg transition flex justify-center items-center gap-2 transform active:scale-95">
-              <Plus className="w-4 h-4" /> Create Form
-            </button>
-          </div>
-        </header>
+        </div>
 
-        {forms.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 px-4 bg-white rounded-3xl border border-slate-200 shadow-sm text-center">
-            <div className="bg-slate-50 p-6 rounded-full border border-slate-100 mb-6"><LayoutTemplate className="w-12 h-12 text-slate-300" /></div>
-            <h2 className="text-xl font-black text-slate-900 mb-2">No active forms</h2>
-            <p className="text-slate-400 text-sm font-medium mb-8 max-w-sm">Every great relationship starts with feedback. Build your first questionnaire to start gathering insights.</p>
-            <button onClick={() => { setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build'); }} className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg hover:bg-indigo-700 transition">
-              Launch Builder
-            </button>
-          </div>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {forms.map(form => (
-              <div key={form.id} className="bg-white p-6 rounded-3xl shadow-sm hover:shadow-md border border-slate-200 flex flex-col justify-between transition-all duration-300 relative group">
-                <div className="absolute top-4 right-4 text-[9px] font-black text-slate-300 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">ID {form.id}</div>
-                
-                <div className="flex flex-col mb-6">
-                  <h3 className="font-black text-lg text-slate-900 leading-tight tracking-tight mb-2 group-hover:text-indigo-600 transition-colors uppercase">{form.title}</h3>
-                  <p className="text-slate-500 font-medium text-[11px] line-clamp-3 min-h-[3rem] leading-relaxed">
-                    {form.description || <span className="text-slate-300 italic">No description provided</span>}
-                  </p>
-                  
-                  <div className="mt-6 flex items-center gap-2">
-                    <span className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1.5 uppercase">
-                       <BarChart2 className="w-3 h-3"/> {form.response_count || 0}
-                    </span>
-                    <span className="bg-slate-50 text-slate-400 border border-slate-100 text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
-                       {form.fields && (typeof form.fields === 'string' ? JSON.parse(form.fields).length : form.fields.length)} Fields
-                    </span>
-                  </div>
-                </div>
+        <div className="flex items-center gap-6">
+          <Link to="/dashboard" className="px-5 py-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-sm rounded-2xl font-black transition-all flex items-center gap-3 group">
+            <BarChart2 className="w-4 h-4 group-hover:-rotate-12 transition-transform" /> Global Stats
+          </Link>
+          <button 
+            onClick={() => { setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build'); }} 
+            className="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-2xl font-black shadow-[0_4px_15px_rgba(99,102,241,0.4)] transition-all flex items-center gap-3 active:scale-95"
+          >
+            <Plus className="w-5 h-5" /> Create New Node
+          </button>
+        </div>
+      </header>
 
-                <div className="space-y-3 pt-6 border-t border-slate-100">
-                  <Link to={`/dashboard?formId=${form.id}`} className="w-full flex justify-center items-center gap-2 bg-slate-900 border border-slate-900 hover:bg-black text-white font-black uppercase text-[10px] tracking-widest py-3 rounded-xl transition shadow-sm active:scale-[0.98]">
-                    View Data <ChevronRight className="w-3 h-3"/>
-                  </Link>
-                  
-                  <div className="grid grid-cols-3 gap-2">
-                    <button onClick={() => shareWhatsApp(form.uuid, form.title)} title="Share via WhatsApp" className="flex justify-center items-center bg-white border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 p-2.5 rounded-xl transition shadow-sm">
-                      <MessageCircle className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => { copyLink(form.uuid); }} title="Copy Link" className="flex justify-center items-center bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 p-2.5 rounded-xl transition shadow-sm">
-                      <LinkIcon className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => editForm(form)} title="Edit Form" className="flex justify-center items-center bg-white border border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600 hover:text-orange-700 p-2.5 rounded-xl transition shadow-sm">
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto bg-slate-50/50 p-8 custom-scrollbar">
+        <div className="max-w-7xl mx-auto">
+          
+          {forms.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-32 px-4 bg-white rounded-[2.5rem] border-2 border-slate-100 shadow-sm text-center">
+              <div className="bg-slate-50 p-8 rounded-[2rem] border-2 border-slate-100 mb-8 grow-0">
+                <LayoutTemplate className="w-16 h-16 text-slate-200" />
               </div>
-            ))}
-          </div>
-        )}
+              <h2 className="text-2xl font-black text-slate-900 mb-3 tracking-tighter uppercase">No Active Nodes</h2>
+              <p className="text-slate-400 text-sm font-bold mb-10 max-w-sm mx-auto leading-relaxed">
+                Your administration hub is currently silent. Build your first interactive feedback node to start gathering structural insights.
+              </p>
+              <button 
+                onClick={() => { setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build'); }} 
+                className="px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black uppercase text-[11px] tracking-[0.3em] shadow-2xl transition transform active:scale-95"
+              >
+                Initialize Builder
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {forms.map(form => (
+                <div key={form.id} className="bg-white p-8 rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.08)] border-2 border-slate-50 flex flex-col justify-between transition-all duration-500 relative group overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100 group-hover:bg-indigo-500 transition-colors"></div>
+                  
+                  <div className="flex flex-col mb-8">
+                    <div className="flex justify-between items-start mb-4">
+                       <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-50 px-2 py-1 rounded-md">Node {form.id}</span>
+                       <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">UUID {form.uuid?.split('-')[0]}</span>
+                    </div>
+
+                    <h3 className="font-black text-xl text-slate-900 leading-tight tracking-tight mb-3 uppercase group-hover:text-indigo-600 transition-colors">{form.title}</h3>
+                    <p className="text-slate-500 font-bold text-[11px] line-clamp-2 min-h-[2.5rem] leading-relaxed opacity-60">
+                      {form.description || 'System-generated intake node with automated synchronization protocols.'}
+                    </p>
+                    
+                    <div className="mt-8 flex items-center gap-2">
+                      <div className="bg-slate-50 text-slate-900 border-2 border-slate-100 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-2 uppercase tracking-tight">
+                         <BarChart2 className="w-3.5 h-3.5 text-indigo-500"/> {form.response_count || 0} <span className="text-slate-300">Intakes</span>
+                      </div>
+                      <div className="bg-slate-50 text-slate-400 border-2 border-slate-100 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest">
+                         {form.fields && (typeof form.fields === 'string' ? JSON.parse(form.fields).length : form.fields.length)} Fields
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 pt-8 border-t-2 border-slate-50">
+                    <Link to={`/dashboard?formId=${form.id}`} className="w-full flex justify-center items-center gap-3 bg-slate-950 hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.3em] py-4 rounded-2xl transition shadow-xl active:scale-[0.98] group/btn">
+                      Analyze Data <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"/>
+                    </Link>
+                    
+                    <div className="grid grid-cols-3 gap-3">
+                      <button onClick={() => shareWhatsApp(form.uuid, form.title)} title="Dispatch via WhatsApp" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 p-3 rounded-2xl transition shadow-sm group/i">
+                        <MessageCircle className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
+                      </button>
+                      <button onClick={() => { copyLink(form.uuid); }} title="Capture Node URL" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-indigo-500/30 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 p-3 rounded-2xl transition shadow-sm group/i">
+                        <LinkIcon className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
+                      </button>
+                      <button onClick={() => editForm(form)} title="Re-Architect Node" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-orange-500/30 hover:bg-orange-50 text-slate-400 hover:text-orange-600 p-3 rounded-2xl transition shadow-sm group/i">
+                        <Edit2 className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
