@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const { v4: uuidv4 } = require('uuid');
 const emailService = require('./utils/emailService');
+const whatsappService = require('./utils/whatsappService');
 
 const db = require('./db');
 const app = express();
@@ -21,6 +22,8 @@ const initTrackingDB = async () => {
         try { await db.query(`ALTER TABLE responses ADD COLUMN ref_id VARCHAR(255) NULL`); } catch(e) {}
         try { await db.query(`ALTER TABLE responses ADD COLUMN user_name VARCHAR(255) NULL`); } catch(e) {}
         try { await db.query(`ALTER TABLE responses ADD COLUMN user_phone VARCHAR(255) NULL`); } catch(e) {}
+        try { await db.query(`ALTER TABLE responses ADD COLUMN feedback_rating INT NULL`); } catch(e) {}
+        try { await db.query(`ALTER TABLE responses ADD COLUMN feedback_comment TEXT NULL`); } catch(e) {}
     } catch (err) { console.error('Error initializing tracking DB:', err); }
 };
 initTrackingDB();
@@ -37,9 +40,21 @@ const processEmailQueue = async () => {
     while (emailQueue.length > 0) {
         const job = emailQueue[0];
         try {
+            // 1. Process Email
             await emailService.sendFeedbackNotifications(job.formTitle, job.userEmail, job.userName, job.userPhone, job.adminEmail, job.rawAnswersArray);
-            console.log(`[Queue] Sent dynamic HTML emails for form: ${job.formTitle}`);
-            emailQueue.shift(); // Remove job from queue on success
+            
+            // 2. Process WhatsApp if consented
+            if (job.consent && job.userPhone) {
+                const feedbackLink = `http://${process.env.FRONTEND_DOMAIN || 'localhost:3000'}/feedback?id=${job.responseId}&name=${encodeURIComponent(job.userName)}`;
+                try {
+                    await whatsappService.sendWhatsAppMessage(job.userPhone, job.userName, feedbackLink);
+                } catch (waErr) {
+                    console.error(`[Queue] WhatsApp failed but email sent. SID: ${job.responseId}`, waErr.message);
+                }
+            }
+
+            console.log(`[Queue] Processed notifications for form: ${job.formTitle} (ID: ${job.responseId})`);
+            emailQueue.shift();
         } catch (err) {
             console.error(`[Queue] Failed to process email job for form: ${job.formTitle}. Error:`, err.message);
             job.retries = (job.retries || 0) + 1;
@@ -268,12 +283,14 @@ app.post('/api/responses', async (req, res) => {
 
         // Push the job to the queue
         emailQueue.push({
+            responseId: result.insertId,
             formTitle,
             userEmail,
             userName: userName.trim(),
             userPhone: userPhone.trim(),
             adminEmail: process.env.EMAIL_TO || null,
             rawAnswersArray,
+            consent: answers.consent !== false, // Consent check
             retries: 0
         });
 
@@ -285,6 +302,25 @@ app.post('/api/responses', async (req, res) => {
     } catch (error) {
         console.error('Error saving response:', error);
         res.status(500).json({ error: 'Internal server error while saving response' });
+    }
+});
+
+app.post('/api/feedback', async (req, res) => {
+    try {
+        const { submissionId, rating, comment } = req.body;
+        if (!submissionId || !rating) return res.status(400).json({ error: 'Missing rating or ID' });
+
+        const [result] = await db.query(
+            'UPDATE responses SET feedback_rating = ?, feedback_comment = ? WHERE id = ?',
+            [rating, comment || null, submissionId]
+        );
+
+        if (result.affectedRows === 0) return res.status(404).json({ error: 'Submission not found' });
+
+        res.json({ success: true, message: 'Feedback stored successfully' });
+    } catch (error) {
+        console.error('Error storing feedback:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
