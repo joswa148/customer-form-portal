@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Database, Filter, LayoutTemplate, CheckCircle2, PieChart, BarChart3, X, ChevronRight, MessageSquare, Flame, Zap, Snowflake, TrendingUp, Trophy, Calendar } from 'lucide-react';
+import { Database, Filter, LayoutTemplate, CheckCircle2, PieChart, BarChart3, X, ChevronRight, MessageSquare, Flame, Zap, Snowflake, TrendingUp, Trophy, Calendar, Eye } from 'lucide-react';
 import ResponsesTable from './ResponsesTable';
 
 const API_URL = 'http://localhost:5002/api';
@@ -28,7 +28,7 @@ export default function Dashboard() {
         ]);
         setResponses(resRes.data);
         setForms(formsRes.data);
-        setActiveQuestionIndex(0); // Always reset to first question on load/change
+        setActiveQuestionIndex(0); // Reset on load
         setActiveOptionFilter(null);
       } catch { console.error('Failed to load portal data'); } 
       finally { setLoading(false); }
@@ -118,7 +118,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* NEW: Horizontal Question Stepper Ribbon */}
+      {/* Horizontal Question Stepper Ribbon */}
       <div className="bg-white border-b border-slate-100 px-6 py-3 shrink-0 flex items-center gap-6 overflow-hidden">
         <div className="shrink-0 flex items-center gap-3 pr-6 border-r border-slate-100">
            <div className="relative w-48">
@@ -256,28 +256,11 @@ export default function Dashboard() {
               />
            </div>
         </section>
-           
-           <div className="flex-1 overflow-hidden relative">
-              <ResponsesTable 
-                responses={filteredResponses} 
-                forms={forms} 
-                allFields={allFields}
-                activeQuestionIndex={activeQuestionIndex}
-                onDelete={async (id) => {
-                   if (!window.confirm("Purge this lead?")) return;
-                   try {
-                     await axios.delete(`${API_URL}/responses/${id}`);
-                     setResponses(prev => prev.filter(r => r.id !== id));
-                   } catch(e) { console.error(e); }
-                }}
-              />
-           </div>
-        </section>
 
       </main>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
       `}} />
