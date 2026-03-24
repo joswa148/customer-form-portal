@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useParams } from 'react-router-dom';
 import { 
   Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, 
@@ -7,8 +7,6 @@ import {
   User, Phone, Zap, ArrowRight, Star
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
-
-const API_URL = 'http://localhost:5002/api';
 
 export default function FeedbackForm() {
   const { uuid } = useParams();
@@ -29,7 +27,7 @@ export default function FeedbackForm() {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/forms/${uuid}`);
+        const { data } = await api.get(`/forms/${uuid}`);
         setFormConfig(data);
         
         let parsedFields = data.fields;
@@ -78,7 +76,7 @@ export default function FeedbackForm() {
 
     setSubmitLoading(true);
     try {
-      await axios.post(`${API_URL}/responses`, {
+      await api.post(`/responses`, {
         formId: formConfig.id,
         userEmail,
         userName,

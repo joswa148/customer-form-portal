@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Link } from 'react-router-dom';
 import { Plus, Link as LinkIcon, Trash2, ArrowLeft, BarChart2, LayoutTemplate, Settings2, FileText, Hash, CheckSquare, AlignLeft, ToggleLeft, ClipboardCheck, MessageCircle, Edit2, ChevronRight, ShieldCheck } from 'lucide-react';
-
-const API_URL = 'http://localhost:5002/api/forms';
 
 export default function DashboardForms() {
   const [forms, setForms] = useState([]);
@@ -21,7 +19,7 @@ export default function DashboardForms() {
   const fetchForms = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(API_URL);
+      const { data } = await api.get('/forms');
       setForms(data);
     } catch (err) {
       console.error('Failed to fetch forms', err);
@@ -73,9 +71,9 @@ export default function DashboardForms() {
     setSaving(true);
     try {
       if (editingId) {
-        await axios.put(`${API_URL}/${editingId}`, { title, description, fields });
+        await api.put(`/forms/${editingId}`, { title, description, fields });
       } else {
-        await axios.post(API_URL, { title, description, fields });
+        await api.post('/forms', { title, description, fields });
       }
       setMode('list');
       setEditingId(null);

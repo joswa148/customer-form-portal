@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Star, Send, CheckCircle2 } from 'lucide-react';
+import api from '../utils/api';
 
 export default function FeedbackPage() {
   const [searchParams] = useSearchParams();
@@ -18,13 +19,9 @@ export default function FeedbackPage() {
     
     setStatus('sending');
     try {
-      const resp = await fetch('http://localhost:5002/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ submissionId, rating, comment })
-      });
+      const resp = await api.post('/feedback', { submissionId, rating, comment });
       
-      if (resp.ok) setStatus('success');
+      if (resp.status >= 200 && resp.status < 300) setStatus('success');
       else setStatus('error');
     } catch (err) {
       console.error(err);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useParams } from 'react-router-dom';
 import { 
   Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, 
@@ -7,8 +7,6 @@ import {
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
-
-const API_URL = 'http://localhost:5002/api';
 
 export default function InteractiveForm() {
   const { uuid } = useParams();
@@ -90,10 +88,10 @@ export default function InteractiveForm() {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/forms/${uuid}`);
+        const { data } = await api.get(`/forms/${uuid}`);
         setFormConfig({ id: data.id, title: data.title, description: data.description });
         if (trackingRef) {
-           axios.post(`${API_URL}/track-open`, { formId: data.id, ref: trackingRef }).catch(() => {});
+           api.post(`/track-open`, { formId: data.id, ref: trackingRef }).catch(() => {});
         }
         
         let parsedFields = data.fields;
@@ -216,7 +214,7 @@ export default function InteractiveForm() {
     setSubmitError('');
     setSubmitLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/responses`, {
+      const res = await api.post(`/responses`, {
         formId: formConfig.id,
         userEmail,
         userName,

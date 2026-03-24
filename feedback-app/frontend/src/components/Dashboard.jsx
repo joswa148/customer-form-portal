@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Link } from 'react-router-dom';
 import { 
   Database, Filter, LayoutTemplate, CheckCircle2, PieChart, 
@@ -7,8 +7,6 @@ import {
   Calendar, Eye, ChevronDown, Search, ArrowRight, MousePointer2 
 } from 'lucide-react';
 import ResponsesTable from './ResponsesTable';
-
-const API_URL = 'http://localhost:5002/api';
 
 export default function Dashboard() {
   const [responses, setResponses] = useState([]);
@@ -28,8 +26,8 @@ export default function Dashboard() {
     const init = async () => {
       try {
         const [resRes, formsRes] = await Promise.all([
-          axios.get(`${API_URL}/responses${selectedForm ? `?formId=${selectedForm}` : ''}`),
-          axios.get(`${API_URL}/forms`)
+          api.get(`/responses${selectedForm ? `?formId=${selectedForm}` : ''}`),
+          api.get(`/forms`)
         ]);
         setResponses(resRes.data);
         setForms(formsRes.data);
@@ -295,7 +293,7 @@ export default function Dashboard() {
               onDelete={async (id) => {
                  if (!window.confirm("Purge this lead?")) return;
                  try {
-                   await axios.delete(`${API_URL}/responses/${id}`);
+                   await api.delete(`/responses/${id}`);
                    setResponses(prev => prev.filter(r => r.id !== id));
                  } catch(e) { console.error(e); }
               }}
