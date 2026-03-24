@@ -95,6 +95,10 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 mr-2">
+            <Calendar className="w-3.5 h-3.5 text-slate-300" />
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Time Range</span>
+          </div>
           <div className="bg-slate-100 p-1 rounded-xl border border-slate-200 flex">
             {[['all', 'All'], ['30', '30d'], ['7', '7d']].map(([val, label]) => (
                <button 
@@ -119,17 +123,22 @@ export default function Dashboard() {
         <section className="col-span-12 lg:col-span-5 xl:col-span-4 flex flex-col gap-6 overflow-hidden">
           
           {/* Question Navigator */}
-          <div className="bg-white rounded-[1.5rem] border border-slate-200 p-5 shadow-sm flex flex-col h-[400px]">
+          <div className="bg-white rounded-[1.5rem] border border-slate-200 p-5 shadow-sm flex flex-col h-[320px]">
              <div className="flex items-center justify-between mb-4 shrink-0">
                 <div>
                   <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                     <LayoutTemplate className="w-4 h-4 text-emerald-500" /> Question Navigator
                   </h2>
-                  <p className="text-[9px] font-bold text-slate-300 uppercase mt-0.5 tracking-tighter">Select a step to analyze</p>
+                  <p className="text-[9px] font-bold text-slate-300 uppercase mt-0.5 tracking-tighter">Explore form structure</p>
                 </div>
-                <span className="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full uppercase tabular-nums">
-                  {allFields.length} Step{allFields.length !== 1 ? 's' : ''}
-                </span>
+                {qSearch && (
+                  <button 
+                    onClick={() => setQSearch('')}
+                    className="text-[9px] font-black text-indigo-500 hover:text-indigo-700 uppercase"
+                  >
+                    Clear Search
+                  </button>
+                )}
              </div>
 
              {/* Search Bar */}
@@ -137,6 +146,7 @@ export default function Dashboard() {
                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 pointer-events-none" />
                 <input 
                   type="text"
+                  value={qSearch}
                   placeholder="Find question..."
                   onChange={(e) => setQSearch(e.target.value)}
                   className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[11px] font-bold text-slate-600 outline-none focus:border-indigo-500 focus:bg-white transition"
@@ -213,7 +223,10 @@ export default function Dashboard() {
                       className={`w-full group text-left p-1 rounded-xl transition-all ${activeOptionFilter === d.label ? 'bg-indigo-50/50 ring-1 ring-indigo-100' : 'hover:bg-slate-50'}`}
                     >
                       <div className="flex justify-between items-end mb-1 px-1">
-                        <span className={`text-[11px] font-black uppercase tracking-tight truncate max-w-[80%] ${activeOptionFilter === d.label ? 'text-indigo-600' : 'text-slate-600'}`}>
+                        <span 
+                          className={`text-[11px] font-black uppercase tracking-tight truncate max-w-[80%] ${activeOptionFilter === d.label ? 'text-indigo-600' : 'text-slate-600'}`}
+                          title={d.label}
+                        >
                           {d.label}
                         </span>
                         <span className="text-[10px] font-black text-slate-300">{d.pct}%</span>
