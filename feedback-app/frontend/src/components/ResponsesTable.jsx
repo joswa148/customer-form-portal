@@ -76,7 +76,7 @@ export default function ResponsesTable({ responses, forms, onDelete, allFields, 
                       </div>
                     </td>
                     <td className="px-4 py-2 text-center">
-                       <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                       <div className="flex items-center justify-center gap-1 transition">
                          <button 
                            onClick={() => setSelectedResponse(res)}
                            className="p-1 px-2 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-indigo-600 rounded-lg transition shadow-sm"

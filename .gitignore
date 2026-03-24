@@ -7,7 +7,6 @@ build/
 .env
 .env.local
 .env.*.local
-
 # Logs
 *.log
 npm-debug.log*
