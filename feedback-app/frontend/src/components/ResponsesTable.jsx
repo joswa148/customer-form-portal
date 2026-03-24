@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Eye, Trash2, Snowflake, Flame, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Trash2 } from 'lucide-react';
 import ResponseDetailModal from './ResponseDetailModal';
 
-export default function ResponsesTable({ responses, forms, onDelete, allFields, activeQuestionIndex }) {
+export default function ResponsesTable({ responses, forms, onDelete, allFields }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedResponse, setSelectedResponse] = useState(null);
   
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 10;
   
   const sortedResponses = useMemo(() => {
     return [...responses].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -18,24 +18,14 @@ export default function ResponsesTable({ responses, forms, onDelete, allFields, 
     currentPage * ITEMS_PER_PAGE
   );
 
-  const getAnswerForActive = (res) => {
-    let answers = res.answers;
-    if (typeof answers === 'string') try { answers = JSON.parse(answers); } catch { answers = {}; }
-    const field = allFields[activeQuestionIndex];
-    if (!field) return 'N/A';
-    const val = answers[field.id];
-    if (val === undefined || val === null) return '-';
-    return Array.isArray(val) ? val.join(', ') : val;
-  };
-
   return (
     <div className="flex-1 flex flex-col h-full bg-white relative">
       <div className="shrink-0 px-4 py-2 border-b border-slate-100 flex items-center justify-between bg-white/50">
         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-           <Eye className="w-3 h-3"/> Granular Response Stream
+           <Eye className="w-3 h-3"/> Standardized Lead Stream
         </span>
         <span className="text-[9px] font-black text-indigo-400 uppercase bg-indigo-50 px-2 py-0.5 rounded-md">
-          {responses.length} Matches
+          {responses.length} Matches Found
         </span>
       </div>
       
@@ -43,51 +33,58 @@ export default function ResponsesTable({ responses, forms, onDelete, allFields, 
         <table className="w-full text-left border-collapse table-fixed">
           <thead className="sticky top-0 z-20">
             <tr className="bg-slate-50/90 backdrop-blur-md border-b border-slate-200">
-              <th className="px-4 py-3 text-[10px] font-black text-slate-500 tracking-widest uppercase w-[35%]">Identity / Metric</th>
-              <th className="px-4 py-3 text-[10px] font-black text-slate-500 tracking-widest uppercase w-[40%]">Question Insight</th>
-              <th className="px-4 py-3 text-[10px] font-black text-slate-500 tracking-widest uppercase w-[12%] text-right font-serif">Date</th>
-              <th className="px-4 py-3 text-[10px] font-black text-slate-500 tracking-widest uppercase text-center w-[13%]">Audit</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-500 tracking-widest uppercase w-[40%]">Lead Identity</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-500 tracking-widest uppercase w-[25%] text-center">Tracking ID</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-500 tracking-widest uppercase w-[20%] text-right font-serif">Date</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-500 tracking-widest uppercase text-center w-[15%]">Audit</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {paginatedResponses.map((res) => {
-               const answer = getAnswerForActive(res);
                return (
-                 <tr key={res.id} className="hover:bg-indigo-50/20 transition duration-150 group">
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="font-black text-slate-900 text-[12px] truncate uppercase tracking-tight" title={res.user_name}>
-                          {res.user_name || 'Anonymous'}
+                 <tr key={res.id} className="hover:bg-indigo-50/10 transition duration-150 group">
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-[10px] font-black uppercase">
+                          {res.user_name ? res.user_name[0] : 'A'}
                         </div>
-                        {res.ref_id && (
-                          <span className="text-[8px] font-black px-1.5 bg-indigo-600 text-white rounded uppercase pt-0.5">{res.ref_id}</span>
-                        )}
-                      </div>
-                      <div className="text-[9px] font-bold text-slate-400 truncate mt-0.5">{res.user_email}</div>
-                    </td>
-                    <td className="px-4 py-4">
-                       <div className="text-[11px] font-black text-indigo-600 bg-indigo-50/30 border border-indigo-100/50 px-3 py-1.5 rounded-xl truncate hover:overflow-visible hover:whitespace-normal transition-all" title={answer}>
-                          {answer}
-                       </div>
-                    </td>
-                    <td className="px-4 py-4 text-right">
-                      <div className="text-[11px] font-black text-slate-400 tabular-nums">
-                        {new Date(res.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        <div>
+                          <div className="font-black text-slate-900 text-[12px] truncate uppercase tracking-tight" title={res.user_name}>
+                            {res.user_name || 'Anonymous'}
+                          </div>
+                          <div className="text-[9px] font-bold text-slate-400 truncate">{res.user_email || 'No email provided'}</div>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-4 py-2 text-center">
-                       <div className="flex items-center justify-center gap-1 transition">
+                    <td className="px-6 py-5 text-center">
+                       {res.ref_id ? (
+                         <span className="text-[9px] font-black px-2 py-1 bg-indigo-600 text-white rounded-lg uppercase tracking-tighter">
+                           {res.ref_id}
+                         </span>
+                       ) : (
+                         <span className="text-[9px] font-bold text-slate-300 uppercase italic">Direct</span>
+                       )}
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <div className="text-[11px] font-black text-slate-400 tabular-nums uppercase">
+                        {new Date(res.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' })}
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 text-center">
+                       <div className="flex items-center justify-center gap-2">
                          <button 
                            onClick={() => setSelectedResponse(res)}
-                           className="p-1 px-2 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-indigo-600 rounded-lg transition shadow-sm"
+                           className="p-2 bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-indigo-600 rounded-xl transition shadow-sm group-hover:shadow-md active:scale-95"
+                           title="Quick View"
                          >
-                           <Eye className="w-3.5 h-3.5"/>
+                           <Eye className="w-4 h-4"/>
                          </button>
                          <button 
                            onClick={() => onDelete && onDelete(res.id)}
-                           className="p-1 px-2 border border-slate-100 hover:border-red-300 hover:bg-red-50 text-red-400 rounded-lg transition"
+                           className="p-2 bg-white border border-slate-100 hover:border-red-300 hover:bg-red-50 text-red-400 rounded-xl transition active:scale-95"
+                           title="Delete Lead"
                          >
-                           <Trash2 className="w-3.5 h-3.5"/>
+                           <Trash2 className="w-4 h-4"/>
                          </button>
                        </div>
                     </td>
@@ -106,16 +103,16 @@ export default function ResponsesTable({ responses, forms, onDelete, allFields, 
             <button 
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 px-3 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 disabled:opacity-30 transition shadow-sm"
+              className="p-2 px-4 rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 disabled:opacity-30 transition shadow-sm font-black text-[10px]"
             >
-              <ChevronLeft className="w-4 h-4"/>
+              PREV
             </button>
             <button 
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 px-3 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 disabled:opacity-30 transition shadow-sm"
+              className="p-2 px-4 rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 disabled:opacity-30 transition shadow-sm font-black text-[10px]"
             >
-              <ChevronRight className="w-4 h-4"/>
+              NEXT
             </button>
           </div>
       </div>

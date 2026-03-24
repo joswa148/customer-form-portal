@@ -39,13 +39,13 @@ export default function ResponseDetailModal({ response, forms, onClose }) {
           <div className="absolute top-0 left-0 w-2 h-full bg-indigo-500 rounded-tl-[2rem]"></div>
           <div>
             <span className="bg-indigo-100 text-indigo-700 text-xs font-black px-3 py-1 rounded-lg uppercase tracking-widest shadow-sm inline-block mb-3">
-              Response Overview
+              Lead Deep Dive
             </span>
             <h2 className="text-2xl font-black text-slate-800 tracking-tight">
               {response.user_name || 'Anonymous Respondent'}
             </h2>
             <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-600 font-medium">
-               <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-slate-400"/> {response.user_email || 'No email'}</span>
+               <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-slate-400"/> {response.user_email || 'No email provided'}</span>
                {response.user_phone && <span className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-slate-400"/> {response.user_phone}</span>}
                <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-slate-400"/> {new Date(response.created_at).toLocaleString()}</span>
             </div>
@@ -61,22 +61,43 @@ export default function ResponseDetailModal({ response, forms, onClose }) {
         </div>
 
         {/* Scrollable Answers */}
-        <div className="p-6 md:p-8 overflow-y-auto bg-white flex-1 relative">
+        <div className="p-6 md:p-8 overflow-y-auto bg-white flex-1 relative custom-scrollbar">
            <h3 className="text-sm font-black uppercase text-slate-400 tracking-widest mb-6 flex items-center gap-2 border-b border-slate-100 pb-3">
-             <CheckCircle2 className="w-5 h-5 text-indigo-400" /> Questionnaire Answers
+             <CheckCircle2 className="w-5 h-5 text-indigo-400" /> Full Questionnaire Data
            </h3>
-           <div className="space-y-6">
-             {Object.entries(parsedAnswers).length === 0 ? (
-                <p className="text-slate-400 italic">No answers provided</p>
-             ) : (
-                Object.entries(parsedAnswers).map(([k, v]) => (
-                  <div key={k} className="bg-slate-50 p-5 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-sm transition">
-                    <p className="text-sm font-bold text-slate-500 mb-2 leading-relaxed">{getLabel(k)}</p>
-                    <p className="text-lg font-black text-slate-800 break-words">{v === null || v === '' ? <span className="text-slate-300 italic font-medium">Empty</span> : String(v)}</p>
-                  </div>
-                ))
-             )}
-           </div>
+           
+           <div className="space-y-6 pb-12">
+              {Object.entries(parsedAnswers).length === 0 ? (
+                 <p className="text-slate-400 italic">No answers provided</p>
+              ) : (
+                 Object.entries(parsedAnswers).map(([k, v]) => {
+                   const label = getLabel(k);
+                   const isArray = Array.isArray(v);
+                   return (
+                     <div key={k} className="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 hover:border-indigo-200 hover:bg-white transition-all group">
+                       <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div> {label}
+                       </p>
+                       <div className="text-[15px] font-bold text-slate-800 leading-relaxed whitespace-pre-wrap">
+                         {v === null || v === '' ? (
+                           <span className="text-slate-300 italic font-medium">No response provided</span>
+                         ) : isArray ? (
+                           <div className="flex flex-wrap gap-2 mt-1">
+                             {v.map((item, i) => (
+                               <span key={i} className="bg-white border border-slate-200 px-3 py-1 rounded-xl text-xs font-black text-indigo-600 shadow-sm">
+                                 {item}
+                               </span>
+                             ))}
+                           </div>
+                         ) : (
+                           String(v)
+                         )}
+                       </div>
+                     </div>
+                   );
+                 })
+              )}
+            </div>
         </div>
       </div>
     </div>
