@@ -114,31 +114,31 @@ export default function Dashboard() {
       {/* Global Header */}
       <header className="bg-slate-900 px-6 py-4 flex items-center justify-between shadow-2xl z-20 shrink-0">
         <div className="flex items-center gap-4">
-          <div className="bg-indigo-500 p-2.5 rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.4)]">
+          <div className="bg-violet-600 p-2.5 rounded-2xl shadow-[0_0_20px_rgba(139,92,246,0.3)]">
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-black text-white tracking-tight">Global Response Hub</h1>
-            <p className="text-[10px] font-bold text-indigo-300/60 uppercase tracking-widest">Cross-Metric Analytics & Lead Matrix</p>
+            <h1 className="text-xl font-black text-white tracking-tight">Global Response Hub 💎</h1>
+            <p className="text-[10px] font-bold text-violet-300/60 uppercase tracking-widest">Cross-Metric Analytics & Lead Matrix</p>
           </div>
         </div>
 
         <div className="flex items-center gap-6">
            <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-indigo-400" />
+            <Calendar className="w-4 h-4 text-violet-400" />
             <div className="bg-white/10 p-1 rounded-xl flex border border-white/5">
               {[['all', 'ALL'], ['30', '30D'], ['7', '7D']].map(([val, label]) => (
                 <button 
                   key={val}
                   onClick={() => setDateFilter(val)}
-                  className={`px-3 py-1.5 text-[10px] font-black rounded-lg transition-all ${dateFilter === val ? 'bg-indigo-500 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
+                  className={`px-3 py-1.5 text-[10px] font-black rounded-lg transition-all ${dateFilter === val ? 'bg-violet-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
                 >
                   {label}
                 </button>
               ))}
             </div>
           </div>
-          <Link to="/dashboard/forms" className="px-5 py-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-sm rounded-2xl font-black transition-all flex items-center gap-3 group">
+          <Link to="/dashboard/forms" className="px-5 py-2.5 bg-violet-600/10 hover:bg-violet-600/20 text-violet-400 border border-violet-500/30 text-sm rounded-2xl font-black transition-all flex items-center gap-3 group">
             <LayoutTemplate className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Forms Hub
           </Link>
         </div>
@@ -256,7 +256,7 @@ export default function Dashboard() {
 
             <div className="ml-auto flex items-center gap-3">
               <div className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-4 py-1.5 rounded-2xl text-[11px] font-black flex items-center gap-2 whitespace-nowrap">
-                 <CheckCircle2 className="w-4 h-4" /> {filteredResponses.length} Leads
+                 <CheckCircle2 className="w-4 h-4" /> {filteredResponses.length} Leads 💎
               </div>
             </div>
           </div>

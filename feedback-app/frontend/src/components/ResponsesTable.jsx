@@ -24,8 +24,8 @@ export default function ResponsesTable({ responses, forms, onDelete }) {
         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
            <Eye className="w-3 h-3"/> Standardized Lead Stream
         </span>
-        <span className="text-[9px] font-black text-indigo-400 uppercase bg-indigo-50 px-2 py-0.5 rounded-md">
-          {responses.length} Matches Found
+        <span className="text-[9px] font-black text-violet-400 uppercase bg-violet-50 px-2 py-0.5 rounded-md">
+          {responses.length} Matches Found 💎
         </span>
       </div>
       
@@ -42,10 +42,10 @@ export default function ResponsesTable({ responses, forms, onDelete }) {
           <tbody className="divide-y divide-slate-100">
             {paginatedResponses.map((res) => {
                return (
-                 <tr key={res.id} className="hover:bg-indigo-50/10 transition duration-150 group">
+                 <tr key={res.id} className="hover:bg-violet-50/10 transition duration-150 group">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-[10px] font-black uppercase">
+                        <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 text-[10px] font-black uppercase">
                           {res.user_name ? res.user_name[0] : 'A'}
                         </div>
                         <div>
@@ -59,7 +59,7 @@ export default function ResponsesTable({ responses, forms, onDelete }) {
                               <div className="group/status relative cursor-help">
                                 {res.whatsapp_status === 'sent' && <Clock className="w-3 h-3 text-slate-300" />}
                                 {(res.whatsapp_status === 'delivered') && <CheckCheck className="w-3 h-3 text-slate-300" />}
-                                {res.whatsapp_status === 'read' && <CheckCheck className="w-3 h-3 text-indigo-500" />}
+                                {res.whatsapp_status === 'read' && <CheckCheck className="w-3 h-3 text-violet-500" />}
                                 {(res.whatsapp_status === 'failed' || res.whatsapp_status === 'undelivered') && <AlertCircle className="w-3 h-3 text-red-400" />}
                                 
                                 <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-1 bg-slate-900 text-white text-[8px] font-black uppercase tracking-widest rounded-md opacity-0 group-hover/status:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-30 shadow-xl">
@@ -74,7 +74,7 @@ export default function ResponsesTable({ responses, forms, onDelete }) {
                     </td>
                     <td className="px-6 py-5 text-center">
                        {res.ref_id ? (
-                         <span className="text-[9px] font-black px-2 py-1 bg-indigo-600 text-white rounded-lg uppercase tracking-tighter">
+                         <span className="text-[9px] font-black px-2 py-1 bg-violet-600 text-white rounded-lg uppercase tracking-tighter">
                            {res.ref_id}
                          </span>
                        ) : (
@@ -90,7 +90,7 @@ export default function ResponsesTable({ responses, forms, onDelete }) {
                        <div className="flex items-center justify-center gap-2">
                          <button 
                            onClick={() => setSelectedResponse(res)}
-                           className="p-2 bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-indigo-600 rounded-xl transition shadow-sm group-hover:shadow-md active:scale-95"
+                           className="p-2 bg-white border border-slate-200 hover:border-violet-300 hover:bg-violet-50 text-violet-600 rounded-xl transition shadow-sm group-hover:shadow-md active:scale-95"
                            title="Quick View"
                          >
                            <Eye className="w-4 h-4"/>

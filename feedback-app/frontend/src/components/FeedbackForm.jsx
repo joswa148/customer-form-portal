@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { 
   Mail, CheckCircle2, ShieldCheck, AlertCircle, Info, 
   Hash, List, MousePointerClick, MessageSquareText, CheckSquare,
-  User, Phone, Zap, ArrowRight
+  User, Phone, Zap, ArrowRight, Star
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 
@@ -242,6 +242,20 @@ export default function FeedbackForm() {
                                   </label>
                                 )
                               })}
+                            </div>
+                          ) : field.type === 'rating' ? (
+                            <div className="flex gap-4 items-center py-4">
+                               {[1,2,3,4,5].map(star => (
+                                 <button
+                                   key={star}
+                                   type="button"
+                                   onClick={() => handleChange(field.id, star)}
+                                   className={`p-1 transition-all ${answers[field.id] >= star ? 'text-amber-400 scale-110' : 'text-slate-200 hover:text-amber-200'}`}
+                                 >
+                                   <Star className={`w-8 h-8 ${answers[field.id] >= star ? 'fill-current' : ''}`} />
+                                 </button>
+                               ))}
+                               <span className="ml-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{answers[field.id] ? `${answers[field.id]} / 5 Score` : 'Select Magnitude'}</span>
                             </div>
                           ) : null}
                         </div>

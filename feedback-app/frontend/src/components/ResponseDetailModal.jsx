@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, Clock, Mail, Phone, CheckCircle2 } from 'lucide-react';
+import { X, Clock, Mail, Phone, CheckCircle2, Star } from 'lucide-react';
 
 export default function ResponseDetailModal({ response, forms, onClose }) {
   // Prevent body scroll when modal is open
@@ -25,7 +25,7 @@ export default function ResponseDetailModal({ response, forms, onClose }) {
     }
     if (!Array.isArray(schema)) return fieldId;
     const field = schema.find(f => f.id === fieldId);
-    return field ? field.label : fieldId;
+    return field ? field : { label: fieldId };
   };
 
   return (
@@ -71,7 +71,9 @@ export default function ResponseDetailModal({ response, forms, onClose }) {
                  <p className="text-slate-400 italic">No answers provided</p>
               ) : (
                  Object.entries(parsedAnswers).map(([k, v]) => {
-                   const label = getLabel(k);
+                   const fieldObj = getLabel(k);
+                   const label = fieldObj.label;
+                   const isRating = fieldObj.type === 'rating';
                    const isArray = Array.isArray(v);
                    return (
                      <div key={k} className="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 hover:border-indigo-200 hover:bg-white transition-all group">
@@ -81,6 +83,13 @@ export default function ResponseDetailModal({ response, forms, onClose }) {
                        <div className="text-[15px] font-bold text-slate-800 leading-relaxed whitespace-pre-wrap">
                          {v === null || v === '' ? (
                            <span className="text-slate-300 italic font-medium">No response provided</span>
+                         ) : isRating ? (
+                           <div className="flex gap-1.5 text-amber-400">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-5 h-5 ${Number(v) > i ? 'fill-current' : 'text-slate-200'}`} />
+                              ))}
+                              <span className="ml-3 text-xs font-black text-slate-400">Magnitude: {v} / 5</span>
+                           </div>
                          ) : isArray ? (
                            <div className="flex flex-wrap gap-2 mt-1">
                              {v.map((item, i) => (

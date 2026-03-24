@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { 
   Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, 
-  Info, ShieldCheck, Check, WifiOff, X, User, Phone, Zap, MousePointer2
+  Info, ShieldCheck, Check, WifiOff, X, User, Phone, Zap, MousePointer2, Star
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
@@ -254,8 +254,8 @@ export default function InteractiveForm() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col justify-center items-center p-2 md:p-6 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
       {/* Background Glow */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
 
       {/* Accessibility: Screen Reader Announcements */}
       <div aria-live="polite" className="sr-only">{announcement}</div>
@@ -271,7 +271,7 @@ export default function InteractiveForm() {
       <div className="fixed top-0 left-0 w-full h-1.5 bg-white/5 z-50 shadow-inner">
          {!isIntro && !submitSuccess && (
            <div 
-             className="h-full bg-gradient-to-r from-indigo-500 via-indigo-400 to-indigo-600 transition-all duration-1000 ease-out shadow-[0_0_25px_rgba(99,102,241,0.8)] relative" 
+             className="h-full bg-gradient-to-r from-violet-600 via-indigo-500 to-violet-500 transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(139,92,246,0.6)] relative" 
              style={{ width: `${(Math.max(0, currentIndex + 1) / (fields.length + 1)) * 100}%` }}
            >
               <div className="absolute top-0 right-0 w-4 h-full bg-white blur-sm"></div>
@@ -299,16 +299,16 @@ export default function InteractiveForm() {
         )}
 
         {/* Form Container: Glass-Matrix Aesthetic */}
-        <div className="bg-white/95 backdrop-blur-xl p-4 md:p-8 rounded-[1.5rem] shadow-[0_30px_80px_rgba(0,0,0,0.4)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
-          <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
+        <div className="bg-white/95 backdrop-blur-2xl p-4 md:p-8 rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.6)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-violet-600 to-indigo-600"></div>
           
           {submitSuccess ? (
             <div className="text-center py-12 animate-fade-in-up">
               <div className="bg-emerald-500 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-10 border-4 border-emerald-100 shadow-[0_20px_40px_rgba(16,185,129,0.3)] rotate-3">
                  <CheckCircle2 className="w-12 h-12 text-white" strokeWidth={3} />
               </div>
-              <h1 className="text-3xl font-black text-slate-900 mb-4 tracking-tight uppercase">Data Transmitted</h1>
-              <p className="text-md text-slate-500 font-bold leading-relaxed max-w-sm mx-auto">{submitSuccess}</p>
+              <h1 className="text-3xl font-black text-slate-900 mb-4 tracking-tight uppercase">Data Transmitted 💎</h1>
+              <p className="text-md text-slate-500 font-bold leading-relaxed max-w-sm mx-auto">Your responses have been successfully committed to the secure analytics hub. Thank you for your engagement. 🤝</p>
               <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col items-center gap-2">
                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Digital Signature Hash</span>
                  <code className="bg-slate-100 px-4 py-2 rounded-xl text-slate-600 text-[11px] font-black tracking-tighter">
@@ -319,10 +319,10 @@ export default function InteractiveForm() {
           ) : isIntro ? (
             <div className="animate-fade-in-up">
                <header className="text-center mb-6">
-                 <div className="w-10 h-1 bg-indigo-600 mx-auto mb-4 rounded-full"></div>
-                 <p className="text-[9px] font-black text-indigo-600 uppercase tracking-[0.4em] mb-2">Secure Intake Session</p>
+                 <div className="w-10 h-1 bg-violet-600 mx-auto mb-4 rounded-full"></div>
+                 <p className="text-[9px] font-black text-violet-600 uppercase tracking-[0.4em] mb-2">Secure Hub Intake</p>
                  <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-3 uppercase">{formConfig.title}</h1>
-                 <p className="text-slate-500 text-[12px] font-bold leading-relaxed max-w-xs mx-auto opacity-70">{formConfig.description}</p>
+                 <p className="text-slate-500 text-[11px] font-bold leading-relaxed max-w-xs mx-auto opacity-60">Authentication & Encrypted Data Submission</p>
                </header>
                
                <div className="space-y-4 mb-8">
@@ -499,9 +499,44 @@ export default function InteractiveForm() {
                             className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl text-slate-900 p-4 text-sm font-black outline-none focus:border-indigo-600 focus:bg-white transition shadow-sm resize-none placeholder:text-slate-300"
                           />
                         );
-                     }
+                      }
+ 
+                      if (field.type === 'rating') {
+                        const max = 5;
+                        const rating = Number(answers[field.id]) || 0;
+                        const emojis = ["😠", "🙁", "😐", "🙂", "😍"];
+                        
+                        return (
+                          <div className="flex flex-col items-center gap-6 py-4">
+                            <div className="flex gap-3">
+                              {[...Array(max)].map((_, i) => (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  onClick={() => {
+                                    setAnswers(prev => ({...prev, [field.id]: i + 1}));
+                                    if (autoAdvanceTimer.current) clearTimeout(autoAdvanceTimer.current);
+                                    autoAdvanceTimer.current = setTimeout(handleNext, 600);
+                                  }}
+                                  className={`p-3 rounded-2xl transition-all transform active:scale-90 ${rating > i ? 'text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] scale-110' : 'text-slate-200 hover:text-amber-200 opacity-30 hover:opacity-100'}`}
+                                >
+                                  <Star className={`w-10 h-10 ${rating > i ? 'fill-current' : ''}`} strokeWidth={1.5} />
+                                </button>
+                              ))}
+                            </div>
+                            {rating > 0 && (
+                               <div className="flex items-center gap-2 animate-fade-in-up">
+                                  <span className="text-3xl">{emojis[rating - 1]}</span>
+                                  <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] bg-indigo-50 px-3 py-1 rounded-full">
+                                    {rating === 5 ? 'Excellence Achieved' : rating >= 4 ? 'High Satisfaction' : rating >= 3 ? 'Standard' : 'Improvement Needed'}
+                                  </span>
+                               </div>
+                            )}
+                          </div>
+                        );
+                      }
 
-                     if (field.type === 'radio' || field.type === 'select' || field.type === 'checkbox' || field.type === 'dropdown-multi') {
+                      if (field.type === 'radio' || field.type === 'select' || field.type === 'checkbox' || field.type === 'dropdown-multi') {
                         const isMulti = field.type === 'checkbox' || field.type === 'dropdown-multi';
                         const options = field.options || [];
                         const isLongList = options.length > 6;
@@ -534,7 +569,9 @@ export default function InteractiveForm() {
                                    }}
                                    className={`group w-full p-3.5 rounded-xl border-2 text-left flex items-center justify-between transition-all duration-300 active:scale-[0.97] outline-none ${isSelected ? 'bg-indigo-600 border-indigo-600 shadow-md' : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'}`}
                                  >
-                                    <span className={`font-black text-[9px] uppercase tracking-[0.1em] ${isSelected ? 'text-white' : 'text-slate-800'}`}>{label}</span>
+                                    <span className={`font-black text-[9px] uppercase tracking-[0.1em] ${isSelected ? 'text-white' : 'text-slate-800'} flex items-center gap-2`}>
+                                      {isSelected && "✨"} {label}
+                                    </span>
                                     {isSelected ? (
                                        <CheckCircle2 className="w-4 h-4 text-white animate-fade-in-up" strokeWidth={3} />
                                     ) : (
@@ -570,7 +607,7 @@ export default function InteractiveForm() {
         <div className="mt-8 flex justify-between items-center px-4">
            <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Secure session</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Secure session 🔒</span>
            </div>
            <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest opacity-30">Antigravity Engine v2.4</span>
         </div>
