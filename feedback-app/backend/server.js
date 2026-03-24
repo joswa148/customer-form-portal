@@ -47,7 +47,7 @@ const processEmailQueue = async () => {
             if (job.consent && job.userPhone) {
                 const feedbackLink = `http://${process.env.FRONTEND_DOMAIN || 'localhost:3000'}/feedback?id=${job.responseId}&name=${encodeURIComponent(job.userName)}`;
                 try {
-                    await whatsappService.sendWhatsAppMessage(job.userPhone, job.userName, feedbackLink);
+                    await whatsappService.sendWhatsAppMessage(job.userPhone, job.userName, feedbackLink, job.rawAnswersArray);
                 } catch (waErr) {
                     console.error(`[Queue] WhatsApp failed but email sent. SID: ${job.responseId}`, waErr.message);
                 }

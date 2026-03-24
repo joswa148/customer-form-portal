@@ -43,7 +43,11 @@ async function runTests() {
             console.warn('⚠️  Twilio SID missing in .env. Skipping WhatsApp test.');
         } else {
             const link = 'http://localhost:3000/feedback?id=test&name=Tester';
-            await whatsappService.sendWhatsAppMessage(TEST_PHONE, TEST_NAME, link);
+            const dummyAnswers = [
+                { label: 'Service Interested In', answer: 'VAT Consultation' },
+                { label: 'Business Type', answer: 'E-commerce' }
+            ];
+            await whatsappService.sendWhatsAppMessage(TEST_PHONE, TEST_NAME, link, dummyAnswers);
             console.log('✅ WhatsApp Service: SUCCESS');
         }
     } catch (err) {
