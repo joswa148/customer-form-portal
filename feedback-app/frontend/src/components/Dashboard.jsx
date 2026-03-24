@@ -17,6 +17,7 @@ export default function Dashboard() {
   
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [activeOptionFilter, setActiveOptionFilter] = useState(null);
+  const [qSearch, setQSearch] = useState('');
 
   useEffect(() => {
     const init = async () => {
@@ -118,31 +119,67 @@ export default function Dashboard() {
         <section className="col-span-12 lg:col-span-5 xl:col-span-4 flex flex-col gap-6 overflow-hidden">
           
           {/* Question Navigator */}
-          <div className="bg-white rounded-[1.5rem] border border-slate-200 p-5 shadow-sm flex flex-col h-[240px]">
-             <div className="flex items-center justify-between mb-3 shrink-0">
-                <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <LayoutTemplate className="w-4 h-4 text-emerald-500" /> Question Navigator
-                </h2>
-                <span className="text-[9px] font-black text-slate-300 uppercase">{allFields.length} Steps</span>
+          <div className="bg-white rounded-[1.5rem] border border-slate-200 p-5 shadow-sm flex flex-col h-[400px]">
+             <div className="flex items-center justify-between mb-4 shrink-0">
+                <div>
+                  <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <LayoutTemplate className="w-4 h-4 text-emerald-500" /> Question Navigator
+                  </h2>
+                  <p className="text-[9px] font-bold text-slate-300 uppercase mt-0.5 tracking-tighter">Select a step to analyze</p>
+                </div>
+                <span className="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full uppercase tabular-nums">
+                  {allFields.length} Step{allFields.length !== 1 ? 's' : ''}
+                </span>
              </div>
+
+             {/* Search Bar */}
+             <div className="relative mb-3 shrink-0">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 pointer-events-none" />
+                <input 
+                  type="text"
+                  placeholder="Find question..."
+                  onChange={(e) => setQSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[11px] font-bold text-slate-600 outline-none focus:border-indigo-500 focus:bg-white transition"
+                />
+             </div>
+
              <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1.5 pr-1">
-                {allFields.map((f, i) => (
-                  <button 
-                    key={i}
-                    onClick={() => {
-                      setActiveQuestionIndex(i);
-                      setActiveOptionFilter(null);
-                    }}
-                    className={`w-full p-2.5 rounded-xl border text-left flex items-center gap-3 transition-all ${activeQuestionIndex === i ? 'bg-indigo-50 border-indigo-200 ring-2 ring-indigo-600/5' : 'bg-slate-50/50 border-slate-100 hover:border-slate-300 hover:bg-white'}`}
-                  >
-                    <span className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-black ${activeQuestionIndex === i ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                      {i + 1}
-                    </span>
-                    <span className={`text-[11px] font-bold truncate ${activeQuestionIndex === i ? 'text-indigo-900' : 'text-slate-500'}`}>
-                      {f.label}
-                    </span>
-                  </button>
-                ))}
+                {allFields
+                  .filter(f => !qSearch || (f.label && f.label.toLowerCase().includes(qSearch.toLowerCase())))
+                  .map((f, i) => {
+                    const originalIndex = allFields.findIndex(orig => orig.id === f.id);
+                    return (
+                      <button 
+                        key={f.id || i}
+                        onClick={() => {
+                          setActiveQuestionIndex(originalIndex);
+                          setActiveOptionFilter(null);
+                        }}
+                        className={`w-full p-3 rounded-2xl border text-left flex items-center gap-3 transition-all group relative overflow-hidden ${activeQuestionIndex === originalIndex ? 'bg-indigo-50 border-indigo-200 shadow-sm ring-1 ring-indigo-100' : 'bg-white border-slate-50 hover:border-slate-200 hover:bg-slate-50/50'}`}
+                      >
+                        {activeQuestionIndex === originalIndex && (
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 rounded-r-full" />
+                        )}
+                        <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black transition-colors ${activeQuestionIndex === originalIndex ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-slate-100 text-slate-400 group-hover:bg-slate-200 group-hover:text-slate-600'}`}>
+                          {originalIndex + 1}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-[12px] font-black leading-tight truncate ${activeQuestionIndex === originalIndex ? 'text-indigo-900 font-black' : 'text-slate-600 font-bold'}`}>
+                            {f.label || 'Unnamed Question'}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className={`text-[8px] font-black uppercase tracking-widest ${activeQuestionIndex === originalIndex ? 'text-indigo-400' : 'text-slate-300'}`}>
+                              {f.type || 'Field'}
+                            </span>
+                          </div>
+                        </div>
+                        {activeQuestionIndex === originalIndex && (
+                           <ChevronRight className="w-4 h-4 text-indigo-400" />
+                        )}
+                      </button>
+                    );
+                })}
+                {allFields.length === 0 && <div className="text-[10px] font-bold text-slate-400 text-center py-10 italic">No questions found for this form.</div>}
              </div>
           </div>
 
