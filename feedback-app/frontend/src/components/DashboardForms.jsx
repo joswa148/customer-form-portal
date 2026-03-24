@@ -131,9 +131,9 @@ export default function DashboardForms() {
           <header className="p-8 pb-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Form Architect</p>
-              <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
+               <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
                 {editingId ? 'Edit Questionnaire' : 'Create New Form'}
-              </h1>
+               </h1>
             </div>
             <button onClick={() => setMode('list')} className="px-4 py-2 text-[10px] font-black text-slate-500 uppercase tracking-widest border border-slate-200 rounded-xl hover:bg-slate-50 transition active:scale-95 flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" /> Exit Builder
@@ -277,8 +277,8 @@ export default function DashboardForms() {
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center py-6 border-b border-slate-200 gap-4">
           <div>
             <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Form Administration</p>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              <LayoutTemplate className="w-7 h-7 text-slate-400" />
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              <LayoutTemplate className="w-6 h-6 text-slate-400" />
               Manage Feedback Forms
             </h1>
           </div>
@@ -310,7 +310,7 @@ export default function DashboardForms() {
                 <div className="absolute top-4 right-4 text-[9px] font-black text-slate-300 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">ID {form.id}</div>
                 
                 <div className="flex flex-col mb-6">
-                  <h3 className="font-black text-xl text-slate-900 leading-tight tracking-tight mb-3 group-hover:text-indigo-600 transition-colors uppercase">{form.title}</h3>
+                  <h3 className="font-black text-lg text-slate-900 leading-tight tracking-tight mb-2 group-hover:text-indigo-600 transition-colors uppercase">{form.title}</h3>
                   <p className="text-slate-500 font-medium text-[11px] line-clamp-3 min-h-[3rem] leading-relaxed">
                     {form.description || <span className="text-slate-300 italic">No description provided</span>}
                   </p>

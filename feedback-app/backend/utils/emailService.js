@@ -20,7 +20,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sendEmail = async (to, subject, htmlContent) => {
     try {
         const mailOptions = {
-            from: process.env.EMAIL_FROM || process.env.MAIL_FROM_ADDRESS,
+            from: process.env.MAIL_FROM_ADDRESS || process.env.EMAIL_FROM || 'mailer@thevatconsultant.com',
             to,
             subject,
             html: htmlContent
@@ -63,17 +63,33 @@ const buildFeedbackTemplate = (formTitle, formattedAnswers, userName, userPhone,
     }
 
     return `
-    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-        <div style="background-color: ${brandColor}; padding: 32px 24px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.025em;">Customer Feedback</h1>
+    <div style="font-family: 'Inter', 'Segoe UI', Tahoma, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); background-color: #f8fafc;">
+        <div style="background-color: ${brandColor}; padding: 48px 24px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -0.05em; text-transform: uppercase;">Feedback Received</h1>
+            <p style="color: rgba(255,255,255,0.7); margin-top: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;">Secure Transmission Verified</p>
         </div>
-        <div style="padding: 40px 32px; background-color: #ffffff;">
-            ${preamble}
-            <h2 style="color: ${brandColor}; font-size: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-top: 40px; margin-bottom: 24px;">Response Summary</h2>
-            <div>
+        <div style="padding: 48px 40px; background-color: #ffffff;">
+            <div style="margin-bottom: 40px;">
+                ${preamble}
+            </div>
+            
+            <h2 style="color: ${brandColor}; font-size: 11px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 32px;">Response Context</h2>
+            
+            <div style="margin-top: 24px;">
                 ${answersHtml}
             </div>
-            ${!isAdmin ? `<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #e2e8f0; text-align: center;"><p style="color: #64748b; font-size: 14px; margin: 0;">Best regards,<br><strong style="color: #334155; font-size: 16px; margin-top: 8px; display: inline-block;">Thynk Unlimited Team</strong></p></div>` : ''}
+            
+            ${!isAdmin ? `
+            <div style="margin-top: 56px; padding-top: 32px; border-top: 1.5px solid #f1f5f9; text-align: center;">
+                <p style="color: #64748b; font-size: 13px; font-weight: 500; margin: 0; line-height: 1.6;">
+                    Best regards,<br>
+                    <strong style="color: #0f172a; font-size: 15px; font-weight: 900; margin-top: 8px; display: inline-block; text-transform: uppercase; tracking: 0.05em;">Thynk Unlimited Analytics</strong>
+                </p>
+            </div>` : ''}
+        </div>
+        <div style="background-color: #f1f5f9; padding: 24px; text-align: center;">
+            <p style="margin: 0; color: #94a3b8; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">© 2026 Thynk Unlimited. All rights reserved.</p>
+            <p style="margin: 12px 0 0 0; font-size: 9px; color: #94a3b8;">You received this because you consented to updates during form submission. <a href="#" style="color: #6366f1; text-decoration: underline;">Unsubscribe</a></p>
         </div>
     </div>
     `;
