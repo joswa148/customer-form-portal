@@ -24,6 +24,8 @@ export default function FeedbackForm() {
   const [submitSuccess, setSubmitSuccess] = useState('');
   const [submitError, setSubmitError] = useState('');
 
+  const activeCountry = countryCodes.find(c => c.code === userPhoneCode) || countryCodes[0];
+
   useEffect(() => {
     const fetchForm = async () => {
       try {
@@ -151,19 +153,25 @@ export default function FeedbackForm() {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="col-span-full">
                       <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Identity Name</label>
-                      <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-300" placeholder="e.g. Liam Anderson" required />
+                      <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-400" placeholder="e.g. Liam Anderson" required />
                     </div>
                     <div>
                       <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Email Verification</label>
-                      <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-600/5 transition text-sm placeholder:text-slate-300" placeholder="name@domain.com" required />
+                      <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-600/5 transition text-sm placeholder:text-slate-400" placeholder="name@domain.com" required />
                     </div>
                     <div>
                       <label className="text-[10px] font-black text-slate-400 mb-2 tracking-widest uppercase block ml-1">Mobile Access</label>
-                      <div className="flex gap-1">
-                        <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="w-[80px] bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-[11px] font-black outline-none appearance-none cursor-pointer hover:bg-slate-100 text-slate-700">
-                          {countryCodes.map((c, i) => <option key={i} value={c.code}>{c.flag}</option>)}
-                        </select>
-                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-300" placeholder="000 000 0000" required />
+                      <div className="flex gap-2">
+                        <div className="relative w-[110px] shrink-0 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center justify-center hover:bg-slate-100 transition overflow-hidden">
+                          <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black appearance-none" title="Select Country">
+                            {countryCodes.map((c, i) => <option key={i} value={c.code} className="text-black bg-white font-semibold">{c.name} ({c.code})</option>)}
+                          </select>
+                          <div className="flex items-center gap-1.5 pointer-events-none px-2">
+                            <span className="text-[15px] text-slate-800 font-black">{activeCountry.flag}</span>
+                            <span className="text-[11px] font-black text-slate-700">{activeCountry.code}</span>
+                          </div>
+                        </div>
+                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm placeholder:text-slate-400" placeholder="000 000 0000" required />
                       </div>
                     </div>
                   </div>
@@ -188,7 +196,7 @@ export default function FeedbackForm() {
                               type={field.type} 
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
-                              className="w-full bg-transparent border-b-4 border-slate-100 py-4 text-xl font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-100"
+                              className="w-full bg-transparent border-b-4 border-slate-100 py-4 text-xl font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-400"
                               required={field.required}
                               placeholder="Synchronize response..."
                             />

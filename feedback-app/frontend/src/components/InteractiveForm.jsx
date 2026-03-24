@@ -233,14 +233,6 @@ export default function InteractiveForm() {
     }
   };
 
-  const [isPhonePickerOpen, setIsPhonePickerOpen] = useState(false);
-  const [phoneSearch, setPhoneSearch] = useState('');
-  
-  const filteredCountries = countryCodes.filter(c => 
-    (c.name || '').toLowerCase().includes(phoneSearch.toLowerCase()) || 
-    (c.code || '').includes(phoneSearch)
-  );
-
   const activeCountry = countryCodes.find(c => c.code === userPhoneCode) || countryCodes[0];
 
   if (loading) return <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center font-black text-indigo-400 text-xs tracking-[0.4em] uppercase animate-pulse"><Zap className="w-12 h-12 mb-4 text-indigo-500"/> Initializing Secure Portal...</div>;
@@ -334,7 +326,7 @@ export default function InteractiveForm() {
                        value={userName} 
                        onChange={e => setUserName(e.target.value)} 
                        placeholder="e.g. Liam Anderson" 
-                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-300" 
+                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-400" 
                      />
                    </div>
                    <div className="space-y-2">
@@ -346,7 +338,7 @@ export default function InteractiveForm() {
                        value={userEmail} 
                        onChange={e => setUserEmail(e.target.value)} 
                        placeholder="name@domain.com" 
-                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-300" 
+                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-400" 
                      />
                    </div>
                  </div>
@@ -356,50 +348,19 @@ export default function InteractiveForm() {
                        <Phone className="w-3 h-3 text-indigo-400"/> Mobile Gateway
                     </label>
                     <div className="flex gap-0 bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-visible focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition">
-                      <div className="relative shrink-0 border-r-2 border-slate-100">
-                         <button 
-                           type="button"
-                           onClick={() => setIsPhonePickerOpen(!isPhonePickerOpen)}
-                           className="h-full flex items-center gap-2 px-5 hover:bg-slate-100 transition outline-none"
-                         >
-                           <span className="text-xl">{activeCountry.flag}</span>
-                           <span className="text-sm font-black text-slate-900">{activeCountry.code}</span>
-                         </button>
-
-                         {isPhonePickerOpen && (
-                           <div className="absolute top-full left-0 mt-3 w-[280px] bg-white border-2 border-slate-100 rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.2)] z-[100] overflow-hidden animate-fade-in-up">
-                             <div className="p-4 border-b border-slate-100 bg-slate-50">
-                                <input 
-                                  type="text" 
-                                  autoFocus
-                                  placeholder="Secure Country Search..." 
-                                  value={phoneSearch}
-                                  onChange={e => setPhoneSearch(e.target.value)}
-                                  className="w-full bg-white border border-slate-200 p-3 rounded-xl text-xs font-black outline-none focus:border-indigo-500"
-                                />
-                             </div>
-                             <div className="max-h-[240px] overflow-y-auto custom-scrollbar">
-                                {filteredCountries.map((c, i) => (
-                                  <button
-                                    key={i}
-                                    type="button"
-                                    onClick={() => {
-                                      setUserPhoneCode(c.code);
-                                      setIsPhonePickerOpen(false);
-                                      setPhoneSearch('');
-                                    }}
-                                    className="w-full flex items-center justify-between p-4 hover:bg-indigo-50 transition border-b border-slate-50 last:border-0"
-                                  >
-                                    <div className="flex items-center gap-3">
-                                      <span className="text-lg">{c.flag}</span>
-                                      <span className="text-[11px] font-black text-slate-600">{c.name}</span>
-                                    </div>
-                                    <span className="text-[10px] font-black text-indigo-500">{c.code}</span>
-                                  </button>
-                                ))}
-                              </div>
-                           </div>
-                         )}
+                      <div className="relative shrink-0 border-r-2 border-slate-100 h-[72px] flex items-center px-4 hover:bg-slate-100 transition rounded-l-[1.8rem] overflow-hidden">
+                        <select 
+                          value={userPhoneCode}
+                          onChange={e => setUserPhoneCode(e.target.value)}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black appearance-none"
+                          title="Select Country"
+                        >
+                          {countryCodes.map((c, i) => <option key={i} value={c.code} className="text-black bg-white font-semibold">{c.name} ({c.code})</option>)}
+                        </select>
+                        <div className="flex items-center gap-2 pointer-events-none">
+                          <span className="text-2xl text-slate-800 font-black">{activeCountry.flag}</span>
+                          <span className="text-sm font-black text-slate-900">{activeCountry.code}</span>
+                        </div>
                       </div>
 
                       <input 
@@ -407,10 +368,9 @@ export default function InteractiveForm() {
                         value={userPhoneNumber} 
                         onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} 
                         placeholder="000 000 0000" 
-                        className="flex-1 bg-transparent p-4 text-slate-900 font-black outline-none text-sm active:scale-[0.98] placeholder:text-slate-300" 
+                        className="flex-1 bg-transparent p-4 text-slate-900 font-black outline-none text-sm active:scale-[0.98] placeholder:text-slate-400" 
                       />
                     </div>
-                    {isPhonePickerOpen && <div className="fixed inset-0 z-40" onClick={() => setIsPhonePickerOpen(false)}></div>}
                  </div>
                </div>
                
@@ -479,7 +439,7 @@ export default function InteractiveForm() {
                               onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
                               onKeyDown={handleKeyDown}
                               placeholder="Type response..."
-                              className="w-full bg-transparent border-b-2 border-slate-100 text-xl md:text-2xl font-black text-indigo-600 py-4 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-100 active:scale-[0.99] focus:placeholder:opacity-0"
+                              className="w-full bg-transparent border-b-2 border-slate-100 text-xl md:text-2xl font-black text-indigo-600 py-4 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-400 active:scale-[0.99] focus:placeholder:opacity-0"
                             />
                             <div className="absolute right-0 bottom-4 text-[9px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-focus-within:opacity-100 transition-opacity">Press Enter ↵</div>
                           </div>
@@ -494,7 +454,7 @@ export default function InteractiveForm() {
                             onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
                             placeholder="Provide context..."
                             rows="3"
-                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl text-slate-900 p-4 text-sm font-black outline-none focus:border-indigo-600 focus:bg-white transition shadow-sm resize-none placeholder:text-slate-300"
+                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl text-slate-900 p-4 text-sm font-black outline-none focus:border-indigo-600 focus:bg-white transition shadow-sm resize-none placeholder:text-slate-400"
                           />
                         );
                       }
