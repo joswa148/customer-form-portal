@@ -28,6 +28,8 @@ export default function Dashboard() {
         ]);
         setResponses(resRes.data);
         setForms(formsRes.data);
+        setActiveQuestionIndex(0); // Always reset to first question on load/change
+        setActiveOptionFilter(null);
       } catch { console.error('Failed to load portal data'); } 
       finally { setLoading(false); }
     };
@@ -165,10 +167,10 @@ export default function Dashboard() {
                           setActiveQuestionIndex(originalIndex);
                           setActiveOptionFilter(null);
                         }}
-                        className={`w-full p-3 rounded-2xl border text-left flex items-center gap-3 transition-all group relative overflow-hidden ${activeQuestionIndex === originalIndex ? 'bg-indigo-50 border-indigo-200 shadow-sm ring-1 ring-indigo-100' : 'bg-white border-slate-50 hover:border-slate-200 hover:bg-slate-50/50'}`}
+                        className={`w-full p-3 rounded-2xl border text-left flex items-center gap-3 transition-all group relative overflow-hidden active:scale-[0.98] ${activeQuestionIndex === originalIndex ? 'bg-indigo-50 border-indigo-200 shadow-sm ring-1 ring-indigo-100 z-10' : 'bg-white border-slate-50 hover:border-slate-200 hover:bg-slate-50/50'}`}
                       >
                         {activeQuestionIndex === originalIndex && (
-                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 rounded-r-full" />
+                          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-600 rounded-r-full shadow-[2px_0_8px_rgba(79,70,229,0.4)]" />
                         )}
                         <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black transition-colors ${activeQuestionIndex === originalIndex ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-slate-100 text-slate-400 group-hover:bg-slate-200 group-hover:text-slate-600'}`}>
                           {originalIndex + 1}
