@@ -20,7 +20,7 @@ const seedForm = async () => {
         type: 'radio',
         label: '2. How satisfied are you with the quality of our services?',
         required: true,
-        options: ['Very Satisfied (5)', 'Satisfied (4)', 'Neutral (3)', 'Unsatisfied (2)']
+        options: ['Very Satisfied (4)', 'Satisfied (3)', 'Neutral (2)', 'Unsatisfied (1)']
       },
       {
         id: `field_${uuidv4().replace(/-/g, '').substring(0, 8)}`,
