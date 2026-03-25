@@ -328,18 +328,13 @@ export default function InteractiveForm() {
                 Your feedback is highly valued and has been securely recorded. As a token of our appreciation, we have a gift for you.
               </p>
 
-              <div className="bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-200 px-5 py-2.5 rounded-full flex items-center gap-3 mb-8 shadow-sm group">
-                <span className="text-xl group-hover:scale-110 transition-transform">🏆</span>
-                <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest mt-0.5">Unlocked: 15-Min Free Consultation</span>
-              </div>
-
               <a 
-                href={`https://wa.me/971501234567?text=${encodeURIComponent("Hi! I just submitted my feedback and would like to claim my free consultation.")}`} 
+                href={`https://wa.me/971501234567?text=${encodeURIComponent("Hi! I just submitted my feedback.")}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full max-w-xs flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(79,70,229,0.3)] transition-all transform active:scale-95 group/wa"
               >
-                Claim via WhatsApp <ChevronRight className="w-4 h-4 group-hover/wa:translate-x-1 transition-transform" />
+                Contact via WhatsApp <ChevronRight className="w-4 h-4 group-hover/wa:translate-x-1 transition-transform" />
               </a>
             </div>
           ) : isIntro ? (
@@ -429,8 +424,8 @@ export default function InteractiveForm() {
                <div className="bg-indigo-600 w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-[0_20px_40px_rgba(79,70,229,0.3)] rotate-3">
                   <ShieldCheck className="w-12 h-12 text-white" strokeWidth={2} />
                </div>
-               <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tighter uppercase">Final Committal</h2>
-               <p className="text-slate-500 text-sm font-bold mb-12 leading-relaxed px-8 opacity-70">Review complete. Please execute the committal command to synchronize your responses to our secure analytics matrix.</p>
+               <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tighter uppercase">Almost Done!</h2>
+               <p className="text-slate-500 text-sm font-bold mb-12 leading-relaxed px-8 opacity-70">Thank you for completing the questions. Please click the button below to securely submit your feedback.</p>
                
                {submitError && (
                   <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 rounded-2xl flex items-center gap-4 font-black text-[11px] uppercase tracking-[0.1em] animate-shake">
@@ -443,7 +438,7 @@ export default function InteractiveForm() {
                  disabled={submitLoading}
                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-6 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_20px_40px_rgba(79,70,229,0.3)] transition-all transform active:scale-[0.97] disabled:opacity-50 flex items-center justify-center gap-4"
                >
-                 {submitLoading ? 'Synchronizing...' : <>Commit Submission <Zap className="w-5 h-5 fill-current"/></>}
+                 {submitLoading ? 'Submitting...' : <>Submit Feedback <Zap className="w-5 h-5 fill-current"/></>}
                </button>
             </div>
           ) : (
@@ -542,7 +537,8 @@ export default function InteractiveForm() {
                              {options.map((opt, i) => {
                                const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
                                const isSelected = isMulti ? currentArr.includes(opt) : answers[field.id] === opt;
-                               const label = typeof opt === 'string' ? opt : opt.label;
+                               const rawLabel = typeof opt === 'string' ? opt : opt.label;
+                               const label = rawLabel.replace(/\s*\(\d+\)$/, '');
                                
                                return (
                                  <button 

@@ -333,7 +333,7 @@ export default function Dashboard() {
              </>
           ) : (
              <div className="flex-1 overflow-hidden relative">
-                <LinkTrackingTable formId={selectedForm} forms={forms} />
+                <LinkTrackingTable formId={selectedForm} forms={forms} responses={responses} />
              </div>
           )}
         </main>

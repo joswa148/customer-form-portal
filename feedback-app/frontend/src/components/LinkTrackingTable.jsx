@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import api from '../utils/api';
-import { Search, MessageCircle, AlertCircle, CheckCircle2, Activity } from 'lucide-react';
+import { Search, MessageCircle, AlertCircle, CheckCircle2, Activity, Eye } from 'lucide-react';
+import ResponseDetailModal from './ResponseDetailModal';
 
-export default function LinkTrackingTable({ formId, forms }) {
+export default function LinkTrackingTable({ formId, forms, responses = [] }) {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
+  const [selectedResponse, setSelectedResponse] = useState(null);
 
   const activeForm = formId ? forms.find(f => f.id === Number(formId)) : forms[0];
 
@@ -107,7 +109,18 @@ export default function LinkTrackingTable({ formId, forms }) {
                                   {stat.submittedAt ? new Date(stat.submittedAt).toLocaleString() : '-'}
                                </td>
                                <td className="p-4 pr-6 text-right">
-                                  {!isSubmitted && (
+                                  {isSubmitted ? (
+                                     <button 
+                                        onClick={() => {
+                                           const matched = responses.find(r => r.ref_id === stat.ref_id && String(r.form_id) === String(activeForm.id));
+                                           if (matched) setSelectedResponse(matched);
+                                        }}
+                                        className="p-2 inline-flex border border-slate-200 hover:bg-violet-50 hover:border-violet-300 text-violet-600 rounded-xl transition-all shadow-sm active:scale-95"
+                                        title="View Submission Details"
+                                     >
+                                        <Eye className="w-4 h-4" />
+                                     </button>
+                                  ) : (
                                      <button 
                                         onClick={() => sendReminder(stat.ref_id)}
                                         className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 active:scale-95"
@@ -124,6 +137,14 @@ export default function LinkTrackingTable({ formId, forms }) {
             </div>
         )}
       </div>
+
+      {selectedResponse && (
+        <ResponseDetailModal 
+          response={selectedResponse} 
+          forms={forms} 
+          onClose={() => setSelectedResponse(null)} 
+        />
+      )}
     </div>
   );
 }
