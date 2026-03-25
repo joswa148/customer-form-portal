@@ -43,6 +43,12 @@ const initTrackingDB = async () => {
             error_code VARCHAR(50) NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`);
+        await db.query(`CREATE TABLE IF NOT EXISTS form_opens (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            form_id INT NOT NULL,
+            ref_id VARCHAR(255) NOT NULL,
+            opened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`);
         try { await db.query(`ALTER TABLE responses ADD COLUMN ref_id VARCHAR(255) NULL`); } catch(e) {}
         try { await db.query(`ALTER TABLE responses ADD COLUMN user_name VARCHAR(255) NULL`); } catch(e) {}
         try { await db.query(`ALTER TABLE responses ADD COLUMN user_phone VARCHAR(255) NULL`); } catch(e) {}
@@ -191,6 +197,29 @@ app.get('/api/forms/:uuid', async (req, res) => {
         res.status(500).json({ error: 'Internal server error while fetching form details' });
     }
 });
+app.get('/api/forms/:formId/tracking-stats', async (req, res) => {
+    try {
+        const { formId } = req.params;
+        const query = `
+            SELECT 
+                o.ref_id as ref_id, 
+                MIN(o.opened_at) as openedAt, 
+                MAX(r.created_at) as submittedAt,
+                CASE WHEN MAX(r.created_at) IS NOT NULL THEN 'submitted' ELSE 'opened_not_submitted' END as status
+            FROM form_opens o
+            LEFT JOIN responses r ON o.ref_id = r.ref_id AND o.form_id = r.form_id
+            WHERE o.form_id = ? AND o.ref_id IS NOT NULL AND o.ref_id != ''
+            GROUP BY o.ref_id
+            ORDER BY MAX(r.created_at) DESC, MIN(o.opened_at) DESC
+        `;
+        const [rows] = await db.query(query, [formId]);
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching tracking stats:', error);
+        res.status(500).json({ error: 'Internal server error while fetching tracking stats' });
+    }
+});
+
 
 
 // --- RESPONSES ENDPOINTS ---

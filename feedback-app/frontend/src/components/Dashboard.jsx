@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { 
   Database, Filter, LayoutTemplate, CheckCircle2, PieChart, 
   BarChart3, X, ChevronRight, MessageSquare, TrendingUp, 
-  Calendar, Eye, ChevronDown, Search, ArrowRight, MousePointer2 
+  Calendar, Eye, ChevronDown, Search, ArrowRight, MousePointer2, Settings2, Activity
 } from 'lucide-react';
 import ResponsesTable from './ResponsesTable';
+import LinkTrackingTable from './LinkTrackingTable';
 
 export default function Dashboard() {
   const [responses, setResponses] = useState([]);
@@ -21,6 +22,9 @@ export default function Dashboard() {
   const [qSearch, setQSearch] = useState('');
   const [expandedQuestions, setExpandedQuestions] = useState({}); // { index: bool }
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+
+  // Tab State: Responses vs Tracking
+  const [activeTab, setActiveTab] = useState('responses');
 
   useEffect(() => {
     const init = async () => {
@@ -184,11 +188,15 @@ export default function Dashboard() {
                             <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black transition-colors ${activeCount > 0 ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500 group-hover:bg-slate-300'}`}>
                               {originalIndex + 1}
                             </div>
-                            <span className="text-[11px] font-black text-slate-700 leading-tight pr-4">{field.label}</span>
+                            <span className="text-[11px] font-black text-slate-700 leading-tight pr-4">
+                              {field.label ? field.label.replace(/^\d+\.\s*/, '') : ''}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
                             {activeCount > 0 && <span className="text-[9px] font-black bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full">{activeCount}</span>}
-                            <ChevronDown className={`w-4 h-4 text-slate-300 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                            {field.options && field.options.length > 0 && (
+                              <ChevronDown className={`w-4 h-4 text-slate-300 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                            )}
                           </div>
                         </button>
                         
@@ -221,45 +229,68 @@ export default function Dashboard() {
         {/* Main Area: Analytics & Matrix */}
         <main className="flex-1 flex flex-col bg-white overflow-hidden">
           
-          {/* Top Bar: Active Filters & Summary */}
-          <div className="px-8 py-5 border-b border-slate-100 flex items-center gap-4 shrink-0 overflow-x-auto no-scrollbar bg-slate-50/20">
-            <div className="flex items-center gap-2 text-slate-400 shrink-0">
-               <Filter className="w-4 h-4" />
-               <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Active Filters</span>
+          {/* Top Bar: Tabs & Active Filters */}
+          <div className="px-8 py-3 border-b border-slate-100 flex items-center gap-8 shrink-0 bg-slate-50/20">
+            {/* View Tabs */}
+            <div className="flex bg-slate-100 p-1 rounded-xl">
+               <button 
+                 onClick={() => setActiveTab('responses')}
+                 className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'responses' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+               >
+                 Response Matrix
+               </button>
+               <button 
+                 onClick={() => setActiveTab('tracking')}
+                 className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'tracking' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+               >
+                 Link Tracking
+               </button>
             </div>
-            
-            <div className="flex items-center gap-2">
-              {Object.entries(filters).map(([qId, values]) => 
-                values.map(val => (
-                  <button 
-                    key={`${qId}-${val}`}
-                    onClick={() => {
-                       const idx = allFields.findIndex(f => f.id === qId);
-                       toggleFilter(qId, idx, val);
-                    }}
-                    className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded-full text-[10px] font-black hover:bg-red-500 transition-all group shadow-md shadow-indigo-100"
-                  >
-                    {val}
-                    <X className="w-3 h-3 opacity-50 group-hover:opacity-100" />
-                  </button>
-                ))
-              )}
-              {Object.keys(filters).length === 0 && (
-                <span className="text-[10px] font-bold text-slate-300 italic">Exploring All Responses</span>
-              )}
-              {Object.keys(filters).length > 0 && (
-                <button onClick={clearFilters} className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 uppercase ml-4">Reset Hub</button>
-              )}
-            </div>
+            {/* End View Tabs */}
 
-            <div className="ml-auto flex items-center gap-3">
-              <div className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-4 py-1.5 rounded-2xl text-[11px] font-black flex items-center gap-2 whitespace-nowrap">
-                 <CheckCircle2 className="w-4 h-4" /> {filteredResponses.length} Leads 💎
-              </div>
-            </div>
+            {activeTab === 'responses' && (
+               <div className="flex-1 flex items-center gap-4 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2 text-slate-400 shrink-0">
+                     <Filter className="w-4 h-4" />
+                     <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Active Filters</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {Object.entries(filters).map(([qId, values]) => 
+                      values.map(val => (
+                        <button 
+                          key={`${qId}-${val}`}
+                          onClick={() => {
+                             const idx = allFields.findIndex(f => f.id === qId);
+                             toggleFilter(qId, idx, val);
+                          }}
+                          className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-1.5 rounded-full text-[10px] font-black hover:bg-red-500 transition-all group shadow-md shadow-indigo-100"
+                        >
+                          {val}
+                          <X className="w-3 h-3 opacity-50 group-hover:opacity-100" />
+                        </button>
+                      ))
+                    )}
+                    {Object.keys(filters).length === 0 && (
+                      <span className="text-[10px] font-bold text-slate-300 italic">Exploring All Responses</span>
+                    )}
+                    {Object.keys(filters).length > 0 && (
+                      <button onClick={clearFilters} className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 uppercase ml-4">Reset Hub</button>
+                    )}
+                  </div>
+
+                  <div className="ml-auto flex items-center gap-3">
+                    <div className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-4 py-1.5 rounded-2xl text-[11px] font-black flex items-center gap-2 whitespace-nowrap">
+                       <CheckCircle2 className="w-4 h-4" /> {filteredResponses.length} Leads 💎
+                    </div>
+                  </div>
+               </div>
+            )}
           </div>
 
-          {/* New Distribution Summary Panel */}
+          {activeTab === 'responses' ? (
+             <>
+               {/* New Distribution Summary Panel */}
           {allFields[activeQuestionIndex] && distributionData.length > 0 && (
             <div className="px-8 py-4 bg-white border-b border-slate-100 shrink-0 animate-in fade-in slide-in-from-top-2 duration-500">
                <div className="flex items-center justify-between mb-3">
@@ -299,6 +330,12 @@ export default function Dashboard() {
               }}
             />
           </div>
+             </>
+          ) : (
+             <div className="flex-1 overflow-hidden relative">
+                <LinkTrackingTable formId={selectedForm} forms={forms} />
+             </div>
+          )}
         </main>
       </div>
 

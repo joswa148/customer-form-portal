@@ -38,3 +38,7 @@
 535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-82b040da438sm8579406b3a.43 - gsmtp
 [2026-03-23T07:11:49.365Z] FAILED to admin@example.com: Invalid login: 535-5.7.8 Username and Password not accepted. For more information, go to
 535 5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-82b041059a5sm10005732b3a.53 - gsmtp
+[2026-03-25T04:40:57.857Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
+[2026-03-25T04:41:06.361Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
+[2026-03-25T04:41:14.806Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
+[2026-03-25T04:41:23.434Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
