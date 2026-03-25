@@ -35,7 +35,9 @@ export default function LinkTrackingTable({ formId, forms, responses = [] }) {
     const feedbackLink = `${origin}/interactive/${activeForm.uuid}?ref=${encodeURIComponent(refId)}`;
     const text = encodeURIComponent(`Hi ${refId},\n\nWe noticed you started providing your feedback on "${activeForm.title}" but didn't complete the submission. Here is your secure link to finalize it:\n\n${feedbackLink}`);
     
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const whatsappUrl = isMobile ? `whatsapp://send?text=${text}` : `https://web.whatsapp.com/send?text=${text}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (

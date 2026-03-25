@@ -329,9 +329,15 @@ export default function InteractiveForm() {
               </p>
 
               <a 
-                href={`https://wa.me/971501234567?text=${encodeURIComponent("Hi! I just submitted my feedback.")}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
+                href="#"
+                onClick={(e) => {
+                   e.preventDefault();
+                   const text = encodeURIComponent("Hi! I just submitted my feedback.");
+                   const phone = "971501234567";
+                   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                   const whatsappUrl = isMobile ? `whatsapp://send?phone=${phone}&text=${text}` : `https://web.whatsapp.com/send?phone=${phone}&text=${text}`;
+                   window.open(whatsappUrl, '_blank');
+                }}
                 className="w-full max-w-xs flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(79,70,229,0.3)] transition-all transform active:scale-95 group/wa"
               >
                 Contact via WhatsApp <ChevronRight className="w-4 h-4 group-hover/wa:translate-x-1 transition-transform" />

@@ -103,8 +103,9 @@ export default function DashboardForms() {
     const rawUrl = `${origin}/interactive/${uuid}${trackingParam}`;
     const text = encodeURIComponent(`Please take a moment to quickly share your feedback on "${formTitle}":\n\n${rawUrl}`);
     
-    // Use the official api.whatsapp.com endpoint which reliably supports WhatsApp Web, Desktop, and Mobile bridging
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const whatsappUrl = isMobile ? `whatsapp://send?text=${text}` : `https://web.whatsapp.com/send?text=${text}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   const editForm = (form) => {
