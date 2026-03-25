@@ -19,10 +19,15 @@ let client;
 try {
     client = getTwilioClient();
 } catch (e) {
-    console.warn(`[WhatsAppService] ${e.message}. Service will fail on call.`);
+    // Twilio credentials missing; service will silently bypass API calls.
 }
 
 const sendWhatsAppMessage = async (to, userName, feedbackLink, rawAnswersArray) => {
+    if (!client) {
+        console.log(`[WhatsAppService] Bypassing message to ${to} (No Twilio credentials configured)`);
+        return { sid: 'bypassed_no_credentials' };
+    }
+
     try {
         // Format the Q&A summary for plain text (WhatsApp)
         let qaSummary = '';
