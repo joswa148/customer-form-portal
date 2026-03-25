@@ -110,7 +110,7 @@ export default function LinkTrackingTable({ formId, forms }) {
                                   {!isSubmitted && (
                                      <button 
                                         onClick={() => sendReminder(stat.ref_id)}
-                                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 active:scale-95 opacity-0 group-hover:opacity-100"
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 active:scale-95"
                                      >
                                         <MessageCircle className="w-3.5 h-3.5" /> Send Reminder
                                      </button>

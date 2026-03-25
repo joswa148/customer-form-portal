@@ -42,3 +42,7 @@
 [2026-03-25T04:41:06.361Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
 [2026-03-25T04:41:14.806Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
 [2026-03-25T04:41:23.434Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
+[2026-03-25T07:44:17.189Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
+[2026-03-25T07:44:25.891Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
+[2026-03-25T07:44:34.501Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.
+[2026-03-25T07:44:43.194Z] FAILED to mailer@thevatconsultant.com: Invalid login: 535 535 Authentication failed: Error: Not enough credit.

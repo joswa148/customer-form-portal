@@ -8,6 +8,29 @@ import {
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
 
+const Confetti = () => {
+  useEffect(() => {
+    const colors = ['#4f46e5', '#8b5cf6', '#10b981', '#fbbf24', '#f43f5e'];
+    const container = document.getElementById('confetti-container');
+    if (!container) return;
+    
+    // Create 75 particles
+    for (let i = 0; i < 75; i++) {
+      const conf = document.createElement('div');
+      conf.className = 'absolute w-2 h-2 rounded-sm opacity-80';
+      conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      conf.style.left = `${Math.random() * 100}%`;
+      conf.style.top = `-10%`;
+      conf.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+      conf.style.animationDelay = `${Math.random() * 2}s`;
+      conf.style.transform = `rotate(${Math.random() * 360}deg)`;
+      container.appendChild(conf);
+    }
+  }, []);
+  
+  return <div id="confetti-container" className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true" />;
+};
+
 export default function InteractiveForm() {
   const { uuid } = useParams();
   const [formConfig, setFormConfig] = useState(null);
@@ -293,18 +316,31 @@ export default function InteractiveForm() {
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-violet-600 to-indigo-600"></div>
           
           {submitSuccess ? (
-            <div className="text-center py-12 animate-fade-in-up">
-              <div className="bg-emerald-500 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-10 border-4 border-emerald-100 shadow-[0_20px_40px_rgba(16,185,129,0.3)] rotate-3">
+            <div className="text-center py-10 animate-fade-in-up flex flex-col items-center relative z-10" aria-live="polite">
+              <Confetti />
+              
+              <div className="bg-emerald-500 w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border-4 border-emerald-100 shadow-[0_20px_40px_rgba(16,185,129,0.3)] rotate-3">
                  <CheckCircle2 className="w-12 h-12 text-white" strokeWidth={3} />
               </div>
-              <h1 className="text-3xl font-black text-slate-900 mb-4 tracking-tight uppercase">Data Transmitted 💎</h1>
-              <p className="text-md text-slate-500 font-bold leading-relaxed max-w-sm mx-auto">Your responses have been successfully committed to the secure analytics hub. Thank you for your engagement. 🤝</p>
-              <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col items-center gap-2">
-                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Digital Signature Hash</span>
-                 <code className="bg-slate-100 px-4 py-2 rounded-xl text-slate-600 text-[11px] font-black tracking-tighter">
-                    {Math.random().toString(36).substr(2, 12).toUpperCase()}
-                 </code>
+              
+              <h1 className="text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">Thank You! 🎉</h1>
+              <p className="text-[13px] font-bold text-slate-500 leading-relaxed max-w-sm mx-auto mb-8">
+                Your feedback is highly valued and has been securely recorded. As a token of our appreciation, we have a gift for you.
+              </p>
+
+              <div className="bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-200 px-5 py-2.5 rounded-full flex items-center gap-3 mb-8 shadow-sm group">
+                <span className="text-xl group-hover:scale-110 transition-transform">🏆</span>
+                <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest mt-0.5">Unlocked: 15-Min Free Consultation</span>
               </div>
+
+              <a 
+                href={`https://wa.me/971501234567?text=${encodeURIComponent("Hi! I just submitted my feedback and would like to claim my free consultation.")}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full max-w-xs flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(79,70,229,0.3)] transition-all transform active:scale-95 group/wa"
+              >
+                Claim via WhatsApp <ChevronRight className="w-4 h-4 group-hover/wa:translate-x-1 transition-transform" />
+              </a>
             </div>
           ) : isIntro ? (
             <div className="animate-fade-in-up">
@@ -579,6 +615,10 @@ export default function InteractiveForm() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInRight { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        @keyframes confettiFall {
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+        }
 
         .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-fade-in-right { animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
