@@ -3,8 +3,8 @@ const db = require('./db');
 
 const seedForm = async () => {
   try {
-    const title = 'Client Feedback Form';
-    const description = 'We value your feedback. Please take a moment to answer these questions.';
+    const title = 'Feedback Form';
+    const description = 'Please share your thoughts to help us improve.';
     const uuid = uuidv4();
 
     const fields = [
