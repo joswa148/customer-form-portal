@@ -132,9 +132,9 @@ export default function DashboardForms() {
             </div>
             <div>
               <h1 className="text-xl font-black text-white tracking-tight uppercase">
-                {editingId ? 'Node Architect' : 'Initialize Node'}
+                {editingId ? 'Edit Form' : 'Create New Form'}
               </h1>
-              <p className="text-[10px] font-bold text-indigo-300/60 uppercase tracking-widest">Structural Configuration & Logic</p>
+              <p className="text-[10px] font-bold text-indigo-300/60 uppercase tracking-widest">Form Settings & Questions</p>
             </div>
           </div>
 
@@ -259,10 +259,9 @@ export default function DashboardForms() {
               </div>
             </section>
 
-            {/* Save Action */}
             <div className="pt-6">
               <button onClick={handleSaveForm} disabled={saving} className="w-full py-5 text-white bg-slate-900 hover:bg-black font-black text-lg uppercase tracking-[0.2em] rounded-2xl shadow-xl transition transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3">
-                {saving ? 'Synchronizing...' : <>Commit Save <ShieldCheck className="w-5 h-5"/></>}
+                {saving ? 'Saving...' : <>Save Form <ShieldCheck className="w-5 h-5"/></>}
               </button>
             </div>
           </div>
@@ -272,7 +271,7 @@ export default function DashboardForms() {
   }
 
   // --- LIST MODE ---
-  if (loading) return <div className="h-screen bg-slate-50 flex flex-col items-center justify-center font-black text-indigo-300 text-xl tracking-widest uppercase animate-pulse"><LayoutTemplate className="w-12 h-12 mb-3 text-indigo-200"/> Loading Hub...</div>;
+  if (loading) return <div className="h-screen bg-slate-50 flex flex-col items-center justify-center font-black text-indigo-300 text-xl tracking-widest uppercase animate-pulse"><LayoutTemplate className="w-12 h-12 mb-3 text-indigo-200"/> Loading Forms...</div>;
 
   return (
     <div className="h-screen bg-white font-sans overflow-hidden flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
@@ -284,20 +283,20 @@ export default function DashboardForms() {
             <LayoutTemplate className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-black text-white tracking-tight">Form Administration</h1>
-            <p className="text-[10px] font-bold text-indigo-300/60 uppercase tracking-widest">Architect & Manage Feedback Nodes</p>
+            <h1 className="text-xl font-black text-white tracking-tight">Manage Forms</h1>
+            <p className="text-[10px] font-bold text-indigo-300/60 uppercase tracking-widest">Create and Manage Forms</p>
           </div>
         </div>
 
         <div className="flex items-center gap-6">
           <Link to="/dashboard" className="px-5 py-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-sm rounded-2xl font-black transition-all flex items-center gap-3 group">
-            <BarChart2 className="w-4 h-4 group-hover:-rotate-12 transition-transform" /> Global Stats
+            <BarChart2 className="w-4 h-4 group-hover:-rotate-12 transition-transform" /> Overview Stats
           </Link>
           <button 
             onClick={() => { setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build'); }} 
             className="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-2xl font-black shadow-[0_4px_15px_rgba(99,102,241,0.4)] transition-all flex items-center gap-3 active:scale-95"
           >
-            <Plus className="w-5 h-5" /> Create New Node
+            <Plus className="w-5 h-5" /> Create New Form
           </button>
         </div>
       </header>
@@ -311,15 +310,15 @@ export default function DashboardForms() {
               <div className="bg-slate-50 p-8 rounded-[2rem] border-2 border-slate-100 mb-8 grow-0">
                 <LayoutTemplate className="w-16 h-16 text-slate-200" />
               </div>
-              <h2 className="text-2xl font-black text-slate-900 mb-3 tracking-tighter uppercase">No Active Nodes</h2>
+              <h2 className="text-2xl font-black text-slate-900 mb-3 tracking-tighter uppercase">No Forms Yet</h2>
               <p className="text-slate-400 text-sm font-bold mb-10 max-w-sm mx-auto leading-relaxed">
-                Your administration hub is currently silent. Build your first interactive feedback node to start gathering structural insights.
+                You haven't created any forms yet. Create a form to start collecting feedback.
               </p>
               <button 
                 onClick={() => { setEditingId(null); setTitle(''); setDescription(''); setFields([]); setMode('build'); }} 
                 className="px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black uppercase text-[11px] tracking-[0.3em] shadow-2xl transition transform active:scale-95"
               >
-                Initialize Builder
+                Create Form
               </button>
             </div>
           ) : (
@@ -330,18 +329,18 @@ export default function DashboardForms() {
                   
                   <div className="flex flex-col mb-8">
                     <div className="flex justify-between items-start mb-4">
-                       <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-50 px-2 py-1 rounded-md">Node {form.id}</span>
+                       <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-50 px-2 py-1 rounded-md">Form {form.id}</span>
                        <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">UUID {form.uuid?.split('-')[0]}</span>
                     </div>
 
                     <h3 className="font-black text-xl text-slate-900 leading-tight tracking-tight mb-3 uppercase group-hover:text-indigo-600 transition-colors">{form.title}</h3>
                     <p className="text-slate-500 font-bold text-[11px] line-clamp-2 min-h-[2.5rem] leading-relaxed opacity-60">
-                      {form.description || 'System-generated intake node with automated synchronization protocols.'}
+                      {form.description || 'A form for collecting customer feedback.'}
                     </p>
                     
                     <div className="mt-8 flex items-center gap-2">
                       <div className="bg-slate-50 text-slate-900 border-2 border-slate-100 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-2 uppercase tracking-tight">
-                         <BarChart2 className="w-3.5 h-3.5 text-indigo-500"/> {form.response_count || 0} <span className="text-slate-300">Intakes</span>
+                         <BarChart2 className="w-3.5 h-3.5 text-indigo-500"/> {form.response_count || 0} <span className="text-slate-300">Responses</span>
                       </div>
                       <div className="bg-slate-50 text-slate-400 border-2 border-slate-100 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest">
                          {form.fields && (typeof form.fields === 'string' ? JSON.parse(form.fields).length : form.fields.length)} Fields
@@ -351,17 +350,17 @@ export default function DashboardForms() {
 
                   <div className="space-y-4 pt-8 border-t-2 border-slate-50">
                     <Link to={`/dashboard?formId=${form.id}`} className="w-full flex justify-center items-center gap-3 bg-slate-950 hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.3em] py-4 rounded-2xl transition shadow-xl active:scale-[0.98] group/btn">
-                      Analyze Data <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"/>
+                      View Responses <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"/>
                     </Link>
                     
                     <div className="grid grid-cols-3 gap-3">
-                      <button onClick={() => shareWhatsApp(form.uuid, form.title)} title="Dispatch via WhatsApp" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 p-3 rounded-2xl transition shadow-sm group/i">
+                      <button onClick={() => shareWhatsApp(form.uuid, form.title)} title="Share via WhatsApp" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 p-3 rounded-2xl transition shadow-sm group/i">
                         <MessageCircle className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
                       </button>
-                      <button onClick={() => { copyLink(form.uuid); }} title="Capture Node URL" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-indigo-500/30 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 p-3 rounded-2xl transition shadow-sm group/i">
+                      <button onClick={() => { copyLink(form.uuid); }} title="Copy Link" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-indigo-500/30 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 p-3 rounded-2xl transition shadow-sm group/i">
                         <LinkIcon className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
                       </button>
-                      <button onClick={() => editForm(form)} title="Re-Architect Node" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-orange-500/30 hover:bg-orange-50 text-slate-400 hover:text-orange-600 p-3 rounded-2xl transition shadow-sm group/i">
+                      <button onClick={() => editForm(form)} title="Edit Form" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-orange-500/30 hover:bg-orange-50 text-slate-400 hover:text-orange-600 p-3 rounded-2xl transition shadow-sm group/i">
                         <Edit2 className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
                       </button>
                     </div>

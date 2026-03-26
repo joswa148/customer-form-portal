@@ -84,7 +84,7 @@ export default function FeedbackForm() {
         userPhone: `${userPhoneCode} ${userPhoneNumber.trim()}`,
         answers
       });
-      setSubmitSuccess('Your data has been committed to the secure hub.');
+      setSubmitSuccess('Your response has been submitted successfully.');
       setAnswers(fields.reduce((acc, f) => ({ ...acc, [f.id]: '' }), {}));
       setUserEmail('');
       setUserName('');
@@ -147,7 +147,7 @@ export default function FeedbackForm() {
                 {/* ID Card */}
                 <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                    <User className="w-3 h-3 text-indigo-400"/> Authentication Matrix
+                    <User className="w-3 h-3 text-indigo-400"/> Authentication
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="col-span-full">
@@ -215,7 +215,7 @@ export default function FeedbackForm() {
                               rows="3"
                               className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-4 text-[13px] font-black text-slate-700 outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition resize-none placeholder:text-slate-400"
                               required={field.required}
-                              placeholder="Provide extended context matrix..."
+                              placeholder="Provide more info..."
                             />
                           ) : (field.type === 'select' || field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown-multi') ? (
                             <div className="grid sm:grid-cols-2 gap-3">

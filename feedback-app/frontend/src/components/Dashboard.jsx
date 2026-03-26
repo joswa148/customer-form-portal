@@ -120,8 +120,8 @@ export default function Dashboard() {
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-black text-white tracking-tight">Global Response Hub 💎</h1>
-            <p className="text-[10px] font-bold text-violet-300/60 uppercase tracking-widest">Cross-Metric Analytics & Lead Matrix</p>
+            <h1 className="text-xl font-black text-white tracking-tight">All Responses</h1>
+            <p className="text-[10px] font-bold text-violet-300/60 uppercase tracking-widest">Analytics & Data</p>
           </div>
         </div>
 
@@ -141,7 +141,7 @@ export default function Dashboard() {
             </div>
           </div>
           <Link to="/dashboard/forms" className="px-5 py-2.5 bg-violet-600/10 hover:bg-violet-600/20 text-violet-400 border border-violet-500/30 text-sm rounded-2xl font-black transition-all flex items-center gap-3 group">
-            <LayoutTemplate className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Forms Hub
+            <LayoutTemplate className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Forms
           </Link>
         </div>
       </header>
@@ -237,7 +237,7 @@ export default function Dashboard() {
                  onClick={() => setActiveTab('responses')}
                  className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'responses' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                >
-                 Response Matrix
+                 Responses
                </button>
                <button 
                  onClick={() => setActiveTab('tracking')}
@@ -275,13 +275,13 @@ export default function Dashboard() {
                       <span className="text-[10px] font-bold text-slate-300 italic">Exploring All Responses</span>
                     )}
                     {Object.keys(filters).length > 0 && (
-                      <button onClick={clearFilters} className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 uppercase ml-4">Reset Hub</button>
+                      <button onClick={clearFilters} className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 uppercase ml-4">Clear Filters</button>
                     )}
                   </div>
 
                   <div className="ml-auto flex items-center gap-3">
                     <div className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-4 py-1.5 rounded-2xl text-[11px] font-black flex items-center gap-2 whitespace-nowrap">
-                       <CheckCircle2 className="w-4 h-4" /> {filteredResponses.length} Leads 💎
+                       <CheckCircle2 className="w-4 h-4" /> {filteredResponses.length} Responses
                     </div>
                   </div>
                </div>
@@ -322,7 +322,7 @@ export default function Dashboard() {
               forms={forms} 
               allFields={allFields}
               onDelete={async (id) => {
-                 if (!window.confirm("Purge this lead?")) return;
+                 if (!window.confirm("Delete this response?")) return;
                  try {
                    await api.delete(`/responses/${id}`);
                    setResponses(prev => prev.filter(r => r.id !== id));

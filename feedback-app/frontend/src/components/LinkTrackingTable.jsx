@@ -48,7 +48,7 @@ export default function LinkTrackingTable({ formId, forms, responses = [] }) {
                <Activity className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
-               <h2 className="text-sm font-black text-slate-800 uppercase tracking-widest">Link Tracking Matrix</h2>
+               <h2 className="text-sm font-black text-slate-800 uppercase tracking-widest">Link Tracking</h2>
                <p className="text-[10px] font-bold text-slate-400 uppercase">Track Open & Submission Rates</p>
             </div>
          </div>

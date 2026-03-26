@@ -347,7 +347,7 @@ export default function InteractiveForm() {
             <div className="animate-fade-in-up">
                <header className="text-center mb-6">
                  <div className="w-10 h-1 bg-violet-600 mx-auto mb-4 rounded-full"></div>
-                 <p className="text-[9px] font-black text-violet-600 uppercase tracking-[0.4em] mb-2">Secure Hub Intake</p>
+                 <p className="text-[9px] font-black text-violet-600 uppercase tracking-[0.4em] mb-2">Secure Submission</p>
                  <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-3 uppercase">{formConfig.title}</h1>
                  <p className="text-slate-500 text-[11px] font-bold leading-relaxed max-w-xs mx-auto opacity-60">Authentication & Encrypted Data Submission</p>
                </header>
@@ -368,7 +368,7 @@ export default function InteractiveForm() {
                    </div>
                    <div className="space-y-2">
                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                       <Mail className="w-3 h-3 text-indigo-400"/> Email Matrix
+                       <Mail className="w-3 h-3 text-indigo-400"/> Email
                      </label>
                      <input 
                        type="email" 
@@ -452,7 +452,7 @@ export default function InteractiveForm() {
               <fieldset className="border-none p-0 m-0">
                 <legend className="sr-only">Step {currentIndex + 1}</legend>
                 
-                <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-4">Question Matrix {currentIndex + 1}</p>
+                <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-4">Question {currentIndex + 1}</p>
                 <h2 
                   ref={questionHeadingRef} 
                   tabIndex="-1" 
