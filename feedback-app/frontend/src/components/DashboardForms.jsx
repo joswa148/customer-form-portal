@@ -324,46 +324,51 @@ export default function DashboardForms() {
           ) : (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {forms.map(form => (
-                <div key={form.id} className="bg-white p-8 rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.08)] border-2 border-slate-50 flex flex-col justify-between transition-all duration-500 relative group overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100 group-hover:bg-indigo-500 transition-colors"></div>
+                <div key={form.id} className="bg-white p-6 rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-indigo-100 border-2 border-slate-50 flex flex-col justify-between transition-all duration-300 relative group overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-[3px] bg-indigo-50 group-hover:bg-indigo-500 transition-colors"></div>
                   
-                  <div className="flex flex-col mb-8">
-                    <div className="flex justify-between items-start mb-4">
-                       <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-50 px-2 py-1 rounded-md">Form {form.id}</span>
+                  <div className="flex flex-col mb-4">
+                    {/* Header Row: ID, UUID, and the big primary action */}
+                    <div className="flex justify-between items-center mb-4">
+                       <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2.5 py-1 rounded-md">Form {form.id}</span>
                        <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">UUID {form.uuid?.split('-')[0]}</span>
                     </div>
 
-                    <h3 className="font-black text-xl text-slate-900 leading-tight tracking-tight mb-3 uppercase group-hover:text-indigo-600 transition-colors">{form.title}</h3>
-                    <p className="text-slate-500 font-bold text-[11px] line-clamp-2 min-h-[2.5rem] leading-relaxed opacity-60">
+                    {/* Title & View Responses Button Row */}
+                    <div className="flex justify-between items-start gap-4 mb-2">
+                       <h3 className="font-black text-lg text-slate-900 leading-tight tracking-tight uppercase group-hover:text-indigo-600 transition-colors line-clamp-2 pb-1 relative">
+                         {form.title}
+                       </h3>
+                       <Link to={`/dashboard?formId=${form.id}`} title="View Responses" className="shrink-0 flex justify-center items-center bg-slate-900 hover:bg-indigo-600 text-white p-2.5 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95 group/btn">
+                         <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform"/>
+                       </Link>
+                    </div>
+
+                    <p className="text-slate-500 font-bold text-[11px] line-clamp-2 leading-relaxed opacity-70 mb-5 min-h-[2.5rem]">
                       {form.description || 'A form for collecting customer feedback.'}
                     </p>
                     
-                    <div className="mt-8 flex items-center gap-2">
-                      <div className="bg-slate-50 text-slate-900 border-2 border-slate-100 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-2 uppercase tracking-tight">
-                         <BarChart2 className="w-3.5 h-3.5 text-indigo-500"/> {form.response_count || 0} <span className="text-slate-300">Responses</span>
+                    {/* Stats grouped side by side tightly */}
+                    <div className="flex items-center gap-2">
+                      <div className="bg-slate-50 text-slate-900 border border-slate-100 text-[10px] font-black px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 uppercase tracking-tight">
+                         <BarChart2 className="w-3.5 h-3.5 text-indigo-500"/> {form.response_count || 0} <span className="text-slate-400 ml-0.5">Resp.</span>
                       </div>
-                      <div className="bg-slate-50 text-slate-400 border-2 border-slate-100 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest">
-                         {form.fields && (typeof form.fields === 'string' ? JSON.parse(form.fields).length : form.fields.length)} Fields
+                      <div className="bg-slate-50 text-slate-900 border border-slate-100 text-[10px] font-black px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 uppercase tracking-widest">
+                         <LayoutTemplate className="w-3.5 h-3.5 text-slate-400"/> {form.fields && (typeof form.fields === 'string' ? JSON.parse(form.fields).length : form.fields.length)} <span className="text-slate-400 ml-0.5">Fields</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-8 border-t-2 border-slate-50">
-                    <Link to={`/dashboard?formId=${form.id}`} className="w-full flex justify-center items-center gap-3 bg-slate-950 hover:bg-black text-white font-black uppercase text-[10px] tracking-[0.3em] py-4 rounded-2xl transition shadow-xl active:scale-[0.98] group/btn">
-                      View Responses <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"/>
-                    </Link>
-                    
-                    <div className="grid grid-cols-3 gap-3">
-                      <button onClick={() => shareWhatsApp(form.uuid, form.title)} title="Share via WhatsApp" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-emerald-500/30 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 p-3 rounded-2xl transition shadow-sm group/i">
-                        <MessageCircle className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
-                      </button>
-                      <button onClick={() => { copyLink(form.uuid); }} title="Copy Link" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-indigo-500/30 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 p-3 rounded-2xl transition shadow-sm group/i">
-                        <LinkIcon className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
-                      </button>
-                      <button onClick={() => editForm(form)} title="Edit Form" className="flex justify-center items-center bg-white border-2 border-slate-100 hover:border-orange-500/30 hover:bg-orange-50 text-slate-400 hover:text-orange-600 p-3 rounded-2xl transition shadow-sm group/i">
-                        <Edit2 className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
-                      </button>
-                    </div>
+                  <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-100">
+                    <button onClick={() => shareWhatsApp(form.uuid, form.title)} title="Share via WhatsApp" className="flex justify-center items-center bg-white border border-slate-200 hover:border-emerald-500/30 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 p-2.5 rounded-xl transition shadow-sm group/i active:scale-95">
+                      <MessageCircle className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
+                    </button>
+                    <button onClick={() => { copyLink(form.uuid); }} title="Copy Link" className="flex justify-center items-center bg-white border border-slate-200 hover:border-indigo-500/30 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 p-2.5 rounded-xl transition shadow-sm group/i active:scale-95">
+                      <LinkIcon className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
+                    </button>
+                    <button onClick={() => editForm(form)} title="Edit Form" className="flex justify-center items-center bg-white border border-slate-200 hover:border-orange-500/30 hover:bg-orange-50 text-slate-400 hover:text-orange-600 p-2.5 rounded-xl transition shadow-sm group/i active:scale-95">
+                      <Edit2 className="w-4 h-4 group-hover/i:scale-110 transition-transform" />
+                    </button>
                   </div>
                 </div>
               ))}
