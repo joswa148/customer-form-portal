@@ -9,13 +9,13 @@ import FeedbackPage from './pages/FeedbackPage';
 
 function App() {
   return (
-    <Router>
+    <Router basename='/feedback'>
       <div className="min-h-screen bg-gray-50 text-gray-800">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard/forms" />} />
           <Route path="/f/:uuid" element={<FeedbackForm />} />
           <Route path="/feedback" element={<FeedbackPage />} />
-          <Route path="/interactive/:uuid" element={<InteractiveForm />} />
+          <Route path="/feedback/interactive/:uuid" element={<InteractiveForm />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/forms" element={<DashboardForms />} />
         </Routes>
