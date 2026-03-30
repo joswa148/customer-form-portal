@@ -91,7 +91,7 @@ export default function DashboardForms() {
     const trackingParam = trackingRef ? `?ref=${encodeURIComponent(trackingRef.trim())}` : '';
     
     let origin = window.location.origin;
-    navigator.clipboard.writeText(`${origin}/interactive/${uuid}${trackingParam}`);
+    navigator.clipboard.writeText(`${origin}/feedback/interactive/${uuid}${trackingParam}`);
     alert('Tracked link copied to clipboard!');
   };
 
@@ -100,7 +100,7 @@ export default function DashboardForms() {
     const trackingParam = trackingRef ? `?ref=${encodeURIComponent(trackingRef.trim())}` : '';
     
     let origin = window.location.origin;
-    const rawUrl = `${origin}/interactive/${uuid}${trackingParam}`;
+    const rawUrl = `${origin}/feedback/interactive/${uuid}${trackingParam}`;
     const text = encodeURIComponent(`Please take a moment to quickly share your feedback on "${formTitle}":\n\n${rawUrl}`);
     
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

@@ -323,10 +323,12 @@ export default function InteractiveForm() {
                  <CheckCircle2 className="w-12 h-12 text-white" strokeWidth={3} />
               </div>
               
-              <h1 className="text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">Thank You! 🎉</h1>
-              <p className="text-[13px] font-bold text-slate-500 leading-relaxed max-w-sm mx-auto mb-8">
-                Your feedback is highly valued and has been securely recorded. As a token of our appreciation, we have a gift for you.
-              </p>
+              <h1 className="text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">
+  Feedback Received 🎉
+</h1>
+<p className="text-[13px] font-bold text-slate-500 leading-relaxed max-w-sm mx-auto mb-8">
+  Thanks for sharing your feedback. Your input is highly valued and has been securely recorded.
+</p>
 
               <a 
                 href="#"
@@ -356,7 +358,7 @@ export default function InteractiveForm() {
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2">
                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                       <User className="w-3 h-3 text-indigo-400"/> Full Identity
+                       <User className="w-3 h-3 text-indigo-400"/> Full Name
                      </label>
                      <input 
                        type="text" 
@@ -382,7 +384,7 @@ export default function InteractiveForm() {
                  
                  <div className="space-y-2 relative">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                       <Phone className="w-3 h-3 text-indigo-400"/> Mobile Gateway
+                       <Phone className="w-3 h-3 text-indigo-400"/> Mobile Number
                     </label>
                     <div className="flex gap-0 bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-visible focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition">
                       <div className="relative shrink-0 border-r-2 border-slate-100 h-[72px] flex items-center px-4 hover:bg-slate-100 transition rounded-l-[1.8rem] overflow-hidden">

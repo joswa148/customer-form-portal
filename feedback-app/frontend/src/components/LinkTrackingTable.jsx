@@ -32,7 +32,7 @@ export default function LinkTrackingTable({ formId, forms, responses = [] }) {
   const sendReminder = (refId) => {
     if (!activeForm) return;
     let origin = window.location.origin;
-    const feedbackLink = `${origin}/interactive/${activeForm.uuid}?ref=${encodeURIComponent(refId)}`;
+    const feedbackLink = `${origin}/feedback/interactive/${activeForm.uuid}?ref=${encodeURIComponent(refId)}`;
     const text = encodeURIComponent(`Hi ${refId},\n\nWe noticed you started providing your feedback on "${activeForm.title}" but didn't complete the submission. Here is your secure link to finalize it:\n\n${feedbackLink}`);
     
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
