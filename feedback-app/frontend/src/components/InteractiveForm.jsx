@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../utils/api';
 import { useParams } from 'react-router-dom';
 import { 
-  Mail, CheckCircle2, ChevronRight, ChevronLeft, AlertCircle, 
-  Info, ShieldCheck, Check, WifiOff, X, User, Phone, Zap, MousePointer2, Star
+  CheckCircle2, ChevronRight, ChevronLeft, AlertCircle,
+  Info, ShieldCheck, Check, WifiOff, X, Phone, Zap, MousePointer2, Star
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
@@ -189,8 +189,8 @@ export default function InteractiveForm() {
     }
 
     if (currentIndex === -1) {
-      if (!userName.trim() || !userEmail.includes('@') || !userPhoneNumber.trim()) {
-        alert('Required: Name, Email, and Phone.');
+      if (!userPhoneNumber.trim()) {
+        alert('Required: Mobile Number.');
         return;
       }
     }
@@ -204,7 +204,7 @@ export default function InteractiveForm() {
       }
     }
     setCurrentIndex(prev => Math.min(prev + 1, fields.length));
-  }, [currentIndex, fields, userName, userEmail, userPhoneNumber]);
+  }, [currentIndex, fields, userPhoneNumber]);
 
   const handlePrev = useCallback(() => {
     analytics.trackNavigation('back', currentIndex);
@@ -355,33 +355,6 @@ export default function InteractiveForm() {
                </header>
                
                <div className="space-y-4 mb-8">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                       <User className="w-3 h-3 text-indigo-400"/> Full Name
-                     </label>
-                     <input 
-                       type="text" 
-                       value={userName} 
-                       onChange={e => setUserName(e.target.value)} 
-                       placeholder="e.g. Liam Anderson" 
-                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-400" 
-                     />
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                       <Mail className="w-3 h-3 text-indigo-400"/> Email
-                     </label>
-                     <input 
-                       type="email" 
-                       value={userEmail} 
-                       onChange={e => setUserEmail(e.target.value)} 
-                       placeholder="name@domain.com" 
-                       className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[12px] focus:ring-indigo-600/5 transition text-sm active:scale-[0.99] placeholder:text-slate-400" 
-                     />
-                   </div>
-                 </div>
-                 
                  <div className="space-y-2 relative">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
                        <Phone className="w-3 h-3 text-indigo-400"/> Mobile Number
