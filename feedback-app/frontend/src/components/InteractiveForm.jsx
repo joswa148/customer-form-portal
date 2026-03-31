@@ -3,7 +3,7 @@ import api from '../utils/api';
 import { useParams } from 'react-router-dom';
 import { 
   CheckCircle2, ChevronRight, ChevronLeft, AlertCircle,
-  Info, ShieldCheck, Check, WifiOff, X, Phone, Zap, MousePointer2, Star
+  Info, ShieldCheck, Check, WifiOff, X, Phone, Zap, MousePointer2, Star, ChevronDown
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
@@ -354,37 +354,44 @@ export default function InteractiveForm() {
                  <p className="text-slate-500 text-[11px] font-bold leading-relaxed max-w-xs mx-auto opacity-60">Authentication & Encrypted Data Submission</p>
                </header>
                
-               <div className="space-y-4 mb-8">
-                 <div className="space-y-2 relative">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                       <Phone className="w-3 h-3 text-indigo-400"/> Mobile Number
-                    </label>
-                    <div className="flex gap-0 bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-visible focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition">
-                      <div className="relative shrink-0 border-r-2 border-slate-100 h-[72px] flex items-center px-4 hover:bg-slate-100 transition rounded-l-[1.8rem] overflow-hidden">
-                        <select 
-                          value={userPhoneCode}
-                          onChange={e => setUserPhoneCode(e.target.value)}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black appearance-none"
-                          title="Select Country"
-                        >
-                          {countryCodes.map((c, i) => <option key={i} value={c.code} className="text-black bg-white font-semibold">{c.name} ({c.code})</option>)}
-                        </select>
-                        <div className="flex items-center gap-2 pointer-events-none">
-                          <span className="text-2xl text-slate-800 font-black">{activeCountry.flag}</span>
-                          <span className="text-sm font-black text-slate-900">{activeCountry.code}</span>
+                 <div className="space-y-4 mb-8">
+                   <div className="space-y-2 relative">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+                         <Phone className="w-3 h-3 text-indigo-400"/> Mobile Number
+                      </label>
+                      <div className="flex items-stretch bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-hidden focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition duration-300">
+                        {/* Country Code Trigger Area */}
+                        <div className="relative shrink-0 flex items-center px-4 bg-slate-100/50 hover:bg-slate-100 transition-colors border-r-2 border-slate-100/50 group/trigger">
+                          <select 
+                            value={userPhoneCode}
+                            onChange={e => setUserPhoneCode(e.target.value)}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 appearance-none"
+                            title="Select Country"
+                          >
+                            {countryCodes.map((c, i) => (
+                              <option key={i} value={c.code} className="text-black bg-white font-semibold">
+                                {c.name} ({c.code})
+                              </option>
+                            ))}
+                          </select>
+                          <div className="flex items-center gap-2 pointer-events-none select-none">
+                            <span className="text-2xl filter drop-shadow-sm text-black">{activeCountry.flag}</span>
+                            <span className="text-sm font-black text-black">{activeCountry.code}</span>
+                            <ChevronDown className="w-3 h-3 text-black/40 group-hover/trigger:text-indigo-600 transition-colors" />
+                          </div>
                         </div>
-                      </div>
 
-                      <input
-                        type="tel"
-                        value={userPhoneNumber}
-                        onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))}
-                        placeholder="000 000 0000"
-                        className="flex-1 bg-transparent px-4 h-[72px] text-slate-900 font-black outline-none text-sm placeholder:text-slate-400"
-                      />
-                    </div>
+                        {/* Number Input Area */}
+                        <input
+                          type="tel"
+                          value={userPhoneNumber}
+                          onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))}
+                          placeholder="000 000 0000"
+                          className="flex-1 bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                        />
+                      </div>
+                   </div>
                  </div>
-               </div>
                
                <button 
                  onClick={handleNext} 
