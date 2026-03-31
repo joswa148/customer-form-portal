@@ -375,12 +375,12 @@ export default function InteractiveForm() {
                         </div>
                       </div>
 
-                      <input 
-                        type="tel" 
-                        value={userPhoneNumber} 
-                        onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} 
-                        placeholder="000 000 0000" 
-                        className="flex-1 bg-transparent p-4 text-slate-900 font-black outline-none text-sm active:scale-[0.98] placeholder:text-slate-400" 
+                      <input
+                        type="tel"
+                        value={userPhoneNumber}
+                        onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))}
+                        placeholder="000 000 0000"
+                        className="flex-1 bg-transparent px-4 h-[72px] text-slate-900 font-black outline-none text-sm placeholder:text-slate-400"
                       />
                     </div>
                  </div>
