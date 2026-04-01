@@ -61,8 +61,8 @@ export default function FeedbackForm() {
     setSubmitError('');
     setSubmitSuccess('');
     
-    if (!userEmail || !userEmail.includes('@')) {
-      setSubmitError('Please provide a valid metric verification email address.');
+    if (!userPhoneCode || !userPhoneNumber.trim()) {
+      setSubmitError('Please provide a valid mobile number for verification.');
       return;
     }
 
@@ -150,14 +150,6 @@ export default function FeedbackForm() {
                     <User className="w-3 h-3 text-indigo-400"/> Authentication
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <div className="col-span-full">
-                      <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Identity Name</label>
-                      <input type="text" value={userName} onChange={e => setUserName(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="e.g. Liam Anderson" required />
-                    </div>
-                    <div>
-                      <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Email Verification</label>
-                      <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="name@domain.com" required />
-                    </div>
                     <div>
                       <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Mobile Access</label>
                       <div className="flex gap-2">

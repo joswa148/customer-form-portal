@@ -42,10 +42,11 @@ const sendWhatsAppMessage = async (to, userName, feedbackLink, rawAnswersArray) 
 
         // Formulate the message based on the approved template:
         // "Hi {{1}}, thank you for reaching out to The VAT Consultant. [Summary] We'd love your feedback: {{2}}"
+        const greeting = userName && userName.trim() ? `Hi ${userName.trim()}` : "Hi there";
         const message = await client.messages.create({
             from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER || '+14155238886'}`,
             to: `whatsapp:${to}`,
-            body: `Hi ${userName}, thank you for reaching out to The VAT Consultant. we have received your submission.${qaSummary}\n\nWe'd love your feedback: ${feedbackLink}`,
+            body: `${greeting}, thank you for reaching out to The VAT Consultant. we have received your submission.${qaSummary}\n\nWe'd love your feedback: ${feedbackLink}`,
             statusCallback: `${process.env.BACKEND_URL || 'http://localhost:5002'}/api/webhooks/whatsapp`
         });
 

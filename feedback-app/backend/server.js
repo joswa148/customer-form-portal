@@ -302,9 +302,13 @@ app.post('/api/responses', async (req, res) => {
 
         if (!formId) return res.status(400).json({ error: 'Form ID is required.' });
         if (!answers || typeof answers !== 'object') return res.status(400).json({ error: 'Answers object is required.' });
-        if (!userEmail || !userEmail.includes('@')) return res.status(400).json({ error: 'Valid user email is required.' });
-        if (!userName || !userName.trim()) return res.status(400).json({ error: 'Valid user name is required.' });
+        
+        // Mobile Number is now the primary required identifier
         if (!userPhone || !userPhone.trim()) return res.status(400).json({ error: 'Valid phone number is required.' });
+
+        // Normalize optional fields
+        const safeEmail = (userEmail && typeof userEmail === 'string' && userEmail.includes('@')) ? userEmail.trim() : '';
+        const safeName = (userName && typeof userName === 'string') ? userName.trim() : '';
 
         const [formCheck] = await db.query('SELECT title, fields FROM forms WHERE id = ?', [formId]);
         if (formCheck.length === 0) {
@@ -347,7 +351,7 @@ app.post('/api/responses', async (req, res) => {
         }
 
         const insertQuery = `INSERT INTO responses (form_id, user_email, user_name, user_phone, answers, ref_id) VALUES (?, ?, ?, ?, ?, ?)`;
-        const [result] = await db.query(insertQuery, [formId, userEmail.trim(), userName.trim(), userPhone.trim(), JSON.stringify(answers), ref && ref.trim() ? ref.trim() : null]);
+        const [result] = await db.query(insertQuery, [formId, safeEmail, safeName, userPhone.trim(), JSON.stringify(answers), ref && ref.trim() ? ref.trim() : null]);
 
         // Build raw answers array for dynamic HTML template
         const rawAnswersArray = [];
@@ -370,8 +374,8 @@ app.post('/api/responses', async (req, res) => {
         emailQueue.push({
             responseId: result.insertId,
             formTitle,
-            userEmail,
-            userName: userName.trim(),
+            userEmail: safeEmail,
+            userName: safeName,
             userPhone: userPhone.trim(),
             adminEmail: process.env.EMAIL_TO || null,
             rawAnswersArray,

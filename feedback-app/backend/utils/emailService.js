@@ -42,14 +42,18 @@ const sendEmail = async (to, subject, htmlContent) => {
 const buildFeedbackTemplate = (formTitle, formattedAnswers, userName, userPhone, userEmail, isAdmin = false) => {
     const brandColor = "#4f46e5"; // Indigo 600
     
+    const displayUser = userName && userName.trim() ? userName : "Customer";
+    const displayEmail = userEmail && userEmail.trim() ? userEmail : "Not Provided";
+    const displayPhone = userPhone && userPhone.trim() ? userPhone : "Not Provided";
+
     let preamble = isAdmin 
         ? `<p style="color: #334155; font-size: 16px; line-height: 1.5;">A new response was received for the form <strong>"${formTitle}"</strong>.</p>
            <div style="background-color:#eff6ff; border:1px solid #bfdbfe; padding:16px; border-radius:8px; margin: 16px 0;">
-             <p style="margin:0; font-size:14px; color:#1e3a8a;"><strong>Name:</strong> ${userName}</p>
-             <p style="margin:4px 0 0 0; font-size:14px; color:#1e3a8a;"><strong>Phone:</strong> ${userPhone}</p>
-             <p style="margin:4px 0 0 0; font-size:14px; color:#1e3a8a;"><strong>Email:</strong> ${userEmail}</p>
+             <p style="margin:0; font-size:14px; color:#1e3a8a;"><strong>Name:</strong> ${displayUser}</p>
+             <p style="margin:4px 0 0 0; font-size:14px; color:#1e3a8a;"><strong>Phone:</strong> ${displayPhone}</p>
+             <p style="margin:4px 0 0 0; font-size:14px; color:#1e3a8a;"><strong>Email:</strong> ${displayEmail}</p>
            </div>`
-        : `<p style="color: #334155; font-size: 16px; line-height: 1.5;">Hi ${userName},</p>
+        : `<p style="color: #334155; font-size: 16px; line-height: 1.5;">Hi ${displayUser},</p>
            <p style="color: #334155; font-size: 16px; line-height: 1.5;">Thank you for providing your feedback on <strong>"${formTitle}"</strong>. We truly appreciate your time.</p>`;
 
     let answersHtml = '';
