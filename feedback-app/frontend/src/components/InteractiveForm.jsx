@@ -81,32 +81,7 @@ export default function InteractiveForm() {
     };
   }, []);
 
-  // Load from LocalStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(`form_progress_v2_${uuid}`);
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        if (data.answers) setAnswers(data.answers);
-        if (data.currentIndex !== undefined) setCurrentIndex(data.currentIndex);
-        if (data.userEmail) setUserEmail(data.userEmail);
-        if (data.userName) setUserName(data.userName);
-        if (data.userPhoneCode) setUserPhoneCode(data.userPhoneCode);
-        if (data.userPhoneNumber) setUserPhoneNumber(data.userPhoneNumber);
-      } catch (e) { console.error('Failed to restore v2 progress', e); }
-    }
-  }, [uuid]);
 
-  // Debounced Save to LocalStorage
-  useEffect(() => {
-    if (loading || submitSuccess) return;
-    const timer = setTimeout(() => {
-      localStorage.setItem(`form_progress_v2_${uuid}`, JSON.stringify({ 
-        answers, currentIndex, userEmail, userName, userPhoneCode, userPhoneNumber 
-      }));
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [answers, currentIndex, userEmail, userName, userPhoneCode, userPhoneNumber, loading, submitSuccess, uuid]);
 
   useEffect(() => {
     const fetchForm = async () => {
@@ -256,7 +231,7 @@ export default function InteractiveForm() {
       const msg = res.data.message || 'Transmission Successful';
       setSubmitSuccess(msg);
       analytics.trackCompletion(formConfig.title, msg);
-      localStorage.removeItem(`form_progress_v2_${uuid}`);
+
     } catch (err) {
       setSubmitError(err.response?.data?.error || 'Sync Failed');
     } finally {
@@ -375,6 +350,7 @@ export default function InteractiveForm() {
                            onChange={e => setUserName(e.target.value)}
                            placeholder="Your Full Name"
                            className="w-full bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                           autoComplete="off"
                          />
                        </div>
                     </div>
@@ -391,6 +367,7 @@ export default function InteractiveForm() {
                            onChange={e => setUserEmail(e.target.value)}
                            placeholder="you@example.com"
                            className="w-full bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                           autoComplete="off"
                          />
                        </div>
                     </div>
@@ -431,6 +408,7 @@ export default function InteractiveForm() {
                            onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))}
                            placeholder="000 000 0000"
                            className="flex-1 bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                           autoComplete="off"
                          />
                        </div>
                     </div>
@@ -501,6 +479,7 @@ export default function InteractiveForm() {
                               onChange={e => setAnswers(prev => ({...prev, [field.id]: e.target.value}))}
                               onKeyDown={handleKeyDown}
                               placeholder="Type response..."
+                              autoComplete="off"
                               className="w-full bg-transparent border-b-2 border-slate-100 text-xl md:text-2xl font-black text-indigo-600 py-4 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-400 active:scale-[0.99] focus:placeholder:opacity-0"
                             />
                             <div className="absolute right-0 bottom-4 text-[9px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-focus-within:opacity-100 transition-opacity">Press Enter ↵</div>

@@ -166,6 +166,7 @@ export default function FeedbackForm() {
                          onChange={e => setUserName(e.target.value)} 
                          placeholder="Your Full Name" 
                          className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
+                         autoComplete="off"
                          required 
                        />
                     </div>
@@ -177,6 +178,7 @@ export default function FeedbackForm() {
                          onChange={e => setUserEmail(e.target.value)} 
                          placeholder="you@example.com" 
                          className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
+                         autoComplete="off"
                          required 
                        />
                     </div>
@@ -195,7 +197,7 @@ export default function FeedbackForm() {
                             <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover/trigger:text-indigo-600 transition-colors shrink-0" />
                           </div>
                         </div>
-                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="000 000 0000" required />
+                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="000 000 0000" autoComplete="off" required />
                       </div>
                     </div>
                   </div>
@@ -221,6 +223,7 @@ export default function FeedbackForm() {
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
                               className="w-full bg-transparent border-b-2 border-slate-100 py-2 text-lg font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-400"
+                              autoComplete="off"
                               required={field.required}
                               placeholder="Synchronize response..."
                             />
@@ -230,6 +233,7 @@ export default function FeedbackForm() {
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
                               className="w-full md:w-32 bg-slate-50 border-2 border-slate-100 p-2 rounded-xl text-lg font-black text-indigo-600 outline-none focus:border-indigo-600 transition"
+                              autoComplete="off"
                               required={field.required}
                               placeholder="0"
                             />
