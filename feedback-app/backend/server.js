@@ -17,9 +17,15 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS
 
 app.use(cors({
     origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Normalize origin: remove trailing slash and convert to lowercase for comparison
+        const normalizedOrigin = origin ? origin.replace(/\/$/, '').toLowerCase() : null;
+        const normalizedAllowed = allowedOrigins.map(o => o.replace(/\/$/, '').toLowerCase());
+
+        if (!origin || normalizedAllowed.includes(normalizedOrigin)) {
             callback(null, true);
         } else {
+            console.warn(`[CORS Blocked] Header Origin: "${origin}" | Normalized: "${normalizedOrigin}"`);
+            console.warn(`[CORS Allowed] ${JSON.stringify(normalizedAllowed)}`);
             callback(new Error('Not allowed by CORS'));
         }
     }

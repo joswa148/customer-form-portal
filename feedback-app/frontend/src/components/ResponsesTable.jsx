@@ -69,6 +69,7 @@ export default function ResponsesTable({ responses, forms, onDelete }) {
                             )}
                           </div>
                           <div className="text-[9px] font-bold text-slate-400 truncate">{res.user_email || 'No email provided'}</div>
+                          {res.user_phone && <div className="text-[9px] font-black text-indigo-500/70 truncate mt-0.5">{res.user_phone}</div>}
                         </div>
                       </div>
                     </td>

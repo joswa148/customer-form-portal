@@ -3,7 +3,7 @@ import api from '../utils/api';
 import { useParams } from 'react-router-dom';
 import { 
   Mail, CheckCircle2, ShieldCheck, AlertCircle, MessageSquareText, CheckSquare,
-  User, Zap, Star
+  User, Zap, Star, ChevronDown
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 
@@ -61,6 +61,14 @@ export default function FeedbackForm() {
     setSubmitError('');
     setSubmitSuccess('');
     
+    if (!userName.trim()) {
+      setSubmitError('Please provide your full name.');
+      return;
+    }
+    if (!userEmail.trim() || !userEmail.includes('@')) {
+      setSubmitError('Please provide a valid email address.');
+      return;
+    }
     if (!userPhoneCode || !userPhoneNumber.trim()) {
       setSubmitError('Please provide a valid mobile number for verification.');
       return;
@@ -150,6 +158,28 @@ export default function FeedbackForm() {
                     <User className="w-3 h-3 text-indigo-400"/> Authentication
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                       <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Full Name</label>
+                       <input 
+                         type="text" 
+                         value={userName} 
+                         onChange={e => setUserName(e.target.value)} 
+                         placeholder="Your Full Name" 
+                         className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
+                         required 
+                       />
+                    </div>
+                    <div>
+                       <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Email Address</label>
+                       <input 
+                         type="email" 
+                         value={userEmail} 
+                         onChange={e => setUserEmail(e.target.value)} 
+                         placeholder="you@example.com" 
+                         className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
+                         required 
+                       />
+                    </div>
                     <div>
                       <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Mobile Access</label>
                       <div className="flex gap-2">

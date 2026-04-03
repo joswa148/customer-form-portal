@@ -3,7 +3,7 @@ import api from '../utils/api';
 import { useParams } from 'react-router-dom';
 import { 
   CheckCircle2, ChevronRight, ChevronLeft, AlertCircle,
-  Info, ShieldCheck, Check, WifiOff, X, Phone, Zap, MousePointer2, Star, ChevronDown
+  Info, ShieldCheck, Check, WifiOff, X, Phone, User, Mail, Zap, MousePointer2, Star, ChevronDown
 } from 'lucide-react';
 import { countryCodes } from '../utils/countries';
 import analytics from '../utils/analytics';
@@ -189,6 +189,14 @@ export default function InteractiveForm() {
     }
 
     if (currentIndex === -1) {
+      if (!userName.trim()) {
+        alert('Required: Full Name.');
+        return;
+      }
+      if (!userEmail.trim() || !userEmail.includes('@')) {
+        alert('Required: Valid Email Address.');
+        return;
+      }
       if (!userPhoneNumber.trim()) {
         alert('Required: Mobile Number.');
         return;
@@ -204,7 +212,7 @@ export default function InteractiveForm() {
       }
     }
     setCurrentIndex(prev => Math.min(prev + 1, fields.length));
-  }, [currentIndex, fields, userPhoneNumber]);
+  }, [currentIndex, fields, userPhoneNumber, userName, userEmail]);
 
   const handlePrev = useCallback(() => {
     analytics.trackNavigation('back', currentIndex);
@@ -355,45 +363,78 @@ export default function InteractiveForm() {
                </header>
                
                  <div className="space-y-4 mb-8">
-                   <div className="space-y-2 relative">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                         <Phone className="w-3 h-3 text-indigo-400"/> Mobile Number
-                      </label>
-                      <div className="flex items-stretch bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-hidden focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition duration-300">
-                        {/* Country Code Trigger Area */}
-                        <div className="relative shrink-0 flex items-center px-4 bg-slate-100/50 hover:bg-slate-100 transition-colors border-r-2 border-slate-100/50 group/trigger min-w-[120px]">
-                          <select 
-                            value={userPhoneCode}
-                            onChange={e => setUserPhoneCode(e.target.value)}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 appearance-none"
-                            title="Select Country"
-                          >
-                            {countryCodes.map((c, i) => (
-                              <option key={i} value={c.code} className="text-black bg-white font-semibold">
-                                {c.name} ({c.code})
-                              </option>
-                            ))}
-                          </select>
-                          <div className="flex items-center gap-2 pointer-events-none select-none w-full justify-between pr-1">
-                            <div className="flex items-baseline gap-1.5">
-                               <span className="text-sm font-black text-slate-900 uppercase tracking-tighter">{activeCountry.name}</span>
-                               <span className="text-[10px] font-bold text-indigo-600/60 transition-colors group-hover/trigger:text-indigo-600">{activeCountry.code}</span>
-                            </div>
-                            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover/trigger:text-indigo-600 transition-colors" />
-                          </div>
-                        </div>
+                    {/* Name Input */}
+                    <div className="space-y-2 relative">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+                          <User className="w-3 h-3 text-indigo-400"/> Full Name
+                       </label>
+                       <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-hidden focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition duration-300">
+                         <input
+                           type="text"
+                           value={userName}
+                           onChange={e => setUserName(e.target.value)}
+                           placeholder="Your Full Name"
+                           className="w-full bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                         />
+                       </div>
+                    </div>
 
-                        {/* Number Input Area */}
-                        <input
-                          type="tel"
-                          value={userPhoneNumber}
-                          onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))}
-                          placeholder="000 000 0000"
-                          className="flex-1 bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
-                        />
-                      </div>
-                   </div>
-                 </div>
+                    {/* Email Input */}
+                    <div className="space-y-2 relative">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+                          <Mail className="w-3 h-3 text-indigo-400"/> Email Address
+                       </label>
+                       <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-hidden focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition duration-300">
+                         <input
+                           type="email"
+                           value={userEmail}
+                           onChange={e => setUserEmail(e.target.value)}
+                           placeholder="you@example.com"
+                           className="w-full bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                         />
+                       </div>
+                    </div>
+
+                    {/* Phone Input */}
+                    <div className="space-y-2 relative">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+                          <Phone className="w-3 h-3 text-indigo-400"/> Mobile Number
+                       </label>
+                       <div className="flex items-stretch bg-slate-50 border-2 border-slate-100 rounded-2xl overflow-hidden focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-[12px] focus-within:ring-indigo-600/5 transition duration-300">
+                         {/* Country Code Trigger Area */}
+                         <div className="relative shrink-0 flex items-center px-4 bg-slate-100/50 hover:bg-slate-100 transition-colors border-r-2 border-slate-100/50 group/trigger min-w-[120px]">
+                           <select 
+                             value={userPhoneCode}
+                             onChange={e => setUserPhoneCode(e.target.value)}
+                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 appearance-none"
+                             title="Select Country"
+                           >
+                             {countryCodes.map((c, i) => (
+                               <option key={i} value={c.code} className="text-black bg-white font-semibold">
+                                 {c.name} ({c.code})
+                               </option>
+                             ))}
+                           </select>
+                           <div className="flex items-center gap-2 pointer-events-none select-none w-full justify-between pr-1">
+                             <div className="flex items-baseline gap-1.5">
+                                <span className="text-sm font-black text-slate-900 uppercase tracking-tighter">{activeCountry.name}</span>
+                                <span className="text-[10px] font-bold text-indigo-600/60 transition-colors group-hover/trigger:text-indigo-600">{activeCountry.code}</span>
+                             </div>
+                             <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover/trigger:text-indigo-600 transition-colors" />
+                           </div>
+                         </div>
+
+                         {/* Number Input Area */}
+                         <input
+                           type="tel"
+                           value={userPhoneNumber}
+                           onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))}
+                           placeholder="000 000 0000"
+                           className="flex-1 bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                         />
+                       </div>
+                    </div>
+                  </div>
                
                <button 
                  onClick={handleNext} 
