@@ -118,22 +118,22 @@ export default function FeedbackForm() {
   );
 
   return (
-    <div className="h-screen bg-slate-950 text-slate-100 py-4 px-4 font-sans flex flex-col items-center relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+    <div className="h-screen bg-slate-950 text-slate-100 py-2 px-4 font-sans flex flex-col items-center relative overflow-hidden selection:bg-indigo-500 selection:text-white">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
       
       <div className="w-full max-w-2xl relative z-10 animate-fade-in-up flex flex-col h-full max-h-[calc(100vh-2rem)]">
-        <header className="text-center mb-4 shrink-0">
+        <header className="text-center mb-2 shrink-0">
            <div className="w-8 h-1 bg-indigo-500 mx-auto mb-2 rounded-full"></div>
            <p className="text-[8px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-1">Feedback Node</p>
-           <h1 className="text-lg md:text-xl font-black text-white tracking-tight leading-tight mb-1 uppercase">{formConfig.title}</h1>
+           <h1 className="text-lg md:text-xl font-black text-white tracking-tight leading-tight mb-0.5 uppercase">{formConfig.title}</h1>
            {formConfig.description && <p className="text-slate-400 text-[10px] font-bold max-w-lg mx-auto leading-relaxed hidden md:block">{formConfig.description}</p>}
         </header>
 
         <div className="bg-white/95 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.4)] border border-white/20 rounded-[1.5rem] relative group flex flex-col min-h-0 flex-1">
           <div className="absolute top-0 w-full h-1.5 bg-indigo-600 rounded-t-[1.5rem] z-10"></div>
           
-          <div className="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-1 relative z-0">
+          <div className="p-3 md:p-4 overflow-y-auto custom-scrollbar flex-1 relative z-0">
             {submitError && (
               <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 font-black text-[11px] uppercase tracking-wider rounded-2xl flex items-center gap-4 animate-shake">
                 <AlertCircle className="w-5 h-5 shrink-0"/> {submitError}
@@ -141,7 +141,7 @@ export default function FeedbackForm() {
             )}
             
             {submitSuccess && (
-              <div className="mb-12 text-center p-10 bg-emerald-50 border-2 border-emerald-100 rounded-[2rem] animate-fade-in-up">
+              <div className="mb-6 text-center p-6 bg-emerald-50 border-2 border-emerald-100 rounded-[2rem] animate-fade-in-up">
                 <div className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3">
                    <CheckCircle2 className="w-8 h-8 text-white" strokeWidth={3}/> 
                 </div>
@@ -151,13 +151,13 @@ export default function FeedbackForm() {
             )}
 
             {!submitSuccess && (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* ID Card */}
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
                     <User className="w-3 h-3 text-indigo-400"/> Authentication
                   </h3>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-2 gap-2">
                     <div className="md:col-span-2">
                        <label className="text-[9px] font-black text-slate-400 mb-1.5 tracking-widest uppercase block ml-1">Full Name</label>
                        <input 
@@ -165,7 +165,7 @@ export default function FeedbackForm() {
                          value={userName} 
                          onChange={e => setUserName(e.target.value)} 
                          placeholder="Your Full Name" 
-                         className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
+                         className="w-full bg-slate-50 border-2 border-slate-100 p-2 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
                          autoComplete="off"
                          required 
                        />
@@ -177,7 +177,7 @@ export default function FeedbackForm() {
                          value={userEmail} 
                          onChange={e => setUserEmail(e.target.value)} 
                          placeholder="you@example.com" 
-                         className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
+                         className="w-full bg-slate-50 border-2 border-slate-100 p-2 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" 
                          autoComplete="off"
                          required 
                        />
@@ -197,21 +197,21 @@ export default function FeedbackForm() {
                             <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover/trigger:text-indigo-600 transition-colors shrink-0" />
                           </div>
                         </div>
-                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-3 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="000 000 0000" autoComplete="off" required />
+                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-2 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="000 000 0000" autoComplete="off" required />
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Questionnaire */}
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
                     <MessageSquareText className="w-3 h-3 text-indigo-400"/> Data Accumulation
                   </h3>
-                  <div className="grid gap-6">
+                  <div className="grid gap-3">
                     {fields.map((field, idx) => (
                       <div key={field.id} className="relative group/field">
-                        <label className="block text-[13px] font-black text-slate-800 mb-3 leading-tight flex items-start gap-3 uppercase tracking-tighter">
+                        <label className="block text-[13px] font-black text-slate-800 mb-1 leading-tight flex items-start gap-3 uppercase tracking-tighter">
                           <span className="bg-indigo-600 text-white rounded-md px-1.5 py-0.5 text-[9px] font-black tracking-widest shadow-md shadow-indigo-100">Q{idx + 1}</span>
                           {field.label} {field.required && <span className="text-indigo-500 font-black ml-1">*</span>}
                         </label>
@@ -222,7 +222,7 @@ export default function FeedbackForm() {
                               type={field.type} 
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
-                              className="w-full bg-transparent border-b-2 border-slate-100 py-2 text-lg font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-400"
+                              className="w-full bg-transparent border-b-2 border-slate-100 py-1 text-lg font-black text-indigo-600 outline-none focus:border-indigo-600 transition placeholder:text-slate-400"
                               autoComplete="off"
                               required={field.required}
                               placeholder="Synchronize response..."
@@ -242,7 +242,7 @@ export default function FeedbackForm() {
                               value={answers[field.id] || ''}
                               onChange={e => handleChange(field.id, e.target.value)}
                               rows="3"
-                              className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-4 text-[13px] font-black text-slate-700 outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition resize-none placeholder:text-slate-400"
+                              className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-2.5 text-[13px] font-black text-slate-700 outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition resize-none placeholder:text-slate-400"
                               required={field.required}
                               placeholder="Provide more info..."
                             />
@@ -302,7 +302,7 @@ export default function FeedbackForm() {
                    <button 
                      type="submit" 
                      disabled={submitLoading}
-                     className="w-full bg-slate-950 hover:bg-black text-white px-8 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_15px_30px_rgba(0,0,0,0.3)] bg-gradient-to-r from-slate-900 to-black transition transform active:scale-[0.97] group flex items-center justify-center gap-4"
+                     className="w-full bg-slate-950 hover:bg-black text-white px-8 py-3 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_15px_30px_rgba(0,0,0,0.3)] bg-gradient-to-r from-slate-900 to-black transition transform active:scale-[0.97] group flex items-center justify-center gap-4"
                    >
                      {submitLoading ? 'Synchronizing...' : <>Commit <Zap className="w-5 h-5 fill-current"/></>}
                    </button>
@@ -315,7 +315,7 @@ export default function FeedbackForm() {
           </div>
         </div>
         
-        <footer className="mt-16 text-center">
+        <footer className="mt-4 text-center">
            <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] opacity-30">Antigravity Design Protocol </span>
         </footer>
       </div>

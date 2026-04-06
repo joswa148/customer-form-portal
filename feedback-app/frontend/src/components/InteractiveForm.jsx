@@ -248,7 +248,7 @@ export default function InteractiveForm() {
   const isOutro = currentIndex === fields.length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col justify-center items-center p-2 md:p-6 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+    <div className="h-screen bg-slate-950 text-slate-100 font-sans flex flex-col justify-center items-center py-4 px-2 md:p-6 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
       {/* Background Glow */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
@@ -278,7 +278,7 @@ export default function InteractiveForm() {
       <div className="w-full max-w-[540px] relative z-10 animate-fade-in-up">
         
         {!submitSuccess && !isIntro && (
-          <div className="mb-4 flex justify-between items-end px-3">
+          <div className="mb-2 flex justify-between items-end px-3">
             <button 
               onClick={handlePrev} 
               className="text-[10px] font-black text-slate-500 hover:text-indigo-400 uppercase tracking-[0.3em] flex items-center gap-2 transition-all active:scale-[0.95] outline-none group"
@@ -295,21 +295,21 @@ export default function InteractiveForm() {
         )}
 
         {/* Form Container: Glass-Matrix Aesthetic */}
-        <div className="bg-white/95 backdrop-blur-2xl p-4 md:p-8 rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.6)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
+        <div className="bg-white/95 backdrop-blur-2xl p-4 md:p-6 rounded-[1.5rem] shadow-[0_30px_90px_rgba(0,0,0,0.6)] overflow-hidden relative transition-all duration-500 border border-white/20 group/card">
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-violet-600 to-indigo-600"></div>
           
           {submitSuccess ? (
-            <div className="text-center py-10 animate-fade-in-up flex flex-col items-center relative z-10" aria-live="polite">
+            <div className="text-center py-6 animate-fade-in-up flex flex-col items-center relative z-10" aria-live="polite">
               <Confetti />
               
-              <div className="bg-emerald-500 w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border-4 border-emerald-100 shadow-[0_20px_40px_rgba(16,185,129,0.3)] rotate-3">
+              <div className="bg-emerald-500 w-16 h-16 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4 border-4 border-emerald-100 shadow-[0_20px_40px_rgba(16,185,129,0.3)] rotate-3">
                  <CheckCircle2 className="w-12 h-12 text-white" strokeWidth={3} />
               </div>
               
               <h1 className="text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">
   Feedback Received 🎉
 </h1>
-<p className="text-[13px] font-bold text-slate-500 leading-relaxed max-w-sm mx-auto mb-8">
+<p className="text-[13px] font-bold text-slate-500 leading-relaxed max-w-sm mx-auto mb-6">
   Thanks for sharing your feedback. Your input is highly valued and has been securely recorded.
 </p>
 
@@ -323,21 +323,21 @@ export default function InteractiveForm() {
                    const whatsappUrl = isMobile ? `whatsapp://send?phone=${phone}&text=${text}` : `https://web.whatsapp.com/send?phone=${phone}&text=${text}`;
                    window.open(whatsappUrl, '_blank');
                 }}
-                className="w-full max-w-xs flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(79,70,229,0.3)] transition-all transform active:scale-95 group/wa"
+                className="w-full max-w-xs flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(79,70,229,0.3)] transition-all transform active:scale-95 group/wa"
               >
                 Contact via WhatsApp <ChevronRight className="w-4 h-4 group-hover/wa:translate-x-1 transition-transform" />
               </a>
             </div>
           ) : isIntro ? (
             <div className="animate-fade-in-up">
-               <header className="text-center mb-6">
+               <header className="text-center mb-3">
                  <div className="w-10 h-1 bg-violet-600 mx-auto mb-4 rounded-full"></div>
                  <p className="text-[9px] font-black text-violet-600 uppercase tracking-[0.4em] mb-2">Secure Submission</p>
-                 <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-3 uppercase">{formConfig.title}</h1>
+                 <h1 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight mb-2 uppercase">{formConfig.title}</h1>
                  <p className="text-slate-500 text-[11px] font-bold leading-relaxed max-w-xs mx-auto opacity-60">Authentication & Encrypted Data Submission</p>
                </header>
                
-                 <div className="space-y-4 mb-8">
+                 <div className="space-y-3 mb-4">
                     {/* Name Input */}
                     <div className="space-y-2 relative">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
@@ -349,7 +349,7 @@ export default function InteractiveForm() {
                            value={userName}
                            onChange={e => setUserName(e.target.value)}
                            placeholder="Your Full Name"
-                           className="w-full bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                           className="w-full bg-transparent px-5 py-4 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
                            autoComplete="off"
                          />
                        </div>
@@ -366,7 +366,7 @@ export default function InteractiveForm() {
                            value={userEmail}
                            onChange={e => setUserEmail(e.target.value)}
                            placeholder="you@example.com"
-                           className="w-full bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                           className="w-full bg-transparent px-5 py-4 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
                            autoComplete="off"
                          />
                        </div>
@@ -407,7 +407,7 @@ export default function InteractiveForm() {
                            value={userPhoneNumber}
                            onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))}
                            placeholder="000 000 0000"
-                           className="flex-1 bg-transparent px-5 py-6 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
+                           className="flex-1 bg-transparent px-5 py-4 text-black font-black outline-none text-base placeholder:text-black/30 placeholder:font-bold"
                            autoComplete="off"
                          />
                        </div>
@@ -416,12 +416,12 @@ export default function InteractiveForm() {
                
                <button 
                  onClick={handleNext} 
-                 className="w-full group/btn flex items-center justify-center gap-3 bg-slate-950 hover:bg-black text-white px-6 py-5 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_15px_30px_rgba(0,0,0,0.3)] transition-all transform active:scale-[0.97]"
+                 className="w-full group/btn flex items-center justify-center gap-3 bg-slate-950 hover:bg-black text-white px-6 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.3em] shadow-[0_15px_30px_rgba(0,0,0,0.3)] transition-all transform active:scale-[0.97]"
                >
                  Start Entry <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"/>
                </button>
 
-               <div className="mt-6 flex items-center gap-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/50">
+               <div className="mt-4 flex items-center gap-2 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/50">
                   <ShieldCheck className="w-4 h-4 text-indigo-500 shrink-0"/>
                   <p className="text-[9px] font-black text-indigo-700/60 leading-tight uppercase tracking-widest">
                      Secure 256-bit encryption active.
@@ -429,12 +429,12 @@ export default function InteractiveForm() {
                </div>
             </div>
           ) : isOutro ? (
-            <div className="animate-fade-in-right text-center py-6">
-               <div className="bg-indigo-600 w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-[0_20px_40px_rgba(79,70,229,0.3)] rotate-3">
+            <div className="animate-fade-in-right text-center py-2">
+               <div className="bg-indigo-600 w-16 h-16 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4 shadow-[0_20px_40px_rgba(79,70,229,0.3)] rotate-3">
                   <ShieldCheck className="w-12 h-12 text-white" strokeWidth={2} />
                </div>
-               <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tighter uppercase">Almost Done!</h2>
-               <p className="text-slate-500 text-sm font-bold mb-12 leading-relaxed px-8 opacity-70">Thank you for completing the questions. Please click the button below to securely submit your feedback.</p>
+               <h2 className="text-2xl font-black text-slate-900 mb-2 tracking-tighter uppercase">Almost Done!</h2>
+               <p className="text-slate-500 text-sm font-bold mb-6 leading-relaxed px-4 opacity-70">Thank you for completing the questions. Please click the button below to securely submit your feedback.</p>
                
                {submitError && (
                   <div className="mb-8 p-5 bg-red-50 border-2 border-red-100 text-red-600 rounded-2xl flex items-center gap-4 font-black text-[11px] uppercase tracking-[0.1em] animate-shake">
@@ -445,7 +445,7 @@ export default function InteractiveForm() {
                <button 
                  onClick={handleSubmit} 
                  disabled={submitLoading}
-                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-6 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_20px_40px_rgba(79,70,229,0.3)] transition-all transform active:scale-[0.97] disabled:opacity-50 flex items-center justify-center gap-4"
+                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] shadow-[0_20px_40px_rgba(79,70,229,0.3)] transition-all transform active:scale-[0.97] disabled:opacity-50 flex items-center justify-center gap-4"
                >
                  {submitLoading ? 'Submitting...' : <>Submit Feedback <Zap className="w-5 h-5 fill-current"/></>}
                </button>
@@ -455,16 +455,16 @@ export default function InteractiveForm() {
               <fieldset className="border-none p-0 m-0">
                 <legend className="sr-only">Step {currentIndex + 1}</legend>
                 
-                <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-4">Question {currentIndex + 1}</p>
+                <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[0.5em] mb-1">Question {currentIndex + 1}</p>
                 <h2 
                   ref={questionHeadingRef} 
                   tabIndex="-1" 
-                  className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight mb-6 outline-none focus:text-indigo-600 transition-colors uppercase"
+                  className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight mb-4 outline-none focus:text-indigo-600 transition-colors uppercase"
                 >
                    {fields[currentIndex]?.label} {fields[currentIndex]?.required && <span className="text-indigo-400 font-black ml-1">*</span>}
                 </h2>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                    {(() => {
                      const field = fields[currentIndex];
                      if (!field) return null;
@@ -480,7 +480,7 @@ export default function InteractiveForm() {
                               onKeyDown={handleKeyDown}
                               placeholder="Type response..."
                               autoComplete="off"
-                              className="w-full bg-transparent border-b-2 border-slate-100 text-xl md:text-2xl font-black text-indigo-600 py-4 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-400 active:scale-[0.99] focus:placeholder:opacity-0"
+                              className="w-full bg-transparent border-b-2 border-slate-100 text-xl md:text-2xl font-black text-indigo-600 py-2 outline-none focus:border-indigo-600 transition-all placeholder:text-slate-400 active:scale-[0.99] focus:placeholder:opacity-0"
                             />
                             <div className="absolute right-0 bottom-4 text-[9px] font-black text-slate-300 uppercase tracking-widest opacity-0 group-focus-within:opacity-100 transition-opacity">Press Enter ↵</div>
                           </div>
@@ -506,7 +506,7 @@ export default function InteractiveForm() {
                         const emojis = ["😠", "🙁", "😐", "🙂", "😍"];
                         
                         return (
-                          <div className="flex flex-col items-center gap-6 py-4">
+                          <div className="flex flex-col items-center gap-3 py-2">
                             <div className="flex gap-3">
                               {[...Array(max)].map((_, i) => (
                                 <button
@@ -519,7 +519,7 @@ export default function InteractiveForm() {
                                   }}
                                   className={`p-3 rounded-2xl transition-all transform active:scale-90 ${rating > i ? 'text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] scale-110' : 'text-slate-200 hover:text-amber-200 opacity-30 hover:opacity-100'}`}
                                 >
-                                  <Star className={`w-10 h-10 ${rating > i ? 'fill-current' : ''}`} strokeWidth={1.5} />
+                                  <Star className={`w-8 h-8 ${rating > i ? 'fill-current' : ''}`} strokeWidth={1.5} />
                                 </button>
                               ))}
                             </div>
@@ -542,7 +542,7 @@ export default function InteractiveForm() {
 
                         return (
                           <div 
-                            className={`grid gap-3 pr-2 custom-scrollbar overscroll-contain ${isLongList ? 'max-h-[50vh] overflow-y-auto' : ''} ${!isLongList && options.length > 3 ? 'sm:grid-cols-1' : 'sm:grid-cols-2'}`}
+                            className={`grid gap-2 pr-2 custom-scrollbar overscroll-contain ${isLongList ? 'max-h-[50vh] overflow-y-auto' : ''} ${!isLongList && options.length > 3 ? 'sm:grid-cols-1' : 'sm:grid-cols-2'}`}
                           >
                              {options.map((opt, i) => {
                                const currentArr = Array.isArray(answers[field.id]) ? answers[field.id] : [];
@@ -567,7 +567,7 @@ export default function InteractiveForm() {
                                         autoAdvanceTimer.current = setTimeout(handleNext, 400);
                                      }
                                    }}
-                                   className={`group w-full p-3.5 rounded-xl border-2 text-left flex items-center justify-between transition-all duration-300 active:scale-[0.97] outline-none ${isSelected ? 'bg-indigo-600 border-indigo-600 shadow-md' : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'}`}
+                                   className={`group w-full p-2.5 rounded-xl border-2 text-left flex items-center justify-between transition-all duration-300 active:scale-[0.97] outline-none ${isSelected ? 'bg-indigo-600 border-indigo-600 shadow-md' : 'bg-white border-slate-100 hover:border-slate-300 hover:bg-slate-50'}`}
                                  >
                                     <span className={`font-black text-[9px] uppercase tracking-[0.1em] ${isSelected ? 'text-white' : 'text-slate-800'} flex items-center gap-2`}>
                                       {isSelected && "✨"} {label}
@@ -586,10 +586,10 @@ export default function InteractiveForm() {
                      return null;
                    })()}
 
-                   <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-slate-100 mt-6">
+                   <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 border-t border-slate-100 mt-3">
                      <button 
                        onClick={handleNext}
-                       className="w-full sm:w-auto px-8 py-4 bg-slate-950 hover:bg-black text-white rounded-lg font-black uppercase tracking-[0.3em] text-[10px] transition-all shadow-md active:scale-[0.97] flex items-center justify-center gap-3"
+                       className="w-full sm:w-auto px-8 py-3 bg-slate-950 hover:bg-black text-white rounded-lg font-black uppercase tracking-[0.3em] text-[10px] transition-all shadow-md active:scale-[0.97] flex items-center justify-center gap-3"
                      >
                         Confirm Entry <ArrowRight className="w-4 h-4"/>
                      </button>

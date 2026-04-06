@@ -10,7 +10,7 @@ import FeedbackPage from './pages/FeedbackPage';
 function App() {
   return (
     <Router basename='/feedback'>
-      <div className="min-h-screen bg-gray-50 text-gray-800">
+      <div className="h-screen overflow-hidden bg-gray-50 text-gray-800">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard/forms" />} />
           <Route path="/f/:uuid" element={<FeedbackForm />} />
