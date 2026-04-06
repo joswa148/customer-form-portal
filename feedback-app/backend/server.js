@@ -314,8 +314,8 @@ app.post('/api/responses', async (req, res) => {
         if (!formId) return res.status(400).json({ error: 'Form ID is required.' });
         if (!answers || typeof answers !== 'object') return res.status(400).json({ error: 'Answers object is required.' });
         
-        // Mobile Number is now the primary required identifier
-        if (!userPhone || !userPhone.trim()) return res.status(400).json({ error: 'Valid phone number is required.' });
+        // Mobile Number is now an optional identifier
+        const safePhone = (userPhone && typeof userPhone === 'string') ? userPhone.trim() : '';
 
         // Normalize optional fields
         const safeEmail = (userEmail && typeof userEmail === 'string' && userEmail.includes('@')) ? userEmail.trim() : '';
@@ -362,7 +362,7 @@ app.post('/api/responses', async (req, res) => {
         }
 
         const insertQuery = `INSERT INTO responses (form_id, user_email, user_name, user_phone, answers, ref_id) VALUES (?, ?, ?, ?, ?, ?)`;
-        const [result] = await db.query(insertQuery, [formId, safeEmail, safeName, userPhone.trim(), JSON.stringify(answers), ref && ref.trim() ? ref.trim() : null]);
+        const [result] = await db.query(insertQuery, [formId, safeEmail, safeName, safePhone, JSON.stringify(answers), ref && ref.trim() ? ref.trim() : null]);
 
         // Build raw answers array for dynamic HTML template
         const rawAnswersArray = [];
@@ -387,7 +387,7 @@ app.post('/api/responses', async (req, res) => {
             formTitle,
             userEmail: safeEmail,
             userName: safeName,
-            userPhone: userPhone.trim(),
+            userPhone: safePhone,
             adminEmail: process.env.EMAIL_TO || null,
             rawAnswersArray,
             consent: answers.consent !== false, // Consent check

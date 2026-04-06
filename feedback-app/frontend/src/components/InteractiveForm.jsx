@@ -172,10 +172,7 @@ export default function InteractiveForm() {
         alert('Required: Valid Email Address.');
         return;
       }
-      if (!userPhoneNumber.trim()) {
-        alert('Required: Mobile Number.');
-        return;
-      }
+      // userPhoneNumber is now optional
     }
     if (currentIndex >= 0 && currentIndex < fields.length) {
       const field = fields[currentIndex];
@@ -187,7 +184,7 @@ export default function InteractiveForm() {
       }
     }
     setCurrentIndex(prev => Math.min(prev + 1, fields.length));
-  }, [currentIndex, fields, userPhoneNumber, userName, userEmail]);
+  }, [currentIndex, fields, userName, userEmail]);
 
   const handlePrev = useCallback(() => {
     analytics.trackNavigation('back', currentIndex);
@@ -224,7 +221,7 @@ export default function InteractiveForm() {
         formId: formConfig.id,
         userEmail,
         userName,
-        userPhone: `${userPhoneCode} ${userPhoneNumber.trim()}`,
+        userPhone: userPhoneNumber.trim() ? `${userPhoneCode} ${userPhoneNumber.trim()}` : '',
         answers,
         ref: trackingRef
       });
@@ -601,15 +598,6 @@ export default function InteractiveForm() {
               </fieldset>
             </div>
           )}
-        </div>
-        
-        {/* Footer Meta */}
-        <div className="mt-8 flex justify-between items-center px-4">
-           <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Secure session 🔒</span>
-           </div>
-           <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest opacity-30">Antigravity Engine v2.4</span>
         </div>
       </div>
 

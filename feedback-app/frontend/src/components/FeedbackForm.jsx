@@ -189,15 +189,15 @@ export default function FeedbackForm() {
                           <select value={userPhoneCode} onChange={e => setUserPhoneCode(e.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black appearance-none" title="Select Country">
                             {countryCodes.map((c, i) => <option key={i} value={c.code} className="text-black bg-white font-semibold">{c.name} ({c.code})</option>)}
                           </select>
-                          <div className="flex items-center gap-2 pointer-events-none px-2 w-full justify-between pr-3">
-                            <div className="flex items-baseline gap-1.5 leading-none">
-                              <span className="text-sm font-black text-slate-900 uppercase tracking-tighter">{activeCountry.name}</span>
-                              <span className="text-[10px] font-bold text-indigo-500/60 group-hover/trigger:text-indigo-600 transition-colors uppercase">{activeCountry.code}</span>
+                          <div className="flex flex-col items-start leading-none pointer-events-none px-2 w-full pr-3 relative">
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5 whitespace-nowrap">{activeCountry.name}</span>
+                            <div className="flex items-center gap-2 w-full justify-between">
+                              <span className="text-sm font-black text-slate-900 tracking-tighter">{activeCountry.code}</span>
+                              <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover/trigger:text-indigo-600 transition-colors shrink-0" />
                             </div>
-                            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover/trigger:text-indigo-600 transition-colors shrink-0" />
                           </div>
                         </div>
-                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-2 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="000 000 0000" autoComplete="off" required />
+                        <input type="tel" value={userPhoneNumber} onChange={e => setUserPhoneNumber(e.target.value.replace(/[^\d\s-]/g, ''))} className="flex-1 bg-slate-50 border-2 border-slate-100 p-2 rounded-xl text-slate-900 font-black outline-none focus:border-indigo-600 focus:bg-white focus:ring-[8px] focus:ring-indigo-600/5 transition text-[13px] placeholder:text-slate-400" placeholder="000 000 0000" autoComplete="off" />
                       </div>
                     </div>
                   </div>
